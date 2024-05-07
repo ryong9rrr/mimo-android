@@ -39,6 +39,16 @@ fun Router(
                     items = arrayOf("조명", "커튼"),
                     homeName = "싸피",
                     address = "서울특별시 강남구 테헤란로 212"
+                ),
+                HubHome(
+                    items = arrayOf("조명", "커튼"),
+                    homeName = "싸피",
+                    address = "서울특별시 강남구 테헤란로 212"
+                ),
+                HubHome(
+                    items = arrayOf("조명", "커튼"),
+                    homeName = "싸피",
+                    address = "서울특별시 강남구 테헤란로 212"
                 )
             )
 

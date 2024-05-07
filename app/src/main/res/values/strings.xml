@@ -4,13 +4,13 @@
     <!-- health connect -->
     <string name="menu">menu</string>
     <string name="not_supported_description">
-        This device does not meet minimum SDK version for Health Connect.
+        헬스커넥트가 지원되지 않는 디바이스에요.
     </string>
     <string name="not_installed_description">
-        Health Connect is supported on this device, but is not currently installed.
+        헬스커넥트가 설치되지 않았어요.
     </string>
-    <string name="permission_denied">Permissions are not granted. Please grant data permissions in the Health Connect permission settings.</string>
-    <string name="permission_granted">All permissions granted.</string>
+    <string name="permission_denied">헬스커넥트 권한에 동의해주세요.</string>
+    <string name="permission_granted">헬스커넥트 권한 허용</string>
     <string name="ok">OK</string>
     <string name="health_connect_logo">Health Connect logo</string>
     <string name="settings">Settings</string>

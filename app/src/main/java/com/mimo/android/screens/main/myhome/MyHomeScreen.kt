@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -36,6 +33,8 @@ import com.mimo.android.components.ButtonSmall
 import com.mimo.android.components.CardType
 import com.mimo.android.components.HeadingLarge
 import com.mimo.android.components.HeadingSmall
+import com.mimo.android.components.Modal
+import com.mimo.android.components.ScrollView
 import com.mimo.android.components.Text
 import com.mimo.android.components.TransparentCard
 import com.mimo.android.components.base.Size
@@ -50,79 +49,82 @@ fun MyHomeScreen(
     currentHome: HubHome?,
     anotherHomes: Array<HubHome>?
 ){
-    Column(
-        modifier = Modifier
-            .size(700.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
+    ScrollView (
+        children = {
 
-        var isShowModal by remember { mutableStateOf(false) }
-        var selectHomeName by remember { mutableStateOf<String?>(null) }
+            var isShowModal by remember { mutableStateOf(false) }
+            var selectHomeName by remember { mutableStateOf<String?>(null) }
 
-        fun showModal(homeName: String?){
-            isShowModal = true
-            selectHomeName = homeName
-        }
-        
-        fun closeModal(){
-            isShowModal = false
-            selectHomeName = null
-        }
+            fun showModal(homeName: String?){
+                isShowModal = true
+                selectHomeName = homeName
+            }
 
-        if (isShowModal && selectHomeName != null) {
-            Modal(
-                homeName = selectHomeName,
-                onClose = ::closeModal,
-                onConfirm = {} // TODO: 현재 거주지변경 api 요청 + Toast
-            )
-        }
+            fun closeModal(){
+                isShowModal = false
+                selectHomeName = null
+            }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            HeadingLarge(text = "우리 집", fontSize = Size.lg)
-            ButtonSmall(text = "거주지 추가")
-        }
-        Spacer(modifier = Modifier.padding(14.dp))
+            if (isShowModal && selectHomeName != null) {
+                Modal(
+                    onClose = ::closeModal,
+                    children = {
+                        ModalContent(
+                            homeName = selectHomeName,
+                            onClose = ::closeModal,
+                            onConfirm = {} // TODO: 현재 거주지변경 api 요청 + Toast
+                        )
+                    }
+                )
+            }
 
-        HeadingSmall(text = "현재 거주지")
-        Spacer(modifier = Modifier.padding(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                HeadingLarge(text = "우리 집", fontSize = Size.lg)
+                ButtonSmall(text = "거주지 추가")
+            }
+            Spacer(modifier = Modifier.padding(14.dp))
 
-        if (currentHome == null) {
-            Box(){
-               Text(text = "등록된 거주지가 없어요")
+            HeadingSmall(text = "현재 거주지")
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            if (currentHome == null) {
+                Box(){
+                    Text(text = "등록된 거주지가 없어요")
+                }
+            }
+
+            if (currentHome != null) {
+                Card(
+                    hubHome = currentHome,
+                    isCurrentHome = true,
+                    onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                    onLongClick = { homeName -> showModal(homeName) }
+                )
+            }
+
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            HeadingSmall(text = "다른 거주지")
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            anotherHomes?.forEachIndexed { index, anotherHome ->
+                Card(
+                    hubHome = anotherHome,
+                    isCurrentHome = false,
+                    onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                    onLongClick = { homeName -> showModal(homeName) }
+                )
+
+                if (index < anotherHomes.size) {
+                    Spacer(modifier = Modifier.padding(4.dp))
+                }
             }
         }
-
-        if (currentHome != null) {
-            Card(
-                hubHome = currentHome,
-                isCurrentHome = true,
-                onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                onLongClick = { homeName -> showModal(homeName) }
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(16.dp))
-
-        HeadingSmall(text = "다른 거주지")
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        anotherHomes?.forEachIndexed { index, anotherHome ->
-            Card(
-                hubHome = anotherHome,
-                isCurrentHome = false,
-                onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                onLongClick = { homeName -> showModal(homeName) }
-            )
-
-            if (index < anotherHomes.size) {
-                Spacer(modifier = Modifier.padding(4.dp))
-            }
-        }
-    }
+    )
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -174,51 +176,45 @@ private fun Card(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Modal(
+fun ModalContent(
     homeName: String? = null,
     onClose: (() -> Unit)? = null,
     onConfirm: (() -> Unit)? = null
 ){
-    AlertDialog(
-        modifier = Modifier.fillMaxWidth(),
-        onDismissRequest = { onClose?.invoke() },
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
     ) {
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = Gray300,
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .background(
-                    color = Gray300,
-                    shape = RoundedCornerShape(16.dp)
-                )
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+            HeadingSmall(text = homeName ?: "")
+            Spacer(modifier = Modifier.padding(2.dp))
+            Text(text = "현재 거주지로 변경할까요?")
+            Spacer(modifier = Modifier.padding(6.dp))
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                HeadingSmall(text = homeName ?: "")
-                Spacer(modifier = Modifier.padding(2.dp))
-                Text(text = "현재 거주지로 변경할까요?")
-                Spacer(modifier = Modifier.padding(6.dp))
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    item {
-                        Button(
-                            text = "닫기", color = Gray600, hasBorder = false,
-                            onClick = { onClose?.invoke() }
-                        )
-                    }
-                    item {
-                        Button(text = "변경할게요", onClick = { onConfirm?.invoke() })
-                    }
+                item {
+                    Button(
+                        text = "닫기", color = Gray600, hasBorder = false,
+                        onClick = { onClose?.invoke() }
+                    )
+                }
+                item {
+                    Button(text = "변경할게요", onClick = { onConfirm?.invoke() })
                 }
             }
         }
