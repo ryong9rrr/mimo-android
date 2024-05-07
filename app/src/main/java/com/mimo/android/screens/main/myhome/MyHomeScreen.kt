@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +46,12 @@ import com.mimo.android.screens.Screen
 @Composable
 fun MyHomeScreen(
     navController: NavHostController,
-    currentHome: HubHome?,
-    anotherHomes: Array<HubHome>?
+    myHomeViewModel: MyHomeViewModel,
 ){
     ScrollView (
         children = {
 
+            val myHomeUiState by myHomeViewModel.uiState.collectAsState()
             var isShowModal by remember { mutableStateOf(false) }
             var selectHomeName by remember { mutableStateOf<String?>(null) }
 
@@ -91,15 +91,13 @@ fun MyHomeScreen(
             HeadingSmall(text = "현재 거주지")
             Spacer(modifier = Modifier.padding(8.dp))
 
-            if (currentHome == null) {
-                Box(){
-                    Text(text = "등록된 거주지가 없어요")
-                }
+            if (myHomeUiState.currentHome == null) {
+                Text(text = "등록된 거주지가 없어요")
             }
 
-            if (currentHome != null) {
+            if (myHomeUiState.currentHome != null) {
                 Card(
-                    hubHome = currentHome,
+                    hubHome = myHomeUiState.currentHome!!,
                     isCurrentHome = true,
                     onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
                     onLongClick = { homeName -> showModal(homeName) }
@@ -111,16 +109,22 @@ fun MyHomeScreen(
             HeadingSmall(text = "다른 거주지")
             Spacer(modifier = Modifier.padding(8.dp))
 
-            anotherHomes?.forEachIndexed { index, anotherHome ->
-                Card(
-                    hubHome = anotherHome,
-                    isCurrentHome = false,
-                    onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                    onLongClick = { homeName -> showModal(homeName) }
-                )
+            if (myHomeUiState.anotherHomeList == null) {
+                Text(text = "등록된 거주지가 없어요")
+            }
 
-                if (index < anotherHomes.size) {
-                    Spacer(modifier = Modifier.padding(4.dp))
+            if (myHomeUiState.anotherHomeList != null) {
+                myHomeUiState.anotherHomeList!!.forEachIndexed { index, anotherHome ->
+                    Card(
+                        hubHome = anotherHome,
+                        isCurrentHome = false,
+                        onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                        onLongClick = { homeName -> showModal(homeName) }
+                    )
+
+                    if (index < myHomeUiState.anotherHomeList!!.size) {
+                        Spacer(modifier = Modifier.padding(4.dp))
+                    }
                 }
             }
         }
@@ -130,7 +134,7 @@ fun MyHomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Card(
-    hubHome: HubHome,
+    hubHome: Home,
     isCurrentHome: Boolean,
     onClick: ((homeName: String?) -> Unit)? = null,
     onLongClick: ((homeName: String?) -> Unit)? = null
@@ -221,37 +225,36 @@ fun ModalContent(
     }
 }
 
-data class HubHome(
-    val items: Array<String>? = null,
-    val homeName: String,
-    val address: String
-)
+
 
 @Preview
 @Composable
 private fun MyHomeScreenPreview(){
     val navController = NavHostController(LocalContext.current)
-    val currentHome = HubHome(
+    val currentHome = Home(
         items = arrayOf("조명", "무드등"),
         homeName = "상윤이의 자취방",
         address = "서울특별시 관악구 봉천동 1234-56"
     )
-    val anotherHomes: Array<HubHome> = arrayOf(
-        HubHome(
+    val anotherHomeList: Array<Home> = arrayOf(
+        Home(
             items = arrayOf("조명", "창문", "커튼"),
             homeName = "상윤이의 본가",
             address = "경기도 고양시 일산서구 산현로12"
         ),
-        HubHome(
+        Home(
             items = arrayOf("조명", "커튼"),
             homeName = "싸피",
             address = "서울특별시 강남구 테헤란로 212"
         )
     )
 
+    val myHomeViewModel = MyHomeViewModel()
+    myHomeViewModel.updateCurrentHome(currentHome)
+    myHomeViewModel.updateAnotherHomeList(anotherHomeList)
+
     MyHomeScreen(
         navController = navController,
-        currentHome = currentHome,
-        anotherHomes = anotherHomes
+        myHomeViewModel = myHomeViewModel
     )
 }

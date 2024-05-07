@@ -9,7 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.mimo.android.screens.main.myhome.HubHome
+import com.mimo.android.screens.main.myhome.Home
+import com.mimo.android.screens.main.myhome.MyHomeViewModel
 
 @Composable
 fun Router(
@@ -24,38 +25,46 @@ fun Router(
 
         // main
         composable(Screen.MyHomeScreen.route) {
-            val currentHome = HubHome(
+            val myHomeViewModel = MyHomeViewModel()
+            val currentHome = Home(
+                homeId = "1",
                 items = arrayOf("조명", "무드등"),
                 homeName = "상윤이의 자취방",
                 address = "서울특별시 관악구 봉천동 1234-56"
             )
-            val anotherHomes: Array<HubHome> = arrayOf(
-                HubHome(
+            val anotherHomeList: Array<Home> = arrayOf(
+                Home(
+                    homeId = "2",
                     items = arrayOf("조명", "창문", "커튼"),
                     homeName = "상윤이의 본가",
                     address = "경기도 고양시 일산서구 산현로12"
                 ),
-                HubHome(
+                Home(
+                    homeId = "3",
                     items = arrayOf("조명", "커튼"),
                     homeName = "싸피",
                     address = "서울특별시 강남구 테헤란로 212"
                 ),
-                HubHome(
+                Home(
+                    homeId = "4",
                     items = arrayOf("조명", "커튼"),
                     homeName = "싸피",
                     address = "서울특별시 강남구 테헤란로 212"
                 ),
-                HubHome(
+                Home(
+                    homeId = "5",
                     items = arrayOf("조명", "커튼"),
                     homeName = "싸피",
                     address = "서울특별시 강남구 테헤란로 212"
                 )
             )
 
+            myHomeViewModel.updateCurrentHome(currentHome)
+            myHomeViewModel.updateAnotherHomeList(anotherHomeList)
+
             MyHomeScreen(
                 navController = navController,
-                currentHome = currentHome,
-                anotherHomes = anotherHomes
+                myHomeViewModel = myHomeViewModel
             )
             return@composable
         }
