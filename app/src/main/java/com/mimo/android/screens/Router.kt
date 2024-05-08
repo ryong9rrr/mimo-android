@@ -6,6 +6,7 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.main.myprofile.MyProfileScreen
 import com.mimo.android.screens.main.sleep.SleepScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -26,13 +27,14 @@ fun Router(
         // main
         composable(Screen.MyHomeScreen.route) {
             val myHomeViewModel = MyHomeViewModel()
+            myHomeViewModel.init(LocalContext.current)
             val currentHome = Home(
                 homeId = "1",
                 items = arrayOf("조명", "무드등"),
                 homeName = "상윤이의 자취방",
                 address = "서울특별시 관악구 봉천동 1234-56"
             )
-            val anotherHomeList: Array<Home> = arrayOf(
+            val anotherHomeList: List<Home> = mutableListOf(
                 Home(
                     homeId = "2",
                     items = arrayOf("조명", "창문", "커튼"),

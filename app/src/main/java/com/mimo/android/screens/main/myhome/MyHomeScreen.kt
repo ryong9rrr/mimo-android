@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,26 +52,31 @@ fun MyHomeScreen(
 
             val myHomeUiState by myHomeViewModel.uiState.collectAsState()
             var isShowModal by remember { mutableStateOf(false) }
-            var selectHomeName by remember { mutableStateOf<String?>(null) }
+            var selectedHome by remember { mutableStateOf<Home?>(null) }
 
-            fun showModal(homeName: String?){
+            fun handleShowModal(home: Home?){
                 isShowModal = true
-                selectHomeName = homeName
+                selectedHome = home
             }
 
-            fun closeModal(){
+            fun handleCloseModal(){
                 isShowModal = false
-                selectHomeName = null
+                selectedHome = null
             }
 
-            if (isShowModal && selectHomeName != null) {
+            fun handleConfirmModal(home: Home){
+                handleCloseModal()
+                myHomeViewModel.changeCurrentHome(home.homeId)
+            }
+
+            if (isShowModal && selectedHome != null) {
                 Modal(
-                    onClose = ::closeModal,
+                    onClose = ::handleCloseModal,
                     children = {
                         ModalContent(
-                            homeName = selectHomeName,
-                            onClose = ::closeModal,
-                            onConfirm = {} // TODO: 현재 거주지변경 api 요청 + Toast
+                            home = selectedHome!!,
+                            onClose = ::handleCloseModal,
+                            onConfirm = { home -> handleConfirmModal(home) } // TODO: 현재 거주지변경 api 요청 + Toast
                         )
                     }
                 )
@@ -97,10 +101,10 @@ fun MyHomeScreen(
 
             if (myHomeUiState.currentHome != null) {
                 Card(
-                    hubHome = myHomeUiState.currentHome!!,
+                    home = myHomeUiState.currentHome!!,
                     isCurrentHome = true,
-                    onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                    onLongClick = { homeName -> showModal(homeName) }
+                    onClick = { navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                    onLongClick = { home -> handleShowModal(home) }
                 )
             }
 
@@ -109,20 +113,20 @@ fun MyHomeScreen(
             HeadingSmall(text = "다른 거주지")
             Spacer(modifier = Modifier.padding(8.dp))
 
-            if (myHomeUiState.anotherHomeList == null) {
+            if (myHomeUiState.anotherHomeList.isEmpty()) {
                 Text(text = "등록된 거주지가 없어요")
             }
 
-            if (myHomeUiState.anotherHomeList != null) {
-                myHomeUiState.anotherHomeList!!.forEachIndexed { index, anotherHome ->
+            if (myHomeUiState.anotherHomeList.isNotEmpty()) {
+                myHomeUiState.anotherHomeList.forEachIndexed { index, anotherHome ->
                     Card(
-                        hubHome = anotherHome,
+                        home = anotherHome,
                         isCurrentHome = false,
-                        onClick = { homeName -> navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                        onLongClick = { homeName -> showModal(homeName) }
+                        onClick = { navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                        onLongClick = { home -> handleShowModal(home) }
                     )
 
-                    if (index < myHomeUiState.anotherHomeList!!.size) {
+                    if (index < myHomeUiState.anotherHomeList.size) {
                         Spacer(modifier = Modifier.padding(4.dp))
                     }
                 }
@@ -134,17 +138,17 @@ fun MyHomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Card(
-    hubHome: Home,
+    home: Home,
     isCurrentHome: Boolean,
-    onClick: ((homeName: String?) -> Unit)? = null,
-    onLongClick: ((homeName: String?) -> Unit)? = null
+    onClick: ((home: Home) -> Unit)? = null,
+    onLongClick: ((home: Home) -> Unit)? = null
 ){
     Box(
         modifier = Modifier.combinedClickable(
-            onClick = { onClick?.invoke(hubHome.homeName) },
+            onClick = { onClick?.invoke(home) },
             onLongClick = {
                 if (!isCurrentHome) {
-                    onLongClick?.invoke(hubHome.homeName)
+                    onLongClick?.invoke(home)
                 }
             }
         )
@@ -159,31 +163,31 @@ private fun Card(
                     Row (
                         modifier = Modifier.align(Alignment.End)
                     ) {
-                        if (hubHome.items != null) {
+                        if (home.items != null) {
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                hubHome.items.forEach { item -> CardType(text = item) }
+                                home.items.forEach { item -> CardType(text = item) }
                             }
                         }
                     }
                     Spacer(modifier = Modifier.padding(4.dp))
-                    HeadingSmall(text = hubHome.homeName ?: "빈 집")
+                    HeadingSmall(text = home.homeName ?: "빈 집")
                     Spacer(modifier = Modifier.padding(4.dp))
                     Spacer(modifier = Modifier.weight(1f))
-                    HeadingSmall(text = hubHome.address ?: "빈 주소", fontSize = Size.xs, color = Teal100)
+                    HeadingSmall(text = home.address ?: "빈 주소", fontSize = Size.xs, color = Teal100)
                 }
             }
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun ModalContent(
-    homeName: String? = null,
+    home: Home,
     onClose: (() -> Unit)? = null,
-    onConfirm: (() -> Unit)? = null
+    onConfirm: ((home: Home) -> Unit)? = null
 ){
     Box(
         modifier = Modifier
@@ -203,7 +207,7 @@ fun ModalContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadingSmall(text = homeName ?: "")
+            HeadingSmall(text = home.homeName ?: "")
             Spacer(modifier = Modifier.padding(2.dp))
             Text(text = "현재 거주지로 변경할까요?")
             Spacer(modifier = Modifier.padding(6.dp))
@@ -218,7 +222,7 @@ fun ModalContent(
                     )
                 }
                 item {
-                    Button(text = "변경할게요", onClick = { onConfirm?.invoke() })
+                    Button(text = "변경할게요", onClick = { onConfirm?.invoke(home) })
                 }
             }
         }
@@ -236,7 +240,7 @@ private fun MyHomeScreenPreview(){
         homeName = "상윤이의 자취방",
         address = "서울특별시 관악구 봉천동 1234-56"
     )
-    val anotherHomeList: Array<Home> = arrayOf(
+    val anotherHomeList: List<Home> = mutableListOf(
         Home(
             items = arrayOf("조명", "창문", "커튼"),
             homeName = "상윤이의 본가",
