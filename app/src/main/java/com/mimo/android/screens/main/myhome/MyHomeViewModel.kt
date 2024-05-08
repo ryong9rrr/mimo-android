@@ -19,6 +19,24 @@ class MyHomeViewModel: ViewModel() {
         this.context = context
     }
 
+    fun isCurrentHome(homeId: String?): Boolean {
+        if (_uiState.value.currentHome == null) {
+            return false
+        }
+        return _uiState.value.currentHome!!.homeId == homeId
+    }
+
+    fun getHome(homeId: String?): Home?{
+        if (homeId == null || _uiState.value.currentHome == null) {
+            return null
+        }
+
+        if (_uiState.value.currentHome!!.homeId == homeId) {
+            return _uiState.value.currentHome
+        }
+        return _uiState.value.anotherHomeList.find { it.homeId == homeId }
+    }
+
     fun updateCurrentHome(currentHome: Home?){
         _uiState.update { prevState -> prevState.copy(currentHome = currentHome) }
     }

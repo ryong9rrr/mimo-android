@@ -30,12 +30,6 @@
     <string name="first_setting_redirect_location_register_after_find_new_hub">first_setting_redirect_location_register_after_find_new_hub</string>
     <string name="first_setting_redirect_main_after_register_hub_and_location">first_setting_redirect_main_after_register_hub_and_location</string>
     <string name="first_setting_funnel_enter_location_to_register_hub">first_setting_funnel_enter_location_to_register_hub</string>
-    <!-- screens:my home -->
-    <string name="my_home_screen">my_home_screen</string>
-    <!-- screens:sleep -->
-    <string name="sleep_screen">sleep_screen</string>
-    <!-- screens:my profile -->
-    <string name="my_profile_screen">my_profile_screen</string>
 
     <!-- foreground sample -->
     <string name="foreground_service_sample_screen">foreground_service_sample_screen</string>

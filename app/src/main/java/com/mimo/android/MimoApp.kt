@@ -63,7 +63,7 @@ fun MimoApp(
             if (hasHomeOrHub) {
                 authViewModel.login(
                     user = user,
-                    cb = { navController.navigate(Screen.MyHomeScreen.route) }
+                    cb = { navController.navigate(MyHomeDestination.route) }
                 )
                 return
             }

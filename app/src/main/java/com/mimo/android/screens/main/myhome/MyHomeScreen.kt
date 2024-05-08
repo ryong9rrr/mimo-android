@@ -27,112 +27,104 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.components.Button
-import com.mimo.android.components.ButtonSmall
-import com.mimo.android.components.CardType
-import com.mimo.android.components.HeadingLarge
-import com.mimo.android.components.HeadingSmall
-import com.mimo.android.components.Modal
-import com.mimo.android.components.ScrollView
-import com.mimo.android.components.Text
-import com.mimo.android.components.TransparentCard
+import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
+import com.mimo.android.screens.MyHomeDetailDestination
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
-import com.mimo.android.screens.Screen
 
 @Composable
 fun MyHomeScreen(
     navController: NavHostController,
     myHomeViewModel: MyHomeViewModel,
+
 ){
-    ScrollView (
-        children = {
+    ScrollView {
+        val myHomeUiState by myHomeViewModel.uiState.collectAsState()
+        var isShowModal by remember { mutableStateOf(false) }
+        var selectedHome by remember { mutableStateOf<Home?>(null) }
 
-            val myHomeUiState by myHomeViewModel.uiState.collectAsState()
-            var isShowModal by remember { mutableStateOf(false) }
-            var selectedHome by remember { mutableStateOf<Home?>(null) }
-
-            fun handleShowModal(home: Home?){
-                isShowModal = true
-                selectedHome = home
+        fun navigateToMyHomeDetailScreen(home: Home){
+            if (home.homeId != null) {
+                navController.navigate("${MyHomeDetailDestination.route}/${home.homeId}")
             }
+        }
 
-            fun handleCloseModal(){
-                isShowModal = false
-                selectedHome = null
-            }
+        fun handleShowModal(home: Home?){
+            isShowModal = true
+            selectedHome = home
+        }
 
-            fun handleConfirmModal(home: Home){
-                handleCloseModal()
-                myHomeViewModel.changeCurrentHome(home.homeId)
-            }
+        fun handleCloseModal(){
+            isShowModal = false
+            selectedHome = null
+        }
 
-            if (isShowModal && selectedHome != null) {
-                Modal(
-                    onClose = ::handleCloseModal,
-                    children = {
-                        ModalContent(
-                            home = selectedHome!!,
-                            onClose = ::handleCloseModal,
-                            onConfirm = { home -> handleConfirmModal(home) } // TODO: 현재 거주지변경 api 요청 + Toast
-                        )
-                    }
-                )
-            }
+        fun handleConfirmModal(home: Home){
+            handleCloseModal()
+            myHomeViewModel.changeCurrentHome(home.homeId)
+        }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-                HeadingLarge(text = "우리 집", fontSize = Size.lg)
-                ButtonSmall(text = "거주지 추가")
-            }
-            Spacer(modifier = Modifier.padding(14.dp))
+        if (isShowModal && selectedHome != null) {
+            Modal(
+                onClose = ::handleCloseModal,
+                children = {
+                    ModalContent(
+                        home = selectedHome!!,
+                        onClose = ::handleCloseModal,
+                        onConfirm = { home -> handleConfirmModal(home) }
+                    )
+                }
+            )
+        }
 
-            HeadingSmall(text = "현재 거주지")
-            Spacer(modifier = Modifier.padding(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ){
+            HeadingLarge(text = "우리 집", fontSize = Size.lg)
+            ButtonSmall(text = "거주지 추가")
+        }
+        Spacer(modifier = Modifier.padding(14.dp))
 
-            if (myHomeUiState.currentHome == null) {
-                Text(text = "등록된 거주지가 없어요")
-            }
+        HeadingSmall(text = "현재 거주지", fontSize = Size.lg)
+        Spacer(modifier = Modifier.padding(4.dp))
+        if (myHomeUiState.currentHome == null) {
+            Text(text = "등록된 거주지가 없어요")
+        }
+        if (myHomeUiState.currentHome != null) {
+            Card(
+                home = myHomeUiState.currentHome!!,
+                isCurrentHome = true,
+                onClick = { home -> navigateToMyHomeDetailScreen(home) },
+                onLongClick = { home -> handleShowModal(home) }
+            )
+        }
 
-            if (myHomeUiState.currentHome != null) {
+        Spacer(modifier = Modifier.padding(16.dp))
+
+        HeadingSmall(text = "다른 거주지")
+        Spacer(modifier = Modifier.padding(4.dp))
+        if (myHomeUiState.anotherHomeList.isEmpty()) {
+            Text(text = "등록된 거주지가 없어요")
+        }
+        if (myHomeUiState.anotherHomeList.isNotEmpty()) {
+            myHomeUiState.anotherHomeList.forEachIndexed { index, anotherHome ->
                 Card(
-                    home = myHomeUiState.currentHome!!,
-                    isCurrentHome = true,
-                    onClick = { navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
+                    home = anotherHome,
+                    isCurrentHome = false,
+                    onClick = { home -> navigateToMyHomeDetailScreen(home) },
                     onLongClick = { home -> handleShowModal(home) }
                 )
-            }
 
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            HeadingSmall(text = "다른 거주지")
-            Spacer(modifier = Modifier.padding(8.dp))
-
-            if (myHomeUiState.anotherHomeList.isEmpty()) {
-                Text(text = "등록된 거주지가 없어요")
-            }
-
-            if (myHomeUiState.anotherHomeList.isNotEmpty()) {
-                myHomeUiState.anotherHomeList.forEachIndexed { index, anotherHome ->
-                    Card(
-                        home = anotherHome,
-                        isCurrentHome = false,
-                        onClick = { navController.navigate(Screen.SleepScreen.route) }, // FIXME: 임시함수
-                        onLongClick = { home -> handleShowModal(home) }
-                    )
-
-                    if (index < myHomeUiState.anotherHomeList.size) {
-                        Spacer(modifier = Modifier.padding(4.dp))
-                    }
+                if (index < myHomeUiState.anotherHomeList.size) {
+                    Spacer(modifier = Modifier.padding(4.dp))
                 }
             }
         }
-    )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -159,9 +151,10 @@ private fun Card(
                 Column(modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .height(120.dp)) {
+                    .height(96.dp)) {
+
                     Row (
-                        modifier = Modifier.align(Alignment.End)
+                        modifier = Modifier.align(Alignment.Start)
                     ) {
                         if (home.items != null) {
                             Row(
@@ -171,11 +164,18 @@ private fun Card(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.padding(4.dp))
-                    HeadingSmall(text = home.homeName ?: "빈 집")
-                    Spacer(modifier = Modifier.padding(4.dp))
+
                     Spacer(modifier = Modifier.weight(1f))
-                    HeadingSmall(text = home.address ?: "빈 주소", fontSize = Size.xs, color = Teal100)
+
+                    HorizontalScroll {
+                        HeadingSmall(text = home.homeName, Size.lg)
+                    }
+
+                    Spacer(modifier = Modifier.padding(4.dp))
+
+                    HorizontalScroll {
+                        HeadingSmall(text = home.address, fontSize = Size.xs, color = Teal100)
+                    }
                 }
             }
         )
@@ -207,7 +207,7 @@ fun ModalContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadingSmall(text = home.homeName ?: "")
+            HeadingSmall(text = home.homeName)
             Spacer(modifier = Modifier.padding(2.dp))
             Text(text = "현재 거주지로 변경할까요?")
             Spacer(modifier = Modifier.padding(6.dp))
@@ -228,8 +228,6 @@ fun ModalContent(
         }
     }
 }
-
-
 
 @Preview
 @Composable
