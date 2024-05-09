@@ -109,7 +109,7 @@ fun MimoApp(
                 Box(modifier = Modifier.padding(16.dp)) {
                     if (authUiState.user == null) {
                         LoginScreen(
-                            onLoginWithKakao = ::handleLoginWithKakao
+                            onLoginWithKakao = ::handleKakaoLoginMock
                         )
                         return@BackgroundImage
                     }
