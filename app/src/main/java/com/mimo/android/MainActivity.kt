@@ -7,13 +7,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.kakao.sdk.common.KakaoSdk
+import com.mimo.android.apis.mimo.mimoServiceInit
 import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.preferences.createSharedPreferences
-import com.mimo.android.utils.preferences.saveData
 
 class MainActivity : ComponentActivity() {
     // 뒤로가기 2번 눌러 앱 종료하기
@@ -135,6 +137,9 @@ class MainActivity : ComponentActivity() {
         // TODO: KAKAO SDK 초기화, key 환경변수로 관리 필요(AndroidManifest도)
         KakaoSdk.init(this, "2fa7b989f12635ed266010d85b0a513e")
 
+        // api 초기화
+        mimoServiceInit()
+
         // health-connect 권한 요청
         healthConnectManager = (application as BaseApplication).healthConnectManager
         if (checkAvailability()) {
@@ -161,23 +166,14 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
 
+        authViewModel.init()
+        if (authViewModel.isLoggedIn() && authViewModel.needFirstSetting()) {
+            firstSettingFunnelsViewModel.init(
+                currentStepId = R.string.first_setting_funnel_first_setting_start
+            )
+        }
+
         setContent {
-            // TODO: 이미 로그인이 되어있는지 아닌지 확인 (처음부터 로그인이 되어있는 경우를 체크)
-            authViewModel.init(user = null)
-
-            // TODO: 로그인이 되어있는 상태가 아니라면 초기설정퍼널을 시작할것인지 아닌지 결정(집이나 허브가 없다면 시작)
-
-            // check firstSetting
-            // TODO: 로그인이 됐는지 확인하고 로그인이 된 상태이며 집이나 허브가 없다면 아래 init() 실행
-            if (true) {
-//                firstSettingFunnelsViewModel.init(
-//                    currentStepId = R.string.first_setting_funnel_first_setting_start
-//                )
-//                firstSettingFunnelsViewModel.init(
-//                    currentStepId = R.string.test_funnel
-//                )
-            }
-
             MimoApp(
                 authViewModel = authViewModel,
                 healthConnectManager = healthConnectManager,

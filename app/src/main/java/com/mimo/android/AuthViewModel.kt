@@ -1,8 +1,10 @@
 package com.mimo.android
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mimo.android.utils.preferences.ACCESS_TOKEN
+import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.preferences.saveData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,48 +16,69 @@ class AuthViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun init(user: User?){
-        // TODO: jwt-token이 있는지 확인하고 없으면 not-login 처리 / 있으면 그걸 가지고 백엔드에 요청해서 확인
+    fun isLoggedIn(): Boolean{
+        return _uiState.value.accessToken != null
+    }
 
-        // TODO: 1. jwt-token이 있는가?
-
-        // TODO: 2. jwt-token이 있으면 백엔드에 요청
-        viewModelScope.launch {
-            delay(1000)
-            if (user != null) {
-                _uiState.update { prevState ->
-                    prevState.copy(user = user)
-                }
-            }
+    // 집과 허브 둘 다 없다면 초기 설정 시작
+    fun needFirstSetting(): Boolean {
+        if (_uiState.value.user == null) {
+            throw Exception("user가 없는데 이 함수 needFirstSetting()를 호출함. needFirstSetting()은 user를 세팅한 후 호출해야함.")
         }
+        return !_uiState.value.user!!.hasHome && !_uiState.value.user!!.hasHub
+    }
+
+    fun init(){
+        val accessToken = getData(ACCESS_TOKEN) ?: return
+        _uiState.update { prevState ->
+            prevState.copy(accessToken = accessToken)
+        }
+        fetchUser()
     }
 
     fun login(
-        user: User,
-        cb: (() -> Unit)? = null
+        accessToken: String?
     ){
-        viewModelScope.launch {
-            delay(1000)
-            try {
-                _uiState.value = AuthUiState(user = user)
-                cb?.invoke()
-            } catch(e: Exception) {
-                Log.d("AuthViewModel login function error", "${e.message}")
-            }
+        if (accessToken == null) {
+            return
+        }
+        saveData(ACCESS_TOKEN, accessToken)
+        _uiState.update { prevState ->
+            prevState.copy(accessToken = accessToken)
         }
     }
 
     fun logout(){
-        _uiState.value = AuthUiState(user = null)
+        _uiState.update { prevState ->
+            prevState.copy(accessToken = null, user = null)
+        }
+    }
+
+    private fun fetchUser(){
+        viewModelScope.launch {
+            // TODO: "내 정보 줘" API 호출
+            delay(1000)
+            val fetchedUser = User(
+                id = "asfcvasrvse",
+                name = "상윤",
+                hasHome = false,
+                hasHub = false
+            )
+            _uiState.update { prevState ->
+                prevState.copy(user = fetchedUser)
+            }
+        }
     }
 }
 
 data class AuthUiState(
-    val user: User? = null
+    val user: User? = null,
+    var accessToken: String? = null
 )
 
 data class User(
-    val username: String,
-    val accessToken: String,
-    val refreshToken: String
+    val id: String,
+    val name: String,
+    val hasHome: Boolean,
+    val hasHub: Boolean
 )

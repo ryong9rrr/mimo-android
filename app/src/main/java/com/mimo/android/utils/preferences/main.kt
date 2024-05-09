@@ -9,9 +9,9 @@ fun saveData(key: String, value: String) {
     editor.apply()
 }
 
-fun getData(key: String, defaultValue: String): String {
+fun getData(key: String): String? {
     if (sharedPreferences == null) {
         throw Exception("MainActivity에서 createSharedPreferences() 함수를 호출해주세요")
     }
-    return sharedPreferences!!.getString(key, defaultValue) ?: defaultValue
+    return sharedPreferences!!.getString(key, null)
 }

@@ -13,6 +13,8 @@ fun postAccessToken(
     val call = mimoApiService.postAccessToken(accessToken)
     call.enqueue(object : retrofit2.Callback<PostAccessTokenResponse> {
         override fun onResponse(call: Call<PostAccessTokenResponse>, response: retrofit2.Response<PostAccessTokenResponse>) {
+            println(response.code())
+            println(response.message())
             if (response.isSuccessful) {
                 onSuccessCallback?.invoke(response.body())
             } else {

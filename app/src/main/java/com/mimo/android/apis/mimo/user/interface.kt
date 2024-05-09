@@ -8,7 +8,7 @@ import retrofit2.http.POST
 interface UserApiService {
 
     @FormUrlEncoded
-    @POST("/auth")
+    @POST("auth")
     fun postAccessToken(
         @Field("accessToken") accessToken: String
     ): Call<PostAccessTokenResponse>
