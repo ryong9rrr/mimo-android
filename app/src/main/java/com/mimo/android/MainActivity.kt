@@ -12,6 +12,8 @@ import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.services.qrcode.*
+import com.mimo.android.utils.preferences.createSharedPreferences
+import com.mimo.android.utils.preferences.saveData
 
 class MainActivity : ComponentActivity() {
     // 뒤로가기 2번 눌러 앱 종료하기
@@ -124,6 +126,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 스토리지 초기화
+        createSharedPreferences()
+
         // 안드로이드OS 뒤로가기 연속 2번 누르면 앱을 종료시키는 핸들러 추가
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
@@ -196,6 +201,7 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
 
         // TODO: 개발 중에는 그냥 매번 로그아웃 처리
+        authViewModel.logout()
         logoutWithKakao()
     }
 
