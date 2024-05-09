@@ -1,6 +1,5 @@
 package com.mimo.android.screens.main.sleep
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -40,8 +39,6 @@ fun SleepScreen(
             onSuccessCallback = { fetchedPosts -> posts = fetchedPosts }
         )
     }
-
-
 
     // UI 작성
     ScrollView {
