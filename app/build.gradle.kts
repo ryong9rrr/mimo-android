@@ -91,6 +91,6 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.4.1")
 
-    // kakao
-    implementation("com.kakao.sdk:v2-all:2.20.1")
+    // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.15.0")
 }

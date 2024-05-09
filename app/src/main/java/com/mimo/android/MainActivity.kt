@@ -7,8 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
+import com.kakao.sdk.common.KakaoSdk
 import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
+import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.services.qrcode.*
 
 class MainActivity : ComponentActivity() {
@@ -26,7 +28,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     // health-connect
     private lateinit var healthConnectManager: HealthConnectManager
@@ -120,18 +121,17 @@ class MainActivity : ComponentActivity() {
 //        }
 //    }
 
-    override fun onStart() {
-        super.onStart()
-        RequestPermissionsUtil(this).requestLocation() // 위치 권한 요청
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 안드로이드OS 뒤로가기 연속 2번 누르면 앱을 종료시키는 핸들러 추가
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        // health-connect instance 생성
-        healthConnectManager = (application as BaseApplication).healthConnectManager
+        // TODO: KAKAO SDK 초기화, key 환경변수로 관리 필요(AndroidManifest도)
+        KakaoSdk.init(this, "2fa7b989f12635ed266010d85b0a513e")
+
         // health-connect 권한 요청
+        healthConnectManager = (application as BaseApplication).healthConnectManager
         if (checkAvailability()) {
             healthConnectPermissionRequest = createHealthConnectPermissionRequest(
                 healthConnectManager = healthConnectManager,
@@ -145,9 +145,16 @@ class MainActivity : ComponentActivity() {
             )
         }
 
+        // 위치 권한 요청
+        RequestPermissionsUtil(this).requestLocation()
+
 //        // check location permission
 //        checkAndRequestNotificationPermission()
 //        tryToBindToServiceIfRunning()
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         setContent {
             // TODO: 이미 로그인이 되어있는지 아닌지 확인 (처음부터 로그인이 되어있는 경우를 체크)
@@ -183,6 +190,13 @@ class MainActivity : ComponentActivity() {
                 context = this,
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // TODO: 개발 중에는 그냥 매번 로그아웃 처리
+        logoutWithKakao()
     }
 
 //    override fun onDestroy() {

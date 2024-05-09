@@ -3,10 +3,9 @@ package com.mimo.android
 import androidx.compose.material3.*
 import android.annotation.SuppressLint
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +20,7 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
+import com.mimo.android.services.kakao.loginWithKakao
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -50,6 +50,24 @@ fun MimoApp(
         val canShowMain = authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null
 
         // TODO: 실제 kakao-login 구현
+        fun handleLoginWithKakao(){
+            loginWithKakao(
+                context = context,
+                onSuccessCallback = { oauthToken ->
+                    println("token 받아오기 성공!")
+                    println("accessToken=${oauthToken.accessToken}")
+                    println("refreshToken=${oauthToken.refreshToken}")
+                },
+                onFailureCallback = {
+                    Toast.makeText(
+                        context,
+                        "로그인 실패",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            )
+        }
+
         fun handleKakaoLoginMock(){
             val user = User(
                 username = "용상윤",
@@ -91,7 +109,7 @@ fun MimoApp(
                 Box(modifier = Modifier.padding(16.dp)) {
                     if (authUiState.user == null) {
                         LoginScreen(
-                            onLoginWithKakao = ::handleKakaoLoginMock
+                            onLoginWithKakao = ::handleLoginWithKakao
                         )
                         return@BackgroundImage
                     }
