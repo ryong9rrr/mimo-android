@@ -17,12 +17,14 @@ class AuthViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun isLoggedIn(): Boolean{
+    fun isLoggedIn(): Boolean {
+        return true
         return _uiState.value.accessToken != null
     }
 
     // 집과 허브 둘 다 없다면 초기 설정 시작
     fun needFirstSetting(): Boolean {
+        return false
         if (_uiState.value.user == null) {
             throw Exception("user가 없는데 이 함수 needFirstSetting()를 호출함. needFirstSetting()은 user를 세팅한 후 호출해야함.")
         }
@@ -38,14 +40,15 @@ class AuthViewModel: ViewModel() {
     }
 
     fun login(
-        accessToken: String?
+        accessToken: String?,
+        user: User?
     ){
-        if (accessToken == null) {
+        if (accessToken == null || user == null) {
             return
         }
         saveData(ACCESS_TOKEN, accessToken)
         _uiState.update { prevState ->
-            prevState.copy(accessToken = accessToken)
+            prevState.copy(accessToken = accessToken, user = user)
         }
     }
 
