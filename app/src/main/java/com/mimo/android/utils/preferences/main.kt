@@ -15,3 +15,12 @@ fun getData(key: String): String? {
     }
     return sharedPreferences!!.getString(key, null)
 }
+
+fun removeData(key: String) {
+    if (sharedPreferences == null) {
+        throw Exception("MainActivity에서 createSharedPreferences() 함수를 호출해주세요")
+    }
+    val editor = sharedPreferences!!.edit()
+    editor.remove(key)
+    editor.apply()
+}

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.preferences.removeData
 import com.mimo.android.utils.preferences.saveData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,6 +50,7 @@ class AuthViewModel: ViewModel() {
     }
 
     fun logout(){
+        removeData(ACCESS_TOKEN)
         _uiState.update { prevState ->
             prevState.copy(accessToken = null, user = null)
         }

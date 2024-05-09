@@ -7,7 +7,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 
-const val TAG = "KAKAO OAUTH"
+const val TAG = "services/kakao/oauth"
 
 fun loginWithKakao(
     context: Context,
@@ -21,7 +21,7 @@ fun loginWithKakao(
             Log.e(TAG, "카카오계정으로 로그인 실패", error)
             onFailureCallback?.invoke()
         } else if (token != null) {
-            Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
+            Log.i(TAG, "카카오계정으로 로그인 성공 accessToken = ${token.accessToken}")
             onSuccessCallback?.invoke(token)
         }
     }

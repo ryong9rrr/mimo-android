@@ -1,9 +1,12 @@
 package com.mimo.android.apis.mimo.user
 
+import android.util.Log
 import retrofit2.Call
 import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
 import com.mimo.android.apis.mimo.mimoApiService
+
+const val TAG = "/apis/mimo/user/main.postAccessToken"
 
 fun postAccessToken(
     accessToken: String,
@@ -13,8 +16,7 @@ fun postAccessToken(
     val call = mimoApiService.postAccessToken(accessToken)
     call.enqueue(object : retrofit2.Callback<PostAccessTokenResponse> {
         override fun onResponse(call: Call<PostAccessTokenResponse>, response: retrofit2.Response<PostAccessTokenResponse>) {
-            println(response.code())
-            println(response.message())
+            Log.e(TAG, response.toString())
             if (response.isSuccessful) {
                 onSuccessCallback?.invoke(response.body())
             } else {
@@ -23,7 +25,7 @@ fun postAccessToken(
         }
 
         override fun onFailure(call: Call<PostAccessTokenResponse>, t: Throwable) {
-            println("Network request failed.")
+            Log.e(TAG, "Network request failed")
             onFailureCallback?.invoke()
         }
     })

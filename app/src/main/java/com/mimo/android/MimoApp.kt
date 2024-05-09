@@ -3,6 +3,7 @@ package com.mimo.android
 import androidx.compose.material3.*
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,8 @@ import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
 import com.mimo.android.utils.preferences.saveData
+
+const val TAG = "MimoApp"
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -54,7 +57,7 @@ fun MimoApp(
             loginWithKakao(
                 context = context,
                 onSuccessCallback = { oauthToken ->
-                    println("kakao accessToken=${oauthToken.accessToken}")
+                    Log.e(TAG, "kakao accessToken=${oauthToken.accessToken}")
                     postAccessToken(
                         accessToken = oauthToken.accessToken,
                         onSuccessCallback = { data ->

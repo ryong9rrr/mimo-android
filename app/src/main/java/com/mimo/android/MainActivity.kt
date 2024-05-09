@@ -4,35 +4,19 @@ import com.journeyapps.barcodescanner.ScanContract
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import com.kakao.sdk.common.KakaoSdk
-import com.mimo.android.apis.mimo.mimoServiceInit
+import com.mimo.android.apis.mimo.createMimoApiService
 import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
+import com.mimo.android.services.kakao.initializeKakaoSdk
 import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.services.qrcode.*
+import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
+import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.createSharedPreferences
 
 class MainActivity : ComponentActivity() {
-    // 뒤로가기 2번 눌러 앱 종료하기
-    // jetpack compose의 BackHandler의 우선순위가 더 높기 때문에 앱종료시키고 싶지 않다면 BackHandler를 정의하면 됨
-    // 네비게이션으로 이동한 상태여도 네비게이션 뒤로가기 우선순위가 더 높음
-    private var backKeyPressedTime = 0L
-    private val onBackPressedCallback: OnBackPressedCallback = object: OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
-                backKeyPressedTime = System.currentTimeMillis()
-                Toast.makeText(this@MainActivity, "뒤로 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show()
-            } else {
-                finish()
-            }
-        }
-    }
-
     // health-connect
     private lateinit var healthConnectManager: HealthConnectManager
     private lateinit var healthConnectPermissionRequest: ActivityResultLauncher<Set<String>>
@@ -67,78 +51,14 @@ class MainActivity : ComponentActivity() {
         barCodeLauncher = barCodeLauncher
     )
 
-//    // location-foreground sample
-//    private var exampleService: ExampleLocationForegroundService? = null
-//    private var serviceBoundState by mutableStateOf(false)
-//    private var displayableLocation by mutableStateOf<String?>(null)
-//
-//    // needed to communicate with the service.
-//    private val connection = object : ServiceConnection {
-//
-//        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-//            // we've bound to ExampleLocationForegroundService, cast the IBinder and get ExampleLocationForegroundService instance.
-//            Log.d(TAG, "onServiceConnected")
-//
-//            val binder = service as ExampleLocationForegroundService.LocalBinder
-//            exampleService = binder.getService()
-//            serviceBoundState = true
-//
-//            onServiceConnected()
-//        }
-//
-//        override fun onServiceDisconnected(arg0: ComponentName) {
-//            // This is called when the connection with the service has been disconnected. Clean up.
-//            Log.d(TAG, "onServiceDisconnected")
-//
-//            serviceBoundState = false
-//            exampleService = null
-//        }
-//    }
-//
-//    // we need notification permission to be able to display a notification for the foreground service
-//    private val notificationPermissionLauncher =
-//        registerForActivityResult(
-//            ActivityResultContracts.RequestPermission()
-//        ) {
-//            // if permission was denied, the service can still run only the notification won't be visible
-//        }
-//
-//    // we need location permission to be able to start the service
-//    private val locationPermissionRequest = registerForActivityResult(
-//        ActivityResultContracts.RequestMultiplePermissions()
-//    ) { permissions ->
-//        when {
-//            permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-//                // Precise location access granted, service can run
-//                startForegroundService()
-//            }
-//
-//            permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-//                // Only approximate location access granted, service can still run.
-//                startForegroundService()
-//            }
-//
-//            else -> {
-//                // No location access granted, service can't be started as it will crash
-//                Toast.makeText(this, "Location permission is required!", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 스토리지 초기화
-        createSharedPreferences()
-
-        // 안드로이드OS 뒤로가기 연속 2번 누르면 앱을 종료시키는 핸들러 추가
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-
-        // TODO: KAKAO SDK 초기화, key 환경변수로 관리 필요(AndroidManifest도)
-        KakaoSdk.init(this, "2fa7b989f12635ed266010d85b0a513e")
-
-        // api 초기화
-        mimoServiceInit()
+        printKeyHash(this)
+        initializeWhenTwiceBackPressExitApp(this) // 안드로이드OS 뒤로가기 연속 2번 누르면 앱을 종료시키는 핸들러 추가
+        initializeKakaoSdk(this) // kakao sdk 초기화
+        createSharedPreferences() // 스토리지 초기화
+        createMimoApiService() // mimo api 초기화
 
         // health-connect 권한 요청
         healthConnectManager = (application as BaseApplication).healthConnectManager
@@ -200,6 +120,64 @@ class MainActivity : ComponentActivity() {
         authViewModel.logout()
         logoutWithKakao()
     }
+
+//    // location-foreground sample
+//    private var exampleService: ExampleLocationForegroundService? = null
+//    private var serviceBoundState by mutableStateOf(false)
+//    private var displayableLocation by mutableStateOf<String?>(null)
+//
+//    // needed to communicate with the service.
+//    private val connection = object : ServiceConnection {
+//
+//        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+//            // we've bound to ExampleLocationForegroundService, cast the IBinder and get ExampleLocationForegroundService instance.
+//            Log.d(TAG, "onServiceConnected")
+//
+//            val binder = service as ExampleLocationForegroundService.LocalBinder
+//            exampleService = binder.getService()
+//            serviceBoundState = true
+//
+//            onServiceConnected()
+//        }
+//
+//        override fun onServiceDisconnected(arg0: ComponentName) {
+//            // This is called when the connection with the service has been disconnected. Clean up.
+//            Log.d(TAG, "onServiceDisconnected")
+//
+//            serviceBoundState = false
+//            exampleService = null
+//        }
+//    }
+//
+//    // we need notification permission to be able to display a notification for the foreground service
+//    private val notificationPermissionLauncher =
+//        registerForActivityResult(
+//            ActivityResultContracts.RequestPermission()
+//        ) {
+//            // if permission was denied, the service can still run only the notification won't be visible
+//        }
+//
+//    // we need location permission to be able to start the service
+//    private val locationPermissionRequest = registerForActivityResult(
+//        ActivityResultContracts.RequestMultiplePermissions()
+//    ) { permissions ->
+//        when {
+//            permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+//                // Precise location access granted, service can run
+//                startForegroundService()
+//            }
+//
+//            permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+//                // Only approximate location access granted, service can still run.
+//                startForegroundService()
+//            }
+//
+//            else -> {
+//                // No location access granted, service can't be started as it will crash
+//                Toast.makeText(this, "Location permission is required!", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
 //    override fun onDestroy() {
 //        super.onDestroy()
