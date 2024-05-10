@@ -32,6 +32,7 @@ class AuthViewModel: ViewModel() {
 
     fun init(){
         val accessToken = getData(ACCESS_TOKEN) ?: return
+        Log.e("AuthViewModel", "디바이스가 가지고 있는 accessToken : ${accessToken}")
         fetchInit(accessToken)
     }
 
