@@ -1,6 +1,5 @@
 package com.mimo.android
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.apis.mimo.user.GetMyInfoResponse
@@ -19,134 +18,83 @@ class AuthViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun isLoggedIn(): Boolean {
-        return _uiState.value.accessToken != null
-    }
-
-    // 집과 허브 둘 다 없다면 초기 설정 시작
-    fun needFirstSetting(): Boolean {
-        if (_uiState.value.user == null) {
-            Log.e(TAG, "user가 없는데 이 함수 needFirstSetting()를 호출함. needFirstSetting()은 user를 세팅한 후 호출해야함.")
-            return false
-        }
-        return !_uiState.value.user!!.hasHome && !_uiState.value.user!!.hasHub
-    }
-
     fun init(
-        cb: (() -> Unit)?
+        firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel
     ){
+        val prevAccessToken = getData(ACCESS_TOKEN) ?: return
+
         viewModelScope.launch {
-            val accessToken = getData(ACCESS_TOKEN)
+            getMyInfo(
+                accessToken = prevAccessToken,
+                onSuccessCallback = { data: GetMyInfoResponse? ->
+                    if (data == null) {
+                        return@getMyInfo
+                    }
 
-            if (accessToken == null) {
-                _uiState.update { prevState ->
-                    prevState.copy(appLoading = false)
+                    if (!data.hasHome && !data.hasHub) {
+                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
+                    }
+
+                    _uiState.update { prevState ->
+                        prevState.copy(
+                            accessToken = prevAccessToken,
+                            user = User(
+                                id = data.userId.toString(),
+                                hasHome = data.hasHome,
+                                hasHub = data.hasHub)
+                        )
+                    }
                 }
-                return@launch
-            }
-
-            Log.i("AuthViewModel", "디바이스가 가지고 있는 accessToken : $accessToken")
-            saveData(ACCESS_TOKEN, accessToken)
-            _uiState.update { prevState ->
-                prevState.copy(accessToken = accessToken)
-            }
-            // TODO: "내 정보 줘" API 호출
-            fetchGetMyInfo(
-                accessToken = accessToken,
-                cb = cb
             )
         }
     }
 
     fun login(
-        accessToken: String? = null,
-        cb: (() -> Unit)? = null
+        accessToken: String,
+        firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel
     ){
         viewModelScope.launch {
-            if (accessToken == null) {
-                return@launch
-            }
-            println("login")
             saveData(ACCESS_TOKEN, accessToken)
-            // TODO: "내 정보 줘" API 호출
-            fetchGetMyInfo(
+            getMyInfo(
                 accessToken = accessToken,
-                cb = cb
+                onSuccessCallback = { data: GetMyInfoResponse? ->
+                    if (data == null) {
+                        return@getMyInfo
+                    }
+
+                    if (!data.hasHome && !data.hasHub) {
+                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
+                    }
+
+                    _uiState.update { prevState ->
+                        prevState.copy(
+                            accessToken = accessToken,
+                            user = User(
+                                id = data.userId.toString(),
+                                hasHome = data.hasHome,
+                                hasHub = data.hasHub)
+                            )
+                    }
+                }
             )
         }
     }
 
-    fun finishLoading(){
-        _uiState.update { prevState ->
-            prevState.copy(appLoading = false)
-        }
-    }
-
-    private fun fetchGetMyInfo(
-        accessToken: String,
-        cb: (() -> Unit)?
-    ){
-        getMyInfo(
-            accessToken = accessToken,
-            onSuccessCallback = { data: GetMyInfoResponse? ->
-
-                if (data != null) {
-                    val fetchedUserId = data.userId
-                    val fetchedHasHome = data.hasHome
-                    val fetchedHasHub = data.hasHub
-                    val fetchedUser = User(
-                        id = fetchedUserId.toString(),
-                        hasHome = fetchedHasHome,
-                        hasHub = fetchedHasHub
-                    )
-                    _uiState.update { prevState ->
-                        prevState.copy(user = fetchedUser)
-                    }
-                    cb?.invoke()
-                }
-            },
-            onFailureCallback = {
-                Log.e(TAG, "fetchUserInfo 실패..")
-            }
-        )
-//        return withContext(Dispatchers.IO) {
-//            Thread.sleep(1000)
-//            println("fetchGetMyInfo")
-//            val fetchedUser = User(
-//                id = "asfcvasrvse",
-//                name = "상윤",
-//                hasHome = false,
-//                hasHub = false
-//            )
-//            _uiState.update { prevState ->
-//                prevState.copy(user = fetchedUser)
-//            }
-//            cb?.invoke()
-//        }
-    }
-
     fun logout(){
-        removeData(ACCESS_TOKEN)
+        //removeData(ACCESS_TOKEN)
         _uiState.update { prevState ->
-            prevState.copy(accessToken = null, user = null)
+            prevState.copy(user = null)
         }
     }
 }
 
 data class AuthUiState(
-    val appLoading: Boolean = true,
     val user: User? = null,
     val accessToken: String? = null
 )
 
 data class User(
     val id: String,
-    val hasHome: Boolean,
-    val hasHub: Boolean
-)
-
-data class GetMyInfoResponse(
-    val userId: String,
     val hasHome: Boolean,
     val hasHub: Boolean
 )

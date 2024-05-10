@@ -6,9 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
-import androidx.compose.runtime.*
 import com.mimo.android.apis.mimo.createMimoApiService
-import com.mimo.android.components.HeadingLarge
 import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.initializeKakaoSdk
@@ -83,23 +81,8 @@ class MainActivity : ComponentActivity() {
 //        // check location permission
 //        checkAndRequestNotificationPermission()
 //        tryToBindToServiceIfRunning()
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         setContent {
-            authViewModel.init(
-                cb = {
-                    if (authViewModel.isLoggedIn() && authViewModel.needFirstSetting()) {
-                        firstSettingFunnelsViewModel.init(
-                            currentStepId = R.string.first_setting_funnel_first_setting_start
-                        )
-                    }
-                    authViewModel.finishLoading()
-                }
-            )
-
             MimoApp(
                 authViewModel = authViewModel,
                 healthConnectManager = healthConnectManager,
@@ -117,6 +100,10 @@ class MainActivity : ComponentActivity() {
                 context = this,
             )
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     override fun onDestroy() {
