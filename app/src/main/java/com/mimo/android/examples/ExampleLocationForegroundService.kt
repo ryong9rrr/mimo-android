@@ -132,6 +132,8 @@ class ExampleLocationForegroundService : Service() {
      * Starts the location updates using the FusedLocationProviderClient.
      */
     private fun startLocationUpdates() {
+
+
         fusedLocationClient.requestLocationUpdates(
             LocationRequest.Builder(
                 LOCATION_UPDATES_INTERVAL_MS

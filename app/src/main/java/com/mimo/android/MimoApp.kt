@@ -70,9 +70,18 @@ fun MimoApp(
                                 return@postAccessToken
                             }
                             val accessToken = data.accessToken
+                            Log.e(TAG, "우리 토큰 받아오기 성공!!!! $accessToken")
+                            authViewModel.login(
+                                accessToken = accessToken,
+                                cb = {
+                                    if (authViewModel.needFirstSetting()) {
+                                        firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_first_setting_start)
+                                    }
+                                }
+                            )
                             Toast.makeText(
                                 context,
-                                "토큰 받아오기 성공!!!! ${accessToken}",
+                                "로그인 성공",
                                 Toast.LENGTH_SHORT
                             ).show()
                         },

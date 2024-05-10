@@ -13,7 +13,7 @@ fun postAccessToken(
     onSuccessCallback: (OnResponseSuccessCallback<PostAccessTokenResponse>)? = null,
     onFailureCallback: (onResponseFailureCallback)? = null
 ){
-    val call = mimoApiService.postAccessToken(accessToken)
+    val call = mimoApiService.postAccessToken(PostAccessTokenRequest(accessToken))
     call.enqueue(object : retrofit2.Callback<PostAccessTokenResponse> {
         override fun onResponse(call: Call<PostAccessTokenResponse>, response: retrofit2.Response<PostAccessTokenResponse>) {
             Log.e(TAG, response.toString())

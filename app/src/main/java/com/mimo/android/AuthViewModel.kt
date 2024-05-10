@@ -1,5 +1,6 @@
 package com.mimo.android
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
@@ -18,13 +19,11 @@ class AuthViewModel: ViewModel() {
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     fun isLoggedIn(): Boolean {
-        return true
         return _uiState.value.accessToken != null
     }
 
     // 집과 허브 둘 다 없다면 초기 설정 시작
     fun needFirstSetting(): Boolean {
-        return false
         if (_uiState.value.user == null) {
             throw Exception("user가 없는데 이 함수 needFirstSetting()를 호출함. needFirstSetting()은 user를 세팅한 후 호출해야함.")
         }
@@ -33,23 +32,22 @@ class AuthViewModel: ViewModel() {
 
     fun init(){
         val accessToken = getData(ACCESS_TOKEN) ?: return
-        _uiState.update { prevState ->
-            prevState.copy(accessToken = accessToken)
-        }
-        fetchUser()
+        fetchInit(accessToken)
     }
 
     fun login(
-        accessToken: String?,
-        user: User?
+        accessToken: String? = null,
+        cb: (() -> Unit)? = null
     ){
-        if (accessToken == null || user == null) {
+        if (accessToken == null) {
             return
         }
+        println("login")
         saveData(ACCESS_TOKEN, accessToken)
-        _uiState.update { prevState ->
-            prevState.copy(accessToken = accessToken, user = user)
-        }
+        fetchInit(
+            accessToken = accessToken,
+            cb = cb
+        )
     }
 
     fun logout(){
@@ -59,8 +57,12 @@ class AuthViewModel: ViewModel() {
         }
     }
 
-    private fun fetchUser(){
+    private fun fetchInit(
+        accessToken: String,
+        cb: (() -> Unit)? = null
+    ){
         viewModelScope.launch {
+            println("fetchInit")
             // TODO: "내 정보 줘" API 호출
             delay(1000)
             val fetchedUser = User(
@@ -70,8 +72,9 @@ class AuthViewModel: ViewModel() {
                 hasHub = false
             )
             _uiState.update { prevState ->
-                prevState.copy(user = fetchedUser)
+                prevState.copy(accessToken = accessToken, user = fetchedUser)
             }
+            cb?.invoke()
         }
     }
 }
