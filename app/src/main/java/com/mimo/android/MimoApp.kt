@@ -11,13 +11,17 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.mimo.android.apis.mimo.user.postAccessToken
 import com.mimo.android.components.BackgroundImage
+import com.mimo.android.components.HeadingLarge
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
@@ -49,15 +53,16 @@ fun MimoApp(
         val currentRoute = navBackStackEntry?.destination?.route
         val availability by healthConnectManager.availability
 
+        val authUiState by authViewModel.uiState.collectAsState()
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
-        val canShowMain = authViewModel.isLoggedIn() && !authViewModel.needFirstSetting() && firstSettingFunnelsUiState.currentStepId == null
+        val canShowMain = !authUiState.appLoading && authUiState.user != null && authUiState.accessToken != null && firstSettingFunnelsUiState.currentStepId == null
 
         // TODO: 실제 kakao-login 구현
         fun handleLoginWithKakao(){
             loginWithKakao(
                 context = context,
                 onSuccessCallback = { oauthToken ->
-                    Log.e(TAG, "kakao accessToken=${oauthToken.accessToken}")
+                    Log.i(TAG, "kakao accessToken=${oauthToken.accessToken}")
                     postAccessToken(
                         accessToken = oauthToken.accessToken,
                         onSuccessCallback = { data ->
@@ -70,25 +75,23 @@ fun MimoApp(
                                 return@postAccessToken
                             }
                             val accessToken = data.accessToken
-                            Log.e(TAG, "우리 토큰 받아오기 성공!!!! $accessToken")
+                            Log.i(TAG, "우리 토큰 받아오기 성공!!!! $accessToken")
                             authViewModel.login(
                                 accessToken = accessToken,
                                 cb = {
-                                    if (authViewModel.needFirstSetting()) {
-                                        firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_first_setting_start)
-                                    }
+                                    
                                 }
                             )
                             Toast.makeText(
                                 context,
-                                "로그인 성공",
+                                "로그인 되었습니다.",
                                 Toast.LENGTH_SHORT
                             ).show()
                         },
                         onFailureCallback = {
                             Toast.makeText(
                                 context,
-                                "우리 로그인 실패",
+                                "다시 로그인 해주세요.",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
@@ -143,6 +146,12 @@ fun MimoApp(
         ) {
             BackgroundImage {
                 Box(modifier = Modifier.padding(16.dp)) {
+                    
+                    if (authUiState.appLoading) {
+                        HeadingLarge(text = "Loading...")
+                        return@BackgroundImage
+                    }
+                    
                     if (!authViewModel.isLoggedIn()) {
                         LoginScreen(
                             onLoginWithKakao = ::handleLoginWithKakao

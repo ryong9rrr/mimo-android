@@ -6,3 +6,13 @@ data class PostAccessTokenRequest(
 data class PostAccessTokenResponse(
     val accessToken: String
 )
+
+data class GetMyInfoRequest(
+    val accessToken: String
+)
+
+data class GetMyInfoResponse(
+    val userId: Int,
+    val hasHome: Boolean,
+    val hasHub: Boolean
+)
