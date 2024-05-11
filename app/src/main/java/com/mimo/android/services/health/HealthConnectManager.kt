@@ -39,7 +39,7 @@ class HealthConnectManager(private val context: Context) {
     suspend fun readSteps(start: Instant, end: Instant): Long {
         val request = ReadRecordsRequest(
             recordType = StepsRecord::class,
-            timeRangeFilter = TimeRangeFilter.between(start, end),
+            timeRangeFilter = TimeRangeFilter.between(start, end)
         )
         val response = healthConnectClient.readRecords(request)
         if (response.records.isNotEmpty()) {
@@ -49,57 +49,33 @@ class HealthConnectManager(private val context: Context) {
         return -1
     }
 
-//    suspend fun readWeight(start: Instant, end: Instant): Double {
-//        val request = ReadRecordsRequest(
-//            recordType = WeightRecord::class,
-//            timeRangeFilter = TimeRangeFilter.between(start, end),
-//        )
-//        val response = healthConnectClient.readRecords(request)
-//        if (response.records.isNotEmpty()) {
-//            val weightRecord = response.records.last()
-//            return weightRecord.weight.inKilograms
-//        }
-//        return 0.0
-//    }
-//
-//    suspend fun readHeight(start: Instant, end: Instant): Double {
-//        val request = ReadRecordsRequest(
-//            recordType = HeightRecord::class,
-//            timeRangeFilter = TimeRangeFilter.between(start, end),
-//        )
-//        val response = healthConnectClient.readRecords(request)
-//        if (response.records.isNotEmpty()) {
-//            val heightRecord = response.records.last()
-//            return heightRecord.height.inMeters
-//        }
-//        return 0.0
-//    }
-//
-//    suspend fun readBodyFatRecord(start: Instant, end: Instant): Double {
-//        val request = ReadRecordsRequest(
-//            recordType = BodyFatRecord::class,
-//            timeRangeFilter = TimeRangeFilter.between(start, end),
-//        )
-//        val response = healthConnectClient.readRecords(request)
-//        if (response.records.isNotEmpty()) {
-//            val bodyFatRecord = response.records.last()
-//            return bodyFatRecord.percentage.value
-//        }
-//        return 0.0
-//    }
-//
-//    suspend fun readBasalMetabolicRateRecord(start: Instant, end: Instant): Double {
-//        val request = ReadRecordsRequest(
-//            recordType = BasalMetabolicRateRecord::class,
-//            timeRangeFilter = TimeRangeFilter.between(start, end),
-//        )
-//        val response = healthConnectClient.readRecords(request)
-//        if (response.records.isNotEmpty()) {
-//            val basalMetabolicRateRecordRecord = response.records.last()
-//            return basalMetabolicRateRecordRecord.basalMetabolicRate.inKilocaloriesPerDay
-//        }
-//        return 0.0
-//    }
+    suspend fun readSleepSessionRecord(start: Instant, end: Instant): List<SleepSessionRecord>?{
+        val result = ArrayList<SleepSessionRecord>()
+        val request = ReadRecordsRequest(
+            recordType = SleepSessionRecord::class,
+            timeRangeFilter = TimeRangeFilter.between(start, end)
+        )
+        val response = healthConnectClient.readRecords(request)
+        if (response.records.isNotEmpty()) {
+            return response.records
+        }
+        return null
+    }
+
+    suspend fun readLastSleepStage(start: Instant, end: Instant): SleepSessionRecord.Stage?{
+        val request = ReadRecordsRequest(
+            recordType = SleepSessionRecord::class,
+            timeRangeFilter = TimeRangeFilter.between(start, end)
+        )
+        val response = healthConnectClient.readRecords(request)
+        if (response.records.isNotEmpty()) {
+            val lastSleepSessionRecord = response.records.last()
+            if (lastSleepSessionRecord.stages.isNotEmpty()) {
+                return lastSleepSessionRecord.stages.last()
+            }
+        }
+        return null
+    }
 
     suspend fun tryWithPermissionsCheck(block: suspend () -> Unit) {
         permissionsGranted.value = hasAllPermissions()
