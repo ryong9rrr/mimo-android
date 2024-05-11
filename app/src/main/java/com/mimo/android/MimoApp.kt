@@ -99,13 +99,25 @@ fun MimoApp(
 
         Scaffold(
             bottomBar = {
-                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
-                    Navigation(navController = navController)
-                }
+                Navigation(navController = navController)
+//                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
+//                    Navigation(navController = navController)
+//                }
             }
         ) {
             BackgroundImage {
                 Box(modifier = Modifier.padding(16.dp)) {
+
+                    Router(
+                        navController = navController,
+                        healthConnectManager = healthConnectManager,
+//                serviceRunning = serviceRunning,
+//                currentLocation = currentLocation,
+//                onClickForeground = onClickForeground,
+                    )
+
+                    return@BackgroundImage
+
                     if (firstSettingFunnelsUiState.currentStepId != null) {
                         FirstSettingFunnelsRoot(
                             qrCodeViewModel = qrCodeViewModel,

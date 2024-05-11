@@ -89,10 +89,10 @@ class MainActivity : ComponentActivity() {
 
         // 위치 권한 요청
         RequestPermissionsUtil(this).requestLocation()
+    }
 
-//        // check location permission
-//        checkAndRequestNotificationPermission()
-//        tryToBindToServiceIfRunning()
+    override fun onStart() {
+        super.onStart()
 
         setContent {
             MimoApp(
@@ -114,10 +114,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
 
@@ -125,131 +121,4 @@ class MainActivity : ComponentActivity() {
         authViewModel.logout()
         logoutWithKakao()
     }
-
-//    // location-foreground sample
-//    private var exampleService: ExampleLocationForegroundService? = null
-//    private var serviceBoundState by mutableStateOf(false)
-//    private var displayableLocation by mutableStateOf<String?>(null)
-//
-//    // needed to communicate with the service.
-//    private val connection = object : ServiceConnection {
-//
-//        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-//            // we've bound to ExampleLocationForegroundService, cast the IBinder and get ExampleLocationForegroundService instance.
-//            Log.d(TAG, "onServiceConnected")
-//
-//            val binder = service as ExampleLocationForegroundService.LocalBinder
-//            exampleService = binder.getService()
-//            serviceBoundState = true
-//
-//            onServiceConnected()
-//        }
-//
-//        override fun onServiceDisconnected(arg0: ComponentName) {
-//            // This is called when the connection with the service has been disconnected. Clean up.
-//            Log.d(TAG, "onServiceDisconnected")
-//
-//            serviceBoundState = false
-//            exampleService = null
-//        }
-//    }
-//
-//    // we need notification permission to be able to display a notification for the foreground service
-//    private val notificationPermissionLauncher =
-//        registerForActivityResult(
-//            ActivityResultContracts.RequestPermission()
-//        ) {
-//            // if permission was denied, the service can still run only the notification won't be visible
-//        }
-//
-//    // we need location permission to be able to start the service
-//    private val locationPermissionRequest = registerForActivityResult(
-//        ActivityResultContracts.RequestMultiplePermissions()
-//    ) { permissions ->
-//        when {
-//            permissions.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
-//                // Precise location access granted, service can run
-//                startForegroundService()
-//            }
-//
-//            permissions.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
-//                // Only approximate location access granted, service can still run.
-//                startForegroundService()
-//            }
-//
-//            else -> {
-//                // No location access granted, service can't be started as it will crash
-//                Toast.makeText(this, "Location permission is required!", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        unbindService(connection)
-//    }
-//
-//    /**
-//     * Check for notification permission before starting the service so that the notification is visible
-//     */
-//    private fun checkAndRequestNotificationPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            when (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)) {
-//                android.content.pm.PackageManager.PERMISSION_GRANTED -> {
-//                    // permission already granted
-//                }
-//
-//                else -> {
-//                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun onStartOrStopForegroundServiceClick() {
-//        if (exampleService == null) {
-//            // service is not yet running, start it after permission check
-//            locationPermissionRequest.launch(
-//                arrayOf(
-//                    android.Manifest.permission.ACCESS_FINE_LOCATION,
-//                    android.Manifest.permission.ACCESS_COARSE_LOCATION
-//                )
-//            )
-//        } else {
-//            // service is already running, stop it
-//            exampleService?.stopForegroundService()
-//        }
-//    }
-//
-//    /**
-//     * Creates and starts the ExampleLocationForegroundService as a foreground service.
-//     *
-//     * It also tries to bind to the service to update the UI with location updates.
-//     */
-//    private fun startForegroundService() {
-//        // start the service
-//        startForegroundService(Intent(this, ExampleLocationForegroundService::class.java))
-//
-//        // bind to the service to update UI
-//        tryToBindToServiceIfRunning()
-//    }
-//
-//    private fun tryToBindToServiceIfRunning() {
-//        Intent(this, ExampleLocationForegroundService::class.java).also { intent ->
-//            bindService(intent, connection, 0)
-//        }
-//    }
-//
-//    private fun onServiceConnected() {
-//        lifecycleScope.launch {
-//            // observe location updates from the service
-//            exampleService?.locationFlow?.map {
-//                it?.let { location ->
-//                    "${location.latitude}, ${location.longitude}"
-//                }
-//            }?.collectLatest {
-//                displayableLocation = it
-//            }
-//        }
-//    }
 }
