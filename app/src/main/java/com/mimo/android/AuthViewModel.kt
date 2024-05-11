@@ -1,12 +1,12 @@
 package com.mimo.android
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.apis.mimo.user.GetMyInfoResponse
 import com.mimo.android.apis.mimo.user.getMyInfo
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
-import com.mimo.android.utils.preferences.removeData
 import com.mimo.android.utils.preferences.saveData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,14 +18,14 @@ class AuthViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
-    fun init(
+    fun checkAlreadyLoggedIn(
         firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel
     ){
-        val prevAccessToken = getData(ACCESS_TOKEN) ?: return
+        val storedAccessToken = getData(ACCESS_TOKEN) ?: return
 
         viewModelScope.launch {
             getMyInfo(
-                accessToken = prevAccessToken,
+                accessToken = storedAccessToken,
                 onSuccessCallback = { data: GetMyInfoResponse? ->
                     if (data == null) {
                         return@getMyInfo
@@ -35,14 +35,29 @@ class AuthViewModel: ViewModel() {
                         firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
                     }
 
+                    Toast.makeText(
+                        MainActivity.getMainActivityContext(),
+                        "자동 로그인 되었습니다",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     _uiState.update { prevState ->
                         prevState.copy(
-                            accessToken = prevAccessToken,
+                            accessToken = storedAccessToken,
                             user = User(
                                 id = data.userId.toString(),
                                 hasHome = data.hasHome,
                                 hasHub = data.hasHub)
                         )
+                    }
+                },
+                onFailureCallback = {
+                    Toast.makeText(
+                        MainActivity.getMainActivityContext(),
+                        "다시 로그인 해주세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    _uiState.update { prevState ->
+                        prevState.copy(accessToken = null, user = null)
                     }
                 }
             )

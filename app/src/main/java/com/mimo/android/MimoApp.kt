@@ -23,8 +23,6 @@ import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
-import com.mimo.android.utils.preferences.ACCESS_TOKEN
-import com.mimo.android.utils.preferences.getData
 
 const val TAG = "MimoApp"
 
@@ -42,9 +40,6 @@ fun MimoApp(
 //    currentLocation: String? = null,
 //    onClickForeground: (() -> Unit)? = null,
     ){
-
-
-
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
         val navController = rememberNavController()
@@ -55,7 +50,7 @@ fun MimoApp(
         val authUiState by authViewModel.uiState.collectAsState()
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
 
-        authViewModel.init(
+        authViewModel.checkAlreadyLoggedIn(
             firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
         )
 

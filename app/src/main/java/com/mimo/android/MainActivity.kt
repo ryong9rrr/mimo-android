@@ -1,5 +1,6 @@
 package com.mimo.android
 
+import android.content.Context
 import com.journeyapps.barcodescanner.ScanContract
 import android.os.Bundle
 import android.widget.Toast
@@ -50,6 +51,17 @@ class MainActivity : ComponentActivity() {
     private val qRRequestPermissionLauncher = createQRRequestPermissionLauncher(
         barCodeLauncher = barCodeLauncher
     )
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        lateinit var instance: MainActivity
+        fun getMainActivityContext(): Context {
+            return instance.applicationContext
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
