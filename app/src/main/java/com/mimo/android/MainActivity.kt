@@ -25,11 +25,14 @@ import com.mimo.android.utils.preferences.createSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.reflect.typeOf
 
 private const val TAG = "MainActivity"
@@ -145,34 +148,50 @@ class MainActivity : ComponentActivity() {
         Log.i(TAG, "App destroy")
     }
 
-    val dateFormatter = DateTimeFormatter.ofPattern("HH:mm")
-        .withZone(ZoneId.of("Asia/Seoul"))
-    private val scope = CoroutineScope(Dispatchers.Default)
-    private var job: Job? = null
+    // private var job: Job? = null
+    private var timerTask: TimerTask? = null
+
     private fun handleStartSleepForegroundService(){
         Intent(getMainActivityContext(), SleepForegroundService::class.java).also {
             it.action = SleepForegroundService.Actions.START.toString()
             startService(it)
 
-            job = createJob()
+            //job = createJob()
+
+            timerTask = Task()
+            Timer().scheduleAtFixedRate(timerTask, 1000, FIFTEEN_MINUTES)
         }
     }
     private fun handleStopSleepForegroundService(){
         Intent(applicationContext, SleepForegroundService::class.java).also {
             it.action = SleepForegroundService.Actions.STOP.toString()
             startService(it)
-            job?.cancel()
+            //job?.cancel()
+            timerTask?.cancel()
+            timerTask = null
         }
     }
 
-    private fun createJob(): Job{
-        return scope.launch {
-            while (true) {
-                //readLastSleepStage()
-                //readSleepSession(4, 28) // 4월 28일의 기록
-                readSteps()
-                delay(15 * 60 * 1000L) // 15분
+//    private fun createJob(): Job{
+//        return scope.launch {
+//            while (true) {
+//                //readLastSleepStage()
+//                //readSleepSession(4, 28) // 4월 28일의 기록
+//                readSteps()
+//                delay(15 * 60 * 1000L) // 15분
+//            }
+//        }
+//    }
+
+    inner class Task: TimerTask() {
+        override fun run() {
+            lifecycleScope.launch {
+                readLastSleepStage()
             }
+        }
+
+        override fun cancel(): Boolean {
+            return super.cancel()
         }
     }
 
@@ -219,6 +238,9 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${step}")
     }
 
+    val dateFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        .withZone(ZoneId.of("Asia/Seoul"))
+
     private fun getCurrentTime(): String{
         val zoneId = ZoneId.of("Asia/Seoul") // 한국 시간대 (KST)
         val currentTimeKST = ZonedDateTime.now(zoneId) // 현재 한국 시간
@@ -237,6 +259,8 @@ class MainActivity : ComponentActivity() {
         return currentTimeKST.format(formatter)
     }
 }
+
+const val FIFTEEN_MINUTES = 15 * 60 * 1000L
 
 enum class SleepStage {
     UNKNOWN, // 0
