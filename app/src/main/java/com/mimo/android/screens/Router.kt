@@ -6,12 +6,9 @@ import com.mimo.android.screens.main.myprofile.MyProfileScreen
 import com.mimo.android.screens.main.sleep.SleepScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
 import com.mimo.android.screens.main.myhome.Home
 import com.mimo.android.screens.main.myhome.MyHomeDetailScreen
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
@@ -20,14 +17,13 @@ import com.mimo.android.screens.main.myhome.MyHomeViewModel
 fun Router(
     navController: NavHostController,
     healthConnectManager: HealthConnectManager,
-//    serviceRunning: Boolean? = null,
-//    currentLocation: String? = null,
-//    onClickForeground: (() -> Unit)? = null,
+    onStartSleepForegroundService: (() -> Unit)? = null,
+    onStopSleepForegroundService: (() -> Unit)? = null
 ){
     val myHomeViewModel = MyHomeViewModel()
     myHomeViewModel.init(context = LocalContext.current)
 
-    NavHost(navController = navController, startDestination = MyHomeDestination.route) {
+    NavHost(navController = navController, startDestination = SleepDestination.route) {
         //val availability by healthConnectManager.availability
 
         // main
@@ -76,7 +72,9 @@ fun Router(
         }
         composable(SleepDestination.route) {
             SleepScreen(
-                navController = navController
+                navController = navController,
+                onStartSleepForegroundService = onStartSleepForegroundService,
+                onStopSleepForegroundService = onStopSleepForegroundService
             )
             return@composable
         }

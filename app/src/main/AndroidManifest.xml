@@ -8,13 +8,9 @@
     <uses-permission android:name="android.permission.health.READ_STEPS"/>
     <uses-permission android:name="android.permission.health.READ_SLEEP"/>
 
-<!--    &lt;!&ndash;  Request the general foreground service permission  &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
-<!--    &lt;!&ndash;  Request the specific foreground service permission for each declared type  &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />-->
-
-<!--    &lt;!&ndash;  Request notification permission to be able to show the foreground service notification  &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />-->
+    <!-- foreground permissions -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <!-- location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -59,11 +55,11 @@
             </intent-filter>
         </activity-alias>
 
-<!--        &lt;!&ndash;  Declare the foreground service type  &ndash;&gt;-->
-<!--        <service-->
-<!--            android:name=".services.locationforegroundexample.ExampleLocationForegroundService"-->
-<!--            android:exported="false"-->
-<!--            android:foregroundServiceType="location" />-->
+        <!-- 수면 포그라운드 -->
+        <service
+            android:name=".services.health.SleepForegroundService"
+            android:foregroundServiceType="health"
+            />
 
         <!-- QR Scanner -->
         <activity

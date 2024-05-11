@@ -24,21 +24,20 @@ import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
 
-const val TAG = "MimoApp"
+private const val TAG = "MimoApp"
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MimoApp(
+    context: Context,
     authViewModel: AuthViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermission: () -> Unit,
     firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel,
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
-    context: Context,
-//    serviceRunning: Boolean? = null,
-//    currentLocation: String? = null,
-//    onClickForeground: (() -> Unit)? = null,
+    onStartSleepForegroundService: (() -> Unit)? = null,
+    onStopSleepForegroundService: (() -> Unit)? = null
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -49,10 +48,6 @@ fun MimoApp(
         val availability by healthConnectManager.availability
         val authUiState by authViewModel.uiState.collectAsState()
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
-
-        authViewModel.checkAlreadyLoggedIn(
-            firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
-        )
 
         // TODO: 실제 kakao-login 구현
         fun handleLoginWithKakao(){
@@ -111,9 +106,8 @@ fun MimoApp(
                     Router(
                         navController = navController,
                         healthConnectManager = healthConnectManager,
-//                serviceRunning = serviceRunning,
-//                currentLocation = currentLocation,
-//                onClickForeground = onClickForeground,
+                        onStartSleepForegroundService = onStartSleepForegroundService,
+                        onStopSleepForegroundService = onStopSleepForegroundService
                     )
 
                     return@BackgroundImage
@@ -140,9 +134,8 @@ fun MimoApp(
                         Router(
                             navController = navController,
                             healthConnectManager = healthConnectManager,
-//                serviceRunning = serviceRunning,
-//                currentLocation = currentLocation,
-//                onClickForeground = onClickForeground,
+                            onStartSleepForegroundService = onStartSleepForegroundService,
+                            onStopSleepForegroundService = onStopSleepForegroundService
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package com.mimo.android
 
+import com.mimo.android.services.kakao.logoutWithKakao
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -97,6 +98,7 @@ class AuthViewModel: ViewModel() {
 
     fun logout(){
         //removeData(ACCESS_TOKEN)
+        //logoutWithKakao()
         _uiState.update { prevState ->
             prevState.copy(user = null)
         }
