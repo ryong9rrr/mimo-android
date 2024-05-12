@@ -25,6 +25,7 @@ import com.mimo.android.utils.preferences.createSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -186,13 +187,28 @@ class MainActivity : ComponentActivity() {
     inner class Task: TimerTask() {
         override fun run() {
             lifecycleScope.launch {
-                readLastSleepStage()
+                readFifteenMinutesAgoSleepStage()
+                if (timerTask == null) {
+                    this.cancel()
+                    return@launch
+                }
             }
         }
 
         override fun cancel(): Boolean {
             return super.cancel()
         }
+    }
+
+    private suspend fun readFifteenMinutesAgoSleepStage(){
+        val now = Instant.now()
+        val fifteenMinutesAgo = now.minus(15, ChronoUnit.MINUTES)
+        val lastSleepStage = healthConnectManager.readLastSleepStage(fifteenMinutesAgo, now)
+        if (lastSleepStage == null) {
+            Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ 수면기록이 감지되지 않음")
+            return
+        }
+        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
     }
 
     private suspend fun readSleepSession(
