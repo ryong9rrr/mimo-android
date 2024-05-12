@@ -18,14 +18,14 @@ class MyHomeViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHomeUiState())
     val uiState: StateFlow<MyHomeUiState> = _uiState.asStateFlow()
 
-    fun isCurrentHome(homeId: String?): Boolean {
+    fun isCurrentHome(homeId: Long?): Boolean {
         if (_uiState.value.currentHome == null) {
             return false
         }
         return _uiState.value.currentHome!!.homeId == homeId
     }
 
-    fun getHome(homeId: String?): Home?{
+    fun getHome(homeId: Long?): Home?{
         if (homeId == null || _uiState.value.currentHome == null) {
             return null
         }
@@ -44,7 +44,7 @@ class MyHomeViewModel: ViewModel() {
         _uiState.update { prevState -> prevState.copy(anotherHomeList = anotherHomeList) }
     }
 
-    fun changeCurrentHome(anotherHomeId: String?){
+    fun changeCurrentHome(anotherHomeId: Long?){
         if (_uiState.value.currentHome == null || anotherHomeId == null) {
             return
         }
@@ -77,17 +77,6 @@ class MyHomeViewModel: ViewModel() {
             ).show()
         }
     }
-
-    fun addHubToHome(home: Home){
-        viewModelScope.launch {
-            // TODO : 허브 등록 API 호출
-            Toast.makeText(
-                MainActivity.getMainActivityContext(),
-                home.homeName,
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
 }
 
 data class MyHomeUiState(
@@ -96,7 +85,7 @@ data class MyHomeUiState(
 )
 
 data class Home(
-    val homeId: String? = null,
+    val homeId: Long? = null,
     val items: Array<String>? = null,
     val homeName: String,
     val address: String

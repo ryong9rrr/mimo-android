@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mimo.android.QrCodeViewModel
 import com.mimo.android.screens.main.myhome.MyHomeDetailScreen
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
 
@@ -19,8 +20,9 @@ fun Router(
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
     myHomeViewModel: MyHomeViewModel,
-    checkCameraPermissionHub: () -> Unit,
-    checkCameraPermissionMachine: () -> Unit,
+    qrCodeViewModel: QrCodeViewModel,
+    checkCameraPermissionHubToHouse: () -> Unit,
+    checkCameraPermissionMachineToHub: () -> Unit,
 ){
     NavHost(navController = navController, startDestination = SleepDestination.route) {
         //val availability by healthConnectManager.availability
@@ -29,7 +31,11 @@ fun Router(
         composable(MyHomeDestination.route) {
             MyHomeScreen(
                 navController = navController,
-                myHomeViewModel = myHomeViewModel
+                myHomeViewModel = myHomeViewModel,
+                qrCodeViewModel = qrCodeViewModel,
+                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
+                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
+
             )
             return@composable
         }
@@ -54,7 +60,7 @@ fun Router(
             arguments = MyHomeDetailDestination.arguments
         ){ backStackEntry ->
             val homeId = backStackEntry.arguments?.getString(MyHomeDetailDestination.homeIdTypeArg)
-            val home = myHomeViewModel.getHome(homeId)
+            val home = myHomeViewModel.getHome(homeId?.toLong())
             if (home == null) {
                 navController.navigate(MyHomeDestination.route) {
                     popUpTo(0)

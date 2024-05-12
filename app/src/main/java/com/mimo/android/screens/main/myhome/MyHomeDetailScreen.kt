@@ -303,7 +303,7 @@ fun MyHomeDetailScreen(
 private fun MyHomeDetailScreenPreview(){
     val navController = NavHostController(LocalContext.current)
     val home = Home(
-        homeId = "1",
+        homeId = 1,
         homeName = "낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가",
         address = "서울특별시 관악구 봉천동 1234-56",
         items = arrayOf("조명", "커튼")

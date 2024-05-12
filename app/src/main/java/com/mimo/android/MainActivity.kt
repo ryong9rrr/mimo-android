@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
             "허브를 찾고 있어요",
             Toast.LENGTH_SHORT
         ).show()
-        qrCodeViewModel.init(qrCode = result.contents)
+        qrCodeViewModel.initRegisterFirstSetting(qrCode = result.contents)
         firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_hub_find_waiting)
     }
     private val qRRequestPermissionLauncherFirstSetting = createQRRequestPermissionLauncher(
@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
     )
 
     // 허브등록용 QR code Scanner
-    private val barCodeLauncherHub = registerForActivityResult(ScanContract()) {
+    private val barCodeLauncherHubToHouse = registerForActivityResult(ScanContract()) {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
@@ -83,30 +83,14 @@ class MainActivity : ComponentActivity() {
             ).show()
             return@registerForActivityResult
         }
-        qrCodeViewModel.init(qrCode = result.contents)
-
-//        qrCodeViewModel.updateAndExecuteAfterProcess(
-//            qrCode = result.contents,
-//            cb = {
-//                lifecycleScope.launch {
-//                    // TODO: 실제 허브 등록 API 호출
-//
-//
-//                    Toast.makeText(
-//                        this@MainActivity,
-//                        "허브를 등록했어요",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        )
+        qrCodeViewModel.registerHubToHouse(qrCode = result.contents)
     }
-    private val qRRequestPermissionLauncherHub = createQRRequestPermissionLauncher(
-        barCodeLauncher = barCodeLauncherHub
+    private val qRRequestPermissionLauncherHubToHouse = createQRRequestPermissionLauncher(
+        barCodeLauncher = barCodeLauncherHubToHouse
     )
 
     // 기기등록용 QR code Scanner
-    private val barCodeLauncherMachine = registerForActivityResult(ScanContract()) {
+    private val barCodeLauncherMachineToHub = registerForActivityResult(ScanContract()) {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
@@ -117,24 +101,10 @@ class MainActivity : ComponentActivity() {
             ).show()
             return@registerForActivityResult
         }
-        qrCodeViewModel.init(qrCode = result.contents)
-//        qrCodeViewModel.updateAndExecuteAfterProcess(
-//            qrCode = result.contents,
-//            cb = {
-//                lifecycleScope.launch {
-//                    // TODO: 실제 허브 등록 API 호출
-//
-//                    Toast.makeText(
-//                        this@MainActivity,
-//                        "기기를 등록했어요",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        )
+        // TODO...
     }
-    private val qRRequestPermissionLauncherMachine = createQRRequestPermissionLauncher(
-        barCodeLauncher = barCodeLauncherMachine
+    private val qRRequestPermissionLauncherMachineToHub = createQRRequestPermissionLauncher(
+        barCodeLauncher = barCodeLauncherMachineToHub
     )
 
     init {
@@ -205,15 +175,15 @@ class MainActivity : ComponentActivity() {
                     barCodeLauncher = barCodeLauncherFirstSetting,
                     qRRequestPermissionLauncher = qRRequestPermissionLauncherFirstSetting
                 ) },
-                checkCameraPermissionHub = { checkCameraPermission(
+                checkCameraPermissionHubToHouse = { checkCameraPermission(
                     context = this,
-                    barCodeLauncher = barCodeLauncherHub,
-                    qRRequestPermissionLauncher = qRRequestPermissionLauncherHub
+                    barCodeLauncher = barCodeLauncherHubToHouse,
+                    qRRequestPermissionLauncher = qRRequestPermissionLauncherHubToHouse
                 ) },
-                checkCameraPermissionMachine = { checkCameraPermission(
+                checkCameraPermissionMachineToHub = { checkCameraPermission(
                     context = this,
-                    barCodeLauncher = barCodeLauncherMachine,
-                    qRRequestPermissionLauncher = qRRequestPermissionLauncherMachine
+                    barCodeLauncher = barCodeLauncherMachineToHub,
+                    qRRequestPermissionLauncher = qRRequestPermissionLauncherMachineToHub
                 ) },
             )
         }

@@ -19,50 +19,49 @@ class QrCodeViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(QrCodeUiState())
     val uiState: StateFlow<QrCodeUiState> = _uiState.asStateFlow()
 
-    fun init(qrCode: String){
+    fun initRegisterFirstSetting(qrCode: String){
         _uiState.value = QrCodeUiState(qrCode = qrCode)
     }
 
-    fun registerHubToHouse(houseId: Long){
-        viewModelScope.launch {
-            val qrCode = _uiState.value.qrCode
-            if (qrCode == null) {
-                Toast.makeText(
-                    MainActivity.getMainActivityContext(),
-                    "다시 시도해주세요",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.e(TAG, "QR Code가 초기화되지 않음")
-                return@launch
-            }
+    fun initRegisterHubToHouse(houseId: Long){
+        _uiState.value = QrCodeUiState(selectedHouseId = houseId)
+    }
 
+    fun registerHubToHouse(qrCode: String){
+        viewModelScope.launch {
             val accessToken = getData(ACCESS_TOKEN)
             if (accessToken == null) {
                 Log.e(TAG, "accessToken이 없음")
                 return@launch
             }
 
-            postRegisterHubToHouse(
-                accessToken = accessToken,
-                postRegisterHubToHomeRequest = PostRegisterHubToHouseRequest(
-                    serialNumber = qrCode,
-                    houseId = houseId
-                ),
-                onSuccessCallback = {
-                    Toast.makeText(
-                        MainActivity.getMainActivityContext(),
-                        "허브를 등록했어요",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                },
-                onFailureCallback = {
-                    Toast.makeText(
-                        MainActivity.getMainActivityContext(),
-                        "다시 시도해주세요",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
+            val houseId = _uiState.value.selectedHouseId
+            if (houseId == null) {
+                Log.e(TAG, "houseId가 Null임...")
+                return@launch
+            }
+
+            // TODO: 아래 토스트 코드를 지우고 실제 API 호출
+            Toast.makeText(
+                MainActivity.getMainActivityContext(),
+                "${houseId}에 ${qrCode}를 등록함!",
+                Toast.LENGTH_SHORT
+            ).show()
+//            postRegisterHubToHouse(
+//                accessToken = accessToken,
+//                postRegisterHubToHomeRequest = PostRegisterHubToHouseRequest(
+//                    serialNumber = qrCode,
+//                    houseId = houseId
+//                ),
+//                onSuccessCallback = {
+//                    Toast.makeText(
+//                        MainActivity.getMainActivityContext(),
+//                        "허브를 등록했어요",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                },
+//                onFailureCallback = {}
+//            )
         }
     }
 

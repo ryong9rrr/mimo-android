@@ -1,5 +1,6 @@
 package com.mimo.android.screens.main.myhome
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mimo.android.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.screens.MyHomeDetailDestination
@@ -34,10 +36,15 @@ import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
 
+private const val TAG = "MyHomeScreen"
+
 @Composable
 fun MyHomeScreen(
     navController: NavHostController,
     myHomeViewModel: MyHomeViewModel,
+    qrCodeViewModel: QrCodeViewModel? = null,
+    checkCameraPermissionHubToHouse: (() -> Unit)? = null,
+    checkCameraPermissionMachineToHub: (() -> Unit)? = null,
 ){
     var isShowModal by remember { mutableStateOf(false) }
     var selectedHome by remember { mutableStateOf<Home?>(null) }
@@ -71,7 +78,11 @@ fun MyHomeScreen(
 
         fun handleClickAddHubModalButton(home: Home){
             handleCloseModal()
-            myHomeViewModel.addHubToHome(home)
+            if (home.homeId == null) {
+                Log.e(TAG, "homeId가 Null임...")
+            }
+            qrCodeViewModel?.initRegisterHubToHouse(houseId = home.homeId!!)
+            checkCameraPermissionHubToHouse?.invoke()
         }
 
         if (isShowModal && selectedHome != null) {

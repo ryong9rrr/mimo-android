@@ -203,19 +203,3 @@ fun FunnelMatcher(
         return
     }
 }
-
-@Composable
-fun TestFunnelWrapper(
-    firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel,
-    children: @Composable () -> Unit
-){
-    Column {
-        Icon(imageVector = Icons.Filled.Home, onClick = {
-            firstSettingFunnelsViewModel.updateCurrentStep(R.string.test_funnel)
-        })
-
-        Spacer(modifier = Modifier.padding(30.dp))
-
-        children()
-    }
-}
