@@ -25,25 +25,18 @@ private const val TAG = "SleepScreen"
 @Composable
 fun SleepScreen(
     navController: NavHostController,
+    isActiveSleepForegroundService: Boolean,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null
 ){
-    var steps by remember { mutableStateOf(mutableListOf<String>()) }
-
     Column {
         HeadingLarge(text = "수면과 기상", fontSize = Size.lg)
+        Spacer(modifier = Modifier.padding(14.dp))
 
-        Button(text = "수면 시작", onClick = onStartSleepForegroundService)
-        Spacer(modifier = Modifier.padding(8.dp))
-        Button(text = "수면 끝", onClick = onStopSleepForegroundService)
-
-        steps.forEach {step ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Text(text = "${getCurrentTime()}")
-                Text(text = step)
-            }
+        if (isActiveSleepForegroundService) {
+            Button(text = "수면 끝", onClick = onStopSleepForegroundService)
+        } else {
+            Button(text = "수면 시작", onClick = onStartSleepForegroundService)
         }
     }
 }

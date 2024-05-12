@@ -30,6 +30,7 @@ private const val TAG = "MimoApp"
 @Composable
 fun MimoApp(
     context: Context,
+    isActiveSleepForegroundService: Boolean,
     authViewModel: AuthViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermission: () -> Unit,
@@ -105,6 +106,7 @@ fun MimoApp(
 
                     Router(
                         navController = navController,
+                        isActiveSleepForegroundService = isActiveSleepForegroundService,
                         healthConnectManager = healthConnectManager,
                         onStartSleepForegroundService = onStartSleepForegroundService,
                         onStopSleepForegroundService = onStopSleepForegroundService
@@ -133,6 +135,7 @@ fun MimoApp(
                     if (authUiState.user != null) {
                         Router(
                             navController = navController,
+                            isActiveSleepForegroundService = isActiveSleepForegroundService,
                             healthConnectManager = healthConnectManager,
                             onStartSleepForegroundService = onStartSleepForegroundService,
                             onStopSleepForegroundService = onStopSleepForegroundService

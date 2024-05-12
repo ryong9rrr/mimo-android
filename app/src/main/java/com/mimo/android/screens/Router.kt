@@ -16,6 +16,7 @@ import com.mimo.android.screens.main.myhome.MyHomeViewModel
 @Composable
 fun Router(
     navController: NavHostController,
+    isActiveSleepForegroundService: Boolean,
     healthConnectManager: HealthConnectManager,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null
@@ -73,6 +74,7 @@ fun Router(
         composable(SleepDestination.route) {
             SleepScreen(
                 navController = navController,
+                isActiveSleepForegroundService = isActiveSleepForegroundService,
                 onStartSleepForegroundService = onStartSleepForegroundService,
                 onStopSleepForegroundService = onStopSleepForegroundService
             )
