@@ -22,6 +22,7 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
+import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.kakao.loginWithKakao
 
 private const val TAG = "MimoApp"
@@ -38,7 +39,8 @@ fun MimoApp(
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
     onStartSleepForegroundService: (() -> Unit)? = null,
-    onStopSleepForegroundService: (() -> Unit)? = null
+    onStopSleepForegroundService: (() -> Unit)? = null,
+    myHomeViewModel: MyHomeViewModel,
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -109,7 +111,8 @@ fun MimoApp(
                         isActiveSleepForegroundService = isActiveSleepForegroundService,
                         healthConnectManager = healthConnectManager,
                         onStartSleepForegroundService = onStartSleepForegroundService,
-                        onStopSleepForegroundService = onStopSleepForegroundService
+                        onStopSleepForegroundService = onStopSleepForegroundService,
+                        myHomeViewModel = myHomeViewModel
                     )
 
                     return@BackgroundImage
@@ -138,7 +141,8 @@ fun MimoApp(
                             isActiveSleepForegroundService = isActiveSleepForegroundService,
                             healthConnectManager = healthConnectManager,
                             onStartSleepForegroundService = onStartSleepForegroundService,
-                            onStopSleepForegroundService = onStopSleepForegroundService
+                            onStopSleepForegroundService = onStopSleepForegroundService,
+                            myHomeViewModel = myHomeViewModel
                         )
                     }
                 }

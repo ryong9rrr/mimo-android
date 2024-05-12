@@ -23,11 +23,6 @@ import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.ui.theme.Teal400
-import com.mimo.android.ui.theme.Teal800
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.debounce
 
 @Composable
 fun MyHomeDetailScreen(

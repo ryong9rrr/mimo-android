@@ -4,20 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mimo.android.MainActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MyHomeViewModel: ViewModel() {
     @SuppressLint("StaticFieldLeak")
     private var context: Context? = null
     private val _uiState = MutableStateFlow(MyHomeUiState())
     val uiState: StateFlow<MyHomeUiState> = _uiState.asStateFlow()
-
-    fun init(context: Context){
-        this.context = context
-    }
 
     fun isCurrentHome(homeId: String?): Boolean {
         if (_uiState.value.currentHome == null) {
@@ -46,24 +45,45 @@ class MyHomeViewModel: ViewModel() {
     }
 
     fun changeCurrentHome(anotherHomeId: String?){
-        if (_uiState.value.currentHome == null) {
+        if (_uiState.value.currentHome == null || anotherHomeId == null) {
             return
         }
 
-        val nextCurrentHome = _uiState.value.anotherHomeList.find { it.homeId == anotherHomeId }
-        var nextAnotherHomeList = _uiState.value.anotherHomeList.filter { it.homeId != anotherHomeId }
-        nextAnotherHomeList = nextAnotherHomeList.plus(_uiState.value.currentHome!!)
-        nextAnotherHomeList = nextAnotherHomeList.sortedBy { home -> home.homeId }
-
-        _uiState.value = MyHomeUiState(
-            currentHome = nextCurrentHome,
-            anotherHomeList = nextAnotherHomeList
-        )
-
-        if (this.context != null) {
+        if (_uiState.value.currentHome!!.homeId == anotherHomeId) {
             Toast.makeText(
                 this.context,
+                "이미 현재 거주지에요.",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        viewModelScope.launch {
+            // TODO : 현재 거주지 변경 API 호출
+            val nextCurrentHome = _uiState.value.copy().anotherHomeList.find { it.homeId == anotherHomeId }
+            var nextAnotherHomeList = _uiState.value.copy().anotherHomeList.filter { it.homeId != anotherHomeId }
+            nextAnotherHomeList = nextAnotherHomeList.plus(_uiState.value.copy().currentHome!!)
+            nextAnotherHomeList = nextAnotherHomeList.sortedBy { home -> home.homeId }
+            _uiState.update { prevState ->
+                prevState.copy(
+                    currentHome = nextCurrentHome,
+                    anotherHomeList = nextAnotherHomeList
+                )
+            }
+            Toast.makeText(
+                MainActivity.getMainActivityContext(),
                 "현재 거주지를 변경했어요",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    fun addHubToHome(home: Home){
+        viewModelScope.launch {
+            // TODO : 허브 등록 API 호출
+            Toast.makeText(
+                MainActivity.getMainActivityContext(),
+                home.homeName,
                 Toast.LENGTH_SHORT
             ).show()
         }

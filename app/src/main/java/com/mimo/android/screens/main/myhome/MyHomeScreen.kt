@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,12 +38,12 @@ import com.mimo.android.ui.theme.Teal100
 fun MyHomeScreen(
     navController: NavHostController,
     myHomeViewModel: MyHomeViewModel,
-
 ){
+    var isShowModal by remember { mutableStateOf(false) }
+    var selectedHome by remember { mutableStateOf<Home?>(null) }
+
     ScrollView {
         val myHomeUiState by myHomeViewModel.uiState.collectAsState()
-        var isShowModal by remember { mutableStateOf(false) }
-        var selectedHome by remember { mutableStateOf<Home?>(null) }
 
         fun navigateToMyHomeDetailScreen(home: Home){
             if (home.homeId != null) {
@@ -61,9 +61,17 @@ fun MyHomeScreen(
             selectedHome = null
         }
 
-        fun handleConfirmModal(home: Home){
+        fun handleClickChangeCurrentHomeModalButton(home: Home){
             handleCloseModal()
+            if (myHomeUiState.currentHome?.homeId == home.homeId) {
+                return
+            }
             myHomeViewModel.changeCurrentHome(home.homeId)
+        }
+
+        fun handleClickAddHubModalButton(home: Home){
+            handleCloseModal()
+            myHomeViewModel.addHubToHome(home)
         }
 
         if (isShowModal && selectedHome != null) {
@@ -71,9 +79,11 @@ fun MyHomeScreen(
                 onClose = ::handleCloseModal,
                 children = {
                     ModalContent(
+                        isCurrentHome = myHomeUiState.currentHome?.homeId == selectedHome?.homeId,
                         home = selectedHome!!,
                         onClose = ::handleCloseModal,
-                        onConfirm = { home -> handleConfirmModal(home) }
+                        onClickChangeCurrentHomeModalButton = ::handleClickChangeCurrentHomeModalButton,
+                        onClickAddHubModalButton = ::handleClickAddHubModalButton
                     )
                 }
             )
@@ -99,7 +109,8 @@ fun MyHomeScreen(
                 home = myHomeUiState.currentHome!!,
                 isCurrentHome = true,
                 onClick = { home -> navigateToMyHomeDetailScreen(home) },
-                onLongClick = { home -> handleShowModal(home) }
+                onClickMenu = { home -> handleShowModal(home) },
+                onLongClick = {}
             )
         }
 
@@ -116,7 +127,8 @@ fun MyHomeScreen(
                     home = anotherHome,
                     isCurrentHome = false,
                     onClick = { home -> navigateToMyHomeDetailScreen(home) },
-                    onLongClick = { home -> handleShowModal(home) }
+                    onClickMenu = { home -> handleShowModal(home) },
+                    onLongClick = {}
                 )
 
                 if (index < myHomeUiState.anotherHomeList.size) {
@@ -133,7 +145,8 @@ private fun Card(
     home: Home,
     isCurrentHome: Boolean,
     onClick: ((home: Home) -> Unit)? = null,
-    onLongClick: ((home: Home) -> Unit)? = null
+    onLongClick: ((home: Home) -> Unit)? = null,
+    onClickMenu: ((home: Home) -> Unit)? = null
 ){
     Box(
         modifier = Modifier.combinedClickable(
@@ -153,16 +166,25 @@ private fun Card(
                     .padding(8.dp)
                     .height(96.dp)) {
 
-                    Row (
-                        modifier = Modifier.align(Alignment.Start)
-                    ) {
-                        if (home.items != null) {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                home.items.forEach { item -> CardType(text = item) }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ){
+                        Row {
+                            if (home.items != null) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    home.items.forEach { item -> CardType(text = item) }
+                                }
                             }
                         }
+
+                        Icon(
+                            imageVector = Icons.Default.Menu,
+                            size = 24.dp,
+                            onClick = { onClickMenu?.invoke(home) }
+                        )
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -185,9 +207,11 @@ private fun Card(
 
 @Composable
 fun ModalContent(
+    isCurrentHome: Boolean,
     home: Home,
     onClose: (() -> Unit)? = null,
-    onConfirm: ((home: Home) -> Unit)? = null
+    onClickChangeCurrentHomeModalButton: ((home: Home) -> Unit)? = null,
+    onClickAddHubModalButton: ((home: Home) -> Unit)? = null
 ){
     Box(
         modifier = Modifier
@@ -208,23 +232,35 @@ fun ModalContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             HeadingSmall(text = home.homeName)
-            Spacer(modifier = Modifier.padding(2.dp))
-            Text(text = "현재 거주지로 변경할까요?")
-            Spacer(modifier = Modifier.padding(6.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                item {
-                    Button(
+//            Spacer(modifier = Modifier.padding(2.dp))
+//            Text(text = "현재 거주지로 변경할까요?")
+            Spacer(modifier = Modifier.padding(8.dp))
+            Column {
+                if (!isCurrentHome) {
+                    Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHomeModalButton?.invoke(home) })
+                    Spacer(modifier = Modifier.padding(4.dp))
+                }
+                Button(text = "허브 등록", onClick = { onClickAddHubModalButton?.invoke(home) })
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(
                         text = "닫기", color = Gray600, hasBorder = false,
                         onClick = { onClose?.invoke() }
                     )
-                }
-                item {
-                    Button(text = "변경할게요", onClick = { onConfirm?.invoke(home) })
-                }
             }
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(2),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                item {
+//                    Button(
+//                        text = "닫기", color = Gray600, hasBorder = false,
+//                        onClick = { onClose?.invoke() }
+//                    )
+//                }
+//                item {
+//                    Button(text = "변경할게요", onClick = { onConfirm?.invoke(home) })
+//                }
+//            }
         }
     }
 }
