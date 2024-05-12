@@ -13,34 +13,33 @@ import com.mimo.android.ui.theme.*
 @Composable
 fun FunnelAutoRegisterLocation(
     location: String,
-    onDirectlyEnterLocation: () -> Unit,
     onConfirm: () -> Unit
 ){
     Column {
         Spacer(modifier = Modifier.padding(30.dp))
 
-        HeadingLarge(text = "현재 위치", fontSize = Size.lg)
+        HeadingLarge(text = "현재 위치에", fontSize = Size.lg)
+        Spacer(modifier = Modifier.padding(4.dp))
+        HeadingLarge(text = "허브를 등록할게요", fontSize = Size.lg)
         Spacer(modifier = Modifier.padding(8.dp))
         HeadingSmall(text = location, color = Teal100, fontSize = Size.sm)
-        
-        Spacer(modifier = Modifier.padding(16.dp))
-        HeadingLarge(text = "이 주소에 허브를 등록할까요?", fontSize = Size.lg)
 
         Spacer(modifier = Modifier.weight(1f))
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                Button(
-                    text = "장소 직접 입력", color = Gray600, hasBorder = false,
-                    onClick = onDirectlyEnterLocation
-                )
-            }
-            item {
-                Button(text = "네 등록할게요", onClick = onConfirm)
-            }
-        }
+        Button(text = "완료", onClick = onConfirm)
+//        LazyVerticalGrid(
+//            columns = GridCells.Fixed(2),
+//            horizontalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            item {
+//                Button(
+//                    text = "장소 직접 입력", color = Gray600, hasBorder = false,
+//                    onClick = onDirectlyEnterLocation
+//                )
+//            }
+//            item {
+//                Button(text = "네 등록할게요", onClick = onConfirm)
+//            }
+//        }
     }
 }
 
@@ -49,7 +48,6 @@ fun FunnelAutoRegisterLocation(
 fun FunnelAutoRegisterLocationPreview(){
     FunnelAutoRegisterLocation(
         location = "서울특별시 강남구 테헤란로 212",
-        onDirectlyEnterLocation = {},
         onConfirm = {}
     )
 }

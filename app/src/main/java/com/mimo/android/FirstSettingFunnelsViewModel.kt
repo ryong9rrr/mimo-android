@@ -29,35 +29,50 @@ class FirstSettingFunnelsViewModel: ViewModel() {
         }
     }
 
-    fun setHubAndRedirect(qrCode: String){
-        if (qrCode.isEmpty()) {
-            return
-        }
+    fun setHubAndRedirect(
+        qrCode: String,
+        launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit
+    ){
+        // TODO: 유효한 QR코드인지 확인
+        // TODO: 샬라샬라...
 
+        // if (유효하지 않은 코드라면) ... 샬라샬라...
+
+        // TODO: 아무튼 유효한 코드라면...
         viewModelScope.launch {
             delay(3000)
             // TODO: Loading UI State
 
             // TODO: 여기서 Spring server 통해서 허브(QR)이미 존재하는지 아닌지 확인하고 리다이렉트
             // Case1 이미 집이 등록된 허브라서 메인으로 이동
-            var isExistingHub = false
+            var isExistingHub = true
             if (isExistingHub) {
-                // TODO: 이미 집이 등록되어있기 때문에 이 유저를 집과허브(?)에 등록시켜야함. 아무튼 등록시켜야함
-                // 등록시킨 후 이동
-                _uiState.update { prevState -> prevState.copy(
+                // TODO: 여기서는 이미 존재하는 허브이기 때문에 유저를 등록시키는 API를 호출하고 잠깐 화면만 보여줌.
+                val responseLocation = "경기도 고양시 일산서구 산현로 34"
+                val responseLocationAlias = "상윤이의 본가"
+
+                // 등록시킨 후 이동, first_setting_redirect_main_after_find_existing_hub에서는 메인으로 리다이렉트하게 됨.
+                _uiState.update { prevState ->
+                    prevState.copy(
                         currentStepId = R.string.first_setting_redirect_main_after_find_existing_hub,
                         hub = Hub(
                             qrCode = qrCode,
-                            location = "경기도 고양시 일산서구 산현로 34",
-                            locationAlias = "상윤이의 본가"
-                        ))
+                            location = responseLocation,
+                            locationAlias = responseLocationAlias
+                        )
+                    )
                 }
                 return@launch
             }
 
-            // Case2 새로운 허브라서 등록 화면으로 이동
-            _uiState.update { prevState -> prevState.copy(
-                currentStepId = R.string.first_setting_redirect_location_register_after_find_new_hub)
+            // Case2 새로운 허브라서 주소 등록 화면으로 이동
+            launchGoogleLocationAndAddress { userLocation ->
+                _uiState.update { prevState ->
+                    prevState.copy(
+                        userLocation = userLocation,
+                        currentStepId = R.string.first_setting_funnel_auto_register_location
+                    )
+                }
             }
         }
     }
@@ -73,18 +88,18 @@ class FirstSettingFunnelsViewModel: ViewModel() {
         }
     }
 
-    fun redirectAutoRegisterLocationFunnel(userLocation: UserLocation?){
-        viewModelScope.launch {
-            // TODO: Loading UI State
-            delay(2000)
-            _uiState.update { prevState ->
-                prevState.copy(
-                    currentStepId = R.string.first_setting_funnel_auto_register_location,
-                    userLocation = userLocation
-                )
-            }
-        }
-    }
+//    fun redirectAutoRegisterLocationFunnel(userLocation: UserLocation?){
+//        viewModelScope.launch {
+//            // TODO: Loading UI State
+//            delay(2000)
+//            _uiState.update { prevState ->
+//                prevState.copy(
+//                    currentStepId = R.string.first_setting_funnel_auto_register_location,
+//                    userLocation = userLocation
+//                )
+//            }
+//        }
+//    }
 }
 
 data class FirstSettingFunnelsUiState (

@@ -15,13 +15,8 @@ import com.mimo.android.ui.theme.*
 @Preview
 @Composable
 fun FunnelFirstSettingStart(
-    goNext: (() -> Unit)? = null
+    checkCameraPermission: (() -> Unit)? = null
 ){
-
-    fun handleGoNext(){
-        goNext?.invoke()
-    }
-
     Column(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -96,6 +91,6 @@ fun FunnelFirstSettingStart(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        Button(text = "허브 등록하기", onClick = ::handleGoNext)
+        Button(text = "허브 등록하기", onClick = checkCameraPermission)
     }
 }
