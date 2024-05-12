@@ -88,7 +88,7 @@ fun FunnelMatcher(
         RedirectMainAfterFindExistingHub(
             hub = firstSettingFunnelsUiState.hub,
             goNext = {
-                firstSettingFunnelsViewModel.redirectMain()
+                firstSettingFunnelsViewModel.redirectToMain()
             },
             redirectAfterCatchError = {
                 Toast.makeText(
@@ -132,16 +132,18 @@ fun FunnelMatcher(
         FunnelAutoRegisterLocation(
             location = userAddress,
             onConfirm = {
-                // TODO: 그냥 여기서 바로 처리해버리기... 집 등록 API 호출하고 메인으로 이동
+                // TODO: 그냥 여기서 바로 처리해버리기...
                 val hubQrCode = qrCodeUiState.qrCode
-                val address = firstSettingFunnelsUiState.userLocation?.address
-                Log.i(TAG, "허브 ${hubQrCode}를 ${address} 에 등록완료!!")
-                Toast.makeText(
-                    MainActivity.getMainActivityContext(),
-                    "허브와 거주지를 등록했어요. 메인화면으로 이동할게요.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                firstSettingFunnelsViewModel.redirectMain()
+                if (hubQrCode == null) {
+                    Toast.makeText(
+                        MainActivity.getMainActivityContext(),
+                        "다시 시도해주세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_first_setting_start)
+                    return@FunnelAutoRegisterLocation
+                }
+                firstSettingFunnelsViewModel.registerNewHubAndRedirectToMain(hubQrCode = hubQrCode)
             }
         )
         return

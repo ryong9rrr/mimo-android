@@ -1,6 +1,8 @@
 package com.mimo.android
 
 import android.location.Location
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -9,6 +11,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val TAG = "FirstSettingFunnelsViewModel"
 
 class FirstSettingFunnelsViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(FirstSettingFunnelsUiState())
@@ -45,7 +49,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
 
             // TODO: 여기서 Spring server 통해서 허브(QR)이미 존재하는지 아닌지 확인하고 리다이렉트
             // Case1 이미 집이 등록된 허브라서 메인으로 이동
-            var isExistingHub = true
+            var isExistingHub = false
             if (isExistingHub) {
                 // TODO: 여기서는 이미 존재하는 허브이기 때문에 유저를 등록시키는 API를 호출하고 잠깐 화면만 보여줌.
                 val responseLocation = "경기도 고양시 일산서구 산현로 34"
@@ -77,14 +81,28 @@ class FirstSettingFunnelsViewModel: ViewModel() {
         }
     }
 
-    fun redirectMain(){
+    fun registerNewHubAndRedirectToMain(
+        hubQrCode: String
+    ){
+        viewModelScope.launch {
+            delay(1000)
+            val address = _uiState.value.userLocation?.address
+            // TODO: 집 등록 API 호출
+            Log.i(TAG, "허브 ${hubQrCode}를 ${address} 에 등록완료!!")
+            Toast.makeText(
+                MainActivity.getMainActivityContext(),
+                "허브와 거주지를 등록했어요. 메인화면으로 이동할게요.",
+                Toast.LENGTH_SHORT
+            ).show()
+            _uiState.value = FirstSettingFunnelsUiState()
+        }
+    }
+
+    fun redirectToMain(){
         viewModelScope.launch {
             delay(3000)
             // TODO: Loading UI State
-
-            _uiState.update {
-                    prevState -> prevState.copy(currentStepId = null, hub = null)
-            }
+            _uiState.value = FirstSettingFunnelsUiState()
         }
     }
 
