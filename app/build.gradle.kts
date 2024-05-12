@@ -100,5 +100,5 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.7")
 
     // workmanager
-    implementation("androidx.work:work-runtime:2.7.0")
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
 }

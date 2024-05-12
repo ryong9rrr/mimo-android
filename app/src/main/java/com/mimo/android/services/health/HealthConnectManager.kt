@@ -16,7 +16,6 @@ import java.io.IOException
 import java.time.Instant
 import java.util.UUID
 
-
 class HealthConnectManager(private val context: Context) {
     private val healthConnectClient by lazy { HealthConnectClient.getOrCreate(context) }
 
