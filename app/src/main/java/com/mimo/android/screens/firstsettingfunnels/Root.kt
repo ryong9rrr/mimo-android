@@ -2,21 +2,13 @@ package com.mimo.android.screens.firstsettingfunnels
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.mimo.android.FirstSettingFunnelsViewModel
 import com.mimo.android.QrCodeViewModel
 import com.mimo.android.R
 import com.mimo.android.UserLocation
-import com.mimo.android.components.Icon
 import com.mimo.android.services.gogglelocation.RequestPermissionsUtil
 
 @Composable
@@ -35,18 +27,6 @@ fun FirstSettingFunnelsRoot(
             launchGoogleLocationAndAddress = launchGoogleLocationAndAddress,
             context = context
     )
-
-//    TestFunnelWrapper(
-//        firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
-//    ) {
-//        FunnelMatcher(
-//            qrCodeViewModel = qrCodeViewModel,
-//            firstSettingFunnelsViewModel = firstSettingFunnelsViewModel,
-//            checkCameraPermission = checkCameraPermission,
-//            launchGoogleLocationAndAddress = launchGoogleLocationAndAddress,
-//            context = context
-//        )
-//    }
 }
 
 @Composable
@@ -194,12 +174,5 @@ fun FunnelMatcher(
                 // TODO
             }
         )
-    }
-
-    if (firstSettingFunnelsUiState.currentStepId == R.string.test_funnel) {
-        TestFunnel(
-            firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
-        )
-        return
     }
 }

@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
         barCodeLauncher = barCodeLauncherFirstSetting
     )
 
-    // 허브등록용 QR code Scanner
+    // 허브를 집에 등록하는 QR code Scanner
     private val barCodeLauncherHubToHouse = registerForActivityResult(ScanContract()) {
             result ->
         if (result.contents == null) {
@@ -89,7 +89,7 @@ class MainActivity : ComponentActivity() {
         barCodeLauncher = barCodeLauncherHubToHouse
     )
 
-    // 기기등록용 QR code Scanner
+    // 기기를 허브에 등록하는 QR code Scanner
     private val barCodeLauncherMachineToHub = registerForActivityResult(ScanContract()) {
             result ->
         if (result.contents == null) {
