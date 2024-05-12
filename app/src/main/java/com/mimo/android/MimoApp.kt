@@ -22,6 +22,7 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
+import com.mimo.android.screens.main.myhome.Home
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.kakao.loginWithKakao
 
@@ -34,13 +35,15 @@ fun MimoApp(
     isActiveSleepForegroundService: Boolean,
     authViewModel: AuthViewModel,
     qrCodeViewModel: QrCodeViewModel,
-    checkCameraPermission: () -> Unit,
     firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel,
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
-    myHomeViewModel: MyHomeViewModel,
+    checkCameraPermissionFirstSetting: () -> Unit,
+    checkCameraPermissionHub: () -> Unit,
+    checkCameraPermissionMachine: () -> Unit,
+    myHomeViewModel: MyHomeViewModel
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -97,31 +100,18 @@ fun MimoApp(
 
         Scaffold(
             bottomBar = {
-                Navigation(navController = navController)
-//                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
-//                    Navigation(navController = navController)
-//                }
+                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
+                    Navigation(navController = navController)
+                }
             }
         ) {
             BackgroundImage {
                 Box(modifier = Modifier.padding(16.dp)) {
-
-                    Router(
-                        navController = navController,
-                        isActiveSleepForegroundService = isActiveSleepForegroundService,
-                        healthConnectManager = healthConnectManager,
-                        onStartSleepForegroundService = onStartSleepForegroundService,
-                        onStopSleepForegroundService = onStopSleepForegroundService,
-                        myHomeViewModel = myHomeViewModel
-                    )
-
-                    return@BackgroundImage
-
                     if (firstSettingFunnelsUiState.currentStepId != null) {
                         FirstSettingFunnelsRoot(
                             qrCodeViewModel = qrCodeViewModel,
                             firstSettingFunnelsViewModel = firstSettingFunnelsViewModel,
-                            checkCameraPermission = checkCameraPermission,
+                            checkCameraPermission = checkCameraPermissionFirstSetting,
                             launchGoogleLocationAndAddress = launchGoogleLocationAndAddress,
                             context = context
                         )
@@ -135,6 +125,42 @@ fun MimoApp(
                         return@BackgroundImage
                     }
 
+                    val currentHome = Home(
+                        homeId = "1",
+                        items = arrayOf("조명", "무드등"),
+                        homeName = "상윤이의 자취방",
+                        address = "서울특별시 관악구 봉천동 1234-56"
+                    )
+                    val anotherHomeList: List<Home> = mutableListOf(
+                        Home(
+                            homeId = "2",
+                            items = arrayOf("조명", "창문", "커튼"),
+                            homeName = "상윤이의 본가",
+                            address = "경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12"
+                        ),
+                        Home(
+                            homeId = "3",
+                            items = arrayOf("조명", "커튼"),
+                            homeName = "낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가",
+                            address = "서울특별시 강남구 테헤란로 212"
+                        ),
+                        Home(
+                            homeId = "4",
+                            items = arrayOf("조명", "커튼"),
+                            homeName = "싸피",
+                            address = "서울특별시 강남구 테헤란로 212"
+                        ),
+                        Home(
+                            homeId = "5",
+                            items = arrayOf("조명", "커튼"),
+                            homeName = "싸피",
+                            address = "서울특별시 강남구 테헤란로 212"
+                        )
+                    )
+
+                    myHomeViewModel.updateCurrentHome(currentHome)
+                    myHomeViewModel.updateAnotherHomeList(anotherHomeList)
+
                     if (authUiState.user != null) {
                         Router(
                             navController = navController,
@@ -142,7 +168,9 @@ fun MimoApp(
                             healthConnectManager = healthConnectManager,
                             onStartSleepForegroundService = onStartSleepForegroundService,
                             onStopSleepForegroundService = onStopSleepForegroundService,
-                            myHomeViewModel = myHomeViewModel
+                            myHomeViewModel = myHomeViewModel,
+                            checkCameraPermissionHub = checkCameraPermissionHub,
+                            checkCameraPermissionMachine = checkCameraPermissionMachine
                         )
                     }
                 }

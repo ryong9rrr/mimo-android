@@ -7,7 +7,6 @@ import android.os.Build
 import com.journeyapps.barcodescanner.ScanContract
 import android.os.Bundle
 import android.util.Log
-import android.util.TimeUtils
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,19 +27,13 @@ import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
 import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.createSharedPreferences
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Timer
 import java.util.TimerTask
-import kotlin.reflect.typeOf
 
 private const val TAG = "MainActivity"
 
@@ -54,8 +47,8 @@ class MainActivity : ComponentActivity() {
     private val qrCodeViewModel = QrCodeViewModel()
     private val myHomeViewModel = MyHomeViewModel()
 
-    // QR code Scanner
-    private val barCodeLauncher = registerForActivityResult(ScanContract()) {
+    // 초기세팅용 QR code Scanner
+    private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
@@ -68,16 +61,80 @@ class MainActivity : ComponentActivity() {
         }
         Toast.makeText(
             this@MainActivity,
-            result.contents,
+            "허브를 찾고 있어요",
             Toast.LENGTH_SHORT
         ).show()
-
-        qrCodeViewModel.updateQrCode(result.contents)
+        qrCodeViewModel.init(qrCode = result.contents)
         firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_hub_find_waiting)
     }
+    private val qRRequestPermissionLauncherFirstSetting = createQRRequestPermissionLauncher(
+        barCodeLauncher = barCodeLauncherFirstSetting
+    )
 
-    private val qRRequestPermissionLauncher = createQRRequestPermissionLauncher(
-        barCodeLauncher = barCodeLauncher
+    // 허브등록용 QR code Scanner
+    private val barCodeLauncherHub = registerForActivityResult(ScanContract()) {
+            result ->
+        if (result.contents == null) {
+            qrCodeViewModel.removeQrCode()
+            Toast.makeText(
+                this@MainActivity,
+                "취소",
+                Toast.LENGTH_SHORT
+            ).show()
+            return@registerForActivityResult
+        }
+        qrCodeViewModel.init(qrCode = result.contents)
+
+//        qrCodeViewModel.updateAndExecuteAfterProcess(
+//            qrCode = result.contents,
+//            cb = {
+//                lifecycleScope.launch {
+//                    // TODO: 실제 허브 등록 API 호출
+//
+//
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "허브를 등록했어요",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        )
+    }
+    private val qRRequestPermissionLauncherHub = createQRRequestPermissionLauncher(
+        barCodeLauncher = barCodeLauncherHub
+    )
+
+    // 기기등록용 QR code Scanner
+    private val barCodeLauncherMachine = registerForActivityResult(ScanContract()) {
+            result ->
+        if (result.contents == null) {
+            qrCodeViewModel.removeQrCode()
+            Toast.makeText(
+                this@MainActivity,
+                "취소",
+                Toast.LENGTH_SHORT
+            ).show()
+            return@registerForActivityResult
+        }
+        qrCodeViewModel.init(qrCode = result.contents)
+//        qrCodeViewModel.updateAndExecuteAfterProcess(
+//            qrCode = result.contents,
+//            cb = {
+//                lifecycleScope.launch {
+//                    // TODO: 실제 허브 등록 API 호출
+//
+//                    Toast.makeText(
+//                        this@MainActivity,
+//                        "기기를 등록했어요",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        )
+    }
+    private val qRRequestPermissionLauncherMachine = createQRRequestPermissionLauncher(
+        barCodeLauncher = barCodeLauncherMachine
     )
 
     init {
@@ -131,62 +188,33 @@ class MainActivity : ComponentActivity() {
             firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
         )
 
-        val currentHome = Home(
-            homeId = "1",
-            items = arrayOf("조명", "무드등"),
-            homeName = "상윤이의 자취방",
-            address = "서울특별시 관악구 봉천동 1234-56"
-        )
-        val anotherHomeList: List<Home> = mutableListOf(
-            Home(
-                homeId = "2",
-                items = arrayOf("조명", "창문", "커튼"),
-                homeName = "상윤이의 본가",
-                address = "경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12 경기도 고양시 일산서구 산현로12"
-            ),
-            Home(
-                homeId = "3",
-                items = arrayOf("조명", "커튼"),
-                homeName = "낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가",
-                address = "서울특별시 강남구 테헤란로 212"
-            ),
-            Home(
-                homeId = "4",
-                items = arrayOf("조명", "커튼"),
-                homeName = "싸피",
-                address = "서울특별시 강남구 테헤란로 212"
-            ),
-            Home(
-                homeId = "5",
-                items = arrayOf("조명", "커튼"),
-                homeName = "싸피",
-                address = "서울특별시 강남구 테헤란로 212"
-            )
-        )
-
-        myHomeViewModel.updateCurrentHome(currentHome)
-        myHomeViewModel.updateAnotherHomeList(anotherHomeList)
-        println("어째써?")
-
         setContent {
-            var isActiveForegroundService by remember { mutableStateOf(false) }
-
             MimoApp(
                 context = this,
                 isActiveSleepForegroundService = isActiveSleepForegroundService,
                 authViewModel = authViewModel,
                 healthConnectManager = healthConnectManager,
                 qrCodeViewModel = qrCodeViewModel,
-                checkCameraPermission = { checkCameraPermission(
-                    context = this,
-                    barCodeLauncher = barCodeLauncher,
-                    qRRequestPermissionLauncher = qRRequestPermissionLauncher
-                ) },
                 firstSettingFunnelsViewModel = firstSettingFunnelsViewModel,
+                myHomeViewModel = myHomeViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,
-                myHomeViewModel = myHomeViewModel
+                checkCameraPermissionFirstSetting = { checkCameraPermission(
+                    context = this,
+                    barCodeLauncher = barCodeLauncherFirstSetting,
+                    qRRequestPermissionLauncher = qRRequestPermissionLauncherFirstSetting
+                ) },
+                checkCameraPermissionHub = { checkCameraPermission(
+                    context = this,
+                    barCodeLauncher = barCodeLauncherHub,
+                    qRRequestPermissionLauncher = qRRequestPermissionLauncherHub
+                ) },
+                checkCameraPermissionMachine = { checkCameraPermission(
+                    context = this,
+                    barCodeLauncher = barCodeLauncherMachine,
+                    qRRequestPermissionLauncher = qRRequestPermissionLauncherMachine
+                ) },
             )
         }
     }

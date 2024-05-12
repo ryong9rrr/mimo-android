@@ -18,7 +18,9 @@ fun Router(
     healthConnectManager: HealthConnectManager,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
-    myHomeViewModel: MyHomeViewModel
+    myHomeViewModel: MyHomeViewModel,
+    checkCameraPermissionHub: () -> Unit,
+    checkCameraPermissionMachine: () -> Unit,
 ){
     NavHost(navController = navController, startDestination = SleepDestination.route) {
         //val availability by healthConnectManager.availability
