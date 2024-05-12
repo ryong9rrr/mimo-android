@@ -1,9 +1,9 @@
-package com.mimo.android.apis.mimo.user
+package com.mimo.android.apis.mimo.users
 
 import retrofit2.Call
 import retrofit2.http.*
 
-interface UserApiService {
+interface UsersApiService {
 
     @Headers("Content-Type: application/json")
     @POST("auth")

@@ -1,16 +1,12 @@
-package com.mimo.android.apis.mimo.user
+package com.mimo.android.apis.mimo.users
 
 import android.util.Log
 import retrofit2.Call
 import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
 import com.mimo.android.apis.mimo.mimoApiService
-import com.mimo.android.utils.preferences.ACCESS_TOKEN
-import com.mimo.android.utils.preferences.getData
-import retrofit2.Callback
-import retrofit2.Response
 
-const val TAG = "/apis/mimo/user/main.postAccessToken"
+const val TAG = "/apis/mimo/users"
 
 fun postAccessToken(
     accessToken: String,

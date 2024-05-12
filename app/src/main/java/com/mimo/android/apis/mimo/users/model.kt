@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo.user
+package com.mimo.android.apis.mimo.users
 
 data class PostAccessTokenRequest(
     val accessToken: String

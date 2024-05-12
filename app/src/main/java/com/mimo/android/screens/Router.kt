@@ -70,13 +70,5 @@ fun Router(
             )
             return@composable
         }
-
-
-//        composable(Screen.ForegroundServiceSampleScreen.route) {
-//            ForegroundServiceSampleScreen(
-//                serviceRunning = serviceRunning,
-//                currentLocation = currentLocation,
-//                onClick = onClickForeground)
-//        }
     }
 }

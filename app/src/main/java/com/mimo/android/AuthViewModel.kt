@@ -1,11 +1,10 @@
 package com.mimo.android
 
-import com.mimo.android.services.kakao.logoutWithKakao
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimo.android.apis.mimo.user.GetMyInfoResponse
-import com.mimo.android.apis.mimo.user.getMyInfo
+import com.mimo.android.apis.mimo.users.GetMyInfoResponse
+import com.mimo.android.apis.mimo.users.getMyInfo
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.preferences.saveData

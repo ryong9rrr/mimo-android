@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.mimo.android.apis.mimo.user.postAccessToken
+import com.mimo.android.apis.mimo.users.postAccessToken
 import com.mimo.android.components.BackgroundImage
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
