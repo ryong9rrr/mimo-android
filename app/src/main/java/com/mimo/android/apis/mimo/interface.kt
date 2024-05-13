@@ -1,6 +1,7 @@
 package com.mimo.android.apis.mimo
 
+import com.mimo.android.apis.mimo.houses.HousesApiService
 import com.mimo.android.apis.mimo.hubs.HubsApiService
 import com.mimo.android.apis.mimo.users.UsersApiService
 
-interface MimoApiService: UsersApiService, HubsApiService
+interface MimoApiService: UsersApiService, HubsApiService, HousesApiService
