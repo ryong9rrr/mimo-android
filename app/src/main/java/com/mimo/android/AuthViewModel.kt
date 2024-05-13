@@ -32,12 +32,10 @@ class AuthViewModel: ViewModel() {
                     if (data == null) {
                         return@getMyInfo
                     }
-
-                    firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
-
-//                    if (!data.hasHome && !data.hasHub) {
-//                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
-//                    }
+                    
+                    if (!data.hasHome && !data.hasHub) {
+                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
+                    }
 
                     Toast.makeText(
                         MainActivity.getMainActivityContext(),

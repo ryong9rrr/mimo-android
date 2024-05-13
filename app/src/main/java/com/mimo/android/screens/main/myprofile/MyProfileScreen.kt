@@ -24,8 +24,7 @@ fun MyProfileScreen(
 ){
     Column {
         HeadingLarge(text = "내 정보", fontSize = Size.lg)
-        
-        Spacer(modifier = Modifier.padding(16.dp))
+        Spacer(modifier = Modifier.padding(14.dp))
 
         // TODO: 임시
         Button(text = "로그아웃", onClick = {
