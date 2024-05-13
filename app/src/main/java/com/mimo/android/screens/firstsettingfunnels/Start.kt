@@ -14,7 +14,7 @@ import com.mimo.android.ui.theme.*
 
 @Preview
 @Composable
-fun FunnelFirstSettingStart(
+fun Start(
     checkCameraPermission: (() -> Unit)? = null
 ){
     Column(

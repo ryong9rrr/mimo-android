@@ -18,18 +18,11 @@
     <!-- screens:login -->
     <string name="login_screen">login_screen</string>
     <!-- screens:first setting funnels -->
-    <string name="test_funnel">test_funnel</string>
-    <string name="first_setting_funnels_root">first_setting_funnels_root</string>
-    <string name="first_setting_funnel_first_setting_start">first_setting_funnel_first_setting_start</string>
-    <string name="first_setting_funnel_qr_code_scan">first_setting_funnel_qr_code_scan</string>
-    <string name="first_setting_funnel_hub_find_waiting">first_setting_funnel_hub_find_waiting</string>
-    <string name="first_setting_funnel_auto_register_location">first_setting_funnel_auto_register_location</string>
-    <string name="first_setting_funnel_make_location_alias">first_setting_funnel_make_location_alias</string>
-    <string name="first_setting_funnel_check_entered_hub_info">first_setting_funnel_check_entered_hub_info</string>
-    <string name="first_setting_redirect_main_after_find_existing_hub">first_setting_redirect_main_after_find_existing_hub</string>
-    <string name="first_setting_redirect_location_register_after_find_new_hub">first_setting_redirect_location_register_after_find_new_hub</string>
-    <string name="first_setting_redirect_main_after_register_hub_and_location">first_setting_redirect_main_after_register_hub_and_location</string>
-    <string name="first_setting_funnel_enter_location_to_register_hub">first_setting_funnel_enter_location_to_register_hub</string>
+    <string name="fsfunnel_root">funnel_root</string>
+    <string name="fsfunnel_start">funnel_start</string>
+    <string name="fsfunnel_waiting">fsfunnel_waiting</string>
+    <string name="fsfunnel_directregister">fsfunnel_directregister</string>
+    <string name="fsfunnel_confirmregister">fsfunnel_confirmregister</string>
 
     <!-- foreground sample -->
     <string name="foreground_service_sample_screen">foreground_service_sample_screen</string>

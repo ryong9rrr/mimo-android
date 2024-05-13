@@ -36,7 +36,7 @@ class AuthViewModel: ViewModel() {
                     }
 
                     if (!data.hasHome && !data.hasHub) {
-                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
+                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.fsfunnel_start)
                     }
 
                     Toast.makeText(
@@ -82,7 +82,7 @@ class AuthViewModel: ViewModel() {
                     }
 
                     if (!data.hasHome && !data.hasHub) {
-                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
+                        firstSettingFunnelsViewModel.updateCurrentStep(R.string.fsfunnel_start)
                     }
 
                     _uiState.update { prevState ->

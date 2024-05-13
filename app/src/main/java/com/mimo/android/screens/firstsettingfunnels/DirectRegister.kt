@@ -16,7 +16,7 @@ import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.Teal100
 
 @Composable
-fun RedirectMainAfterFindExistingHub(
+fun DirectRegister(
     hub: Hub?,
     goNext: () -> Unit,
     redirectAfterCatchError: () -> Unit,
@@ -43,8 +43,8 @@ fun RedirectMainAfterFindExistingHub(
 
 @Preview
 @Composable
-fun RedirectMainAfterFindExistingHubPreview(){
-    RedirectMainAfterFindExistingHub(
+fun DirectRegisterPreview(){
+    DirectRegister(
         hub = Hub(
             address = "경기도 고양시 일산서구 산현로12"
         ),

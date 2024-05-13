@@ -61,7 +61,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                             _uiState.update { prevState ->
                                 prevState.copy(
                                     userLocation = userLocation,
-                                    currentStepId = R.string.first_setting_funnel_auto_register_location
+                                    currentStepId = R.string.fsfunnel_confirmregister
                                 )
                             }
                         }
@@ -72,7 +72,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                     // 등록시킨 후 이동, first_setting_redirect_main_after_find_existing_hub에서는 메인으로 리다이렉트하게 됨.
                     _uiState.update { prevState ->
                         prevState.copy(
-                            currentStepId = R.string.first_setting_redirect_main_after_find_existing_hub,
+                            currentStepId = R.string.fsfunnel_directregister,
                             hub = Hub(
                                 serialNumber = qrCode,
                                 address = data.address,
@@ -87,7 +87,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                         _uiState.update { prevState ->
                             prevState.copy(
                                 userLocation = userLocation,
-                                currentStepId = R.string.first_setting_funnel_auto_register_location
+                                currentStepId = R.string.fsfunnel_confirmregister
                             )
                         }
                     }
@@ -125,7 +125,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                             houseId = data.houseId
                         ),
                         onSuccessCallback = { data ->
-                            Log.i(TAG, "허브 ${qrCode}를 $address 에 등록완료!!")
+                            Log.i(TAG, "허브 ${qrCode}를 $address 에 등록완료!! @@ 리턴 데이터 ${data}")
                             redirectToMain()
                         },
                         onFailureCallback = {
@@ -157,19 +157,6 @@ class FirstSettingFunnelsViewModel: ViewModel() {
             Toast.LENGTH_SHORT
         ).show()
     }
-
-//    fun redirectAutoRegisterLocationFunnel(userLocation: UserLocation?){
-//        viewModelScope.launch {
-//            // TODO: Loading UI State
-//            delay(2000)
-//            _uiState.update { prevState ->
-//                prevState.copy(
-//                    currentStepId = R.string.first_setting_funnel_auto_register_location,
-//                    userLocation = userLocation
-//                )
-//            }
-//        }
-//    }
 }
 
 data class FirstSettingFunnelsUiState (

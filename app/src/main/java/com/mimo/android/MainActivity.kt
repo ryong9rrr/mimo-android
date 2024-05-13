@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
             Toast.LENGTH_SHORT
         ).show()
         qrCodeViewModel.initRegisterFirstSetting(qrCode = result.contents)
-        firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_hub_find_waiting)
+        firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.fsfunnel_waiting)
     }
     private val qRRequestPermissionLauncherFirstSetting = createQRRequestPermissionLauncher(
         barCodeLauncher = barCodeLauncherFirstSetting

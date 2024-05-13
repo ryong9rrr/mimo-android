@@ -1,7 +1,6 @@
 package com.mimo.android.screens.firstsettingfunnels
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -11,7 +10,7 @@ import com.mimo.android.components.base.*
 import com.mimo.android.ui.theme.*
 
 @Composable
-fun FunnelAutoRegisterLocation(
+fun ConfirmRegister(
     location: String,
     onConfirm: () -> Unit
 ){
@@ -26,27 +25,13 @@ fun FunnelAutoRegisterLocation(
 
         Spacer(modifier = Modifier.weight(1f))
         Button(text = "완료", onClick = onConfirm)
-//        LazyVerticalGrid(
-//            columns = GridCells.Fixed(2),
-//            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            item {
-//                Button(
-//                    text = "장소 직접 입력", color = Gray600, hasBorder = false,
-//                    onClick = onDirectlyEnterLocation
-//                )
-//            }
-//            item {
-//                Button(text = "네 등록할게요", onClick = onConfirm)
-//            }
-//        }
     }
 }
 
 @Preview
 @Composable
-fun FunnelAutoRegisterLocationPreview(){
-    FunnelAutoRegisterLocation(
+fun ConfirmRegisterPreview(){
+    ConfirmRegister(
         location = "서울특별시 강남구 테헤란로 212",
         onConfirm = {}
     )
