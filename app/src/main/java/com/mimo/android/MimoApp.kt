@@ -26,8 +26,8 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
-import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.kakao.loginWithKakao
+import com.mimo.android.viewmodels.MyHouseViewModel
 
 private const val TAG = "MimoApp"
 
@@ -46,7 +46,7 @@ fun MimoApp(
     checkCameraPermissionFirstSetting: () -> Unit,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
-    myHomeViewModel: MyHomeViewModel
+    myHouseViewModel: MyHouseViewModel
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -55,6 +55,7 @@ fun MimoApp(
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         val availability by healthConnectManager.availability
+
         val authUiState by authViewModel.uiState.collectAsState()
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
 
@@ -171,7 +172,7 @@ fun MimoApp(
                             healthConnectManager = healthConnectManager,
                             onStartSleepForegroundService = onStartSleepForegroundService,
                             onStopSleepForegroundService = onStopSleepForegroundService,
-                            myHomeViewModel = myHomeViewModel,
+                            myHouseViewModel = myHouseViewModel,
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                             checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,

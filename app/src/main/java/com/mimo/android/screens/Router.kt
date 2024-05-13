@@ -1,16 +1,19 @@
 package com.mimo.android.screens
 
-import com.mimo.android.screens.main.myhome.MyHomeScreen
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.main.myprofile.MyProfileScreen
 import com.mimo.android.screens.main.sleep.SleepScreen
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mimo.android.screens.main.myhome.MyHouseHubListScreen
 import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
-import com.mimo.android.screens.main.myhome.*
+import com.mimo.android.screens.main.myhouse.*
+import com.mimo.android.viewmodels.MyHouseViewModel
 
 @Composable
 fun Router(
@@ -19,17 +22,19 @@ fun Router(
     healthConnectManager: HealthConnectManager,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
-    myHomeViewModel: MyHomeViewModel,
+    myHouseViewModel: MyHouseViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
     authViewModel: AuthViewModel
 ){
-    NavHost(navController = navController, startDestination = SleepDestination.route) {
-        composable(MyHomeDestination.route) {
-            MyHomeScreen(
+    val myHouseUiState by myHouseViewModel.uiState.collectAsState()
+
+    NavHost(navController = navController, startDestination = SleepScreenDestination.route) {
+        composable(MyHouseScreenDestination.route) {
+            MyHouseScreen(
                 navController = navController,
-                myHomeViewModel = myHomeViewModel,
+                myHouseViewModel = myHouseViewModel,
                 qrCodeViewModel = qrCodeViewModel,
                 checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                 checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
@@ -37,7 +42,7 @@ fun Router(
             return@composable
         }
 
-        composable(SleepDestination.route) {
+        composable(SleepScreenDestination.route) {
             SleepScreen(
                 navController = navController,
                 isActiveSleepForegroundService = isActiveSleepForegroundService,
@@ -47,7 +52,7 @@ fun Router(
             return@composable
         }
 
-        composable(MyProfileDestination.route) {
+        composable(MyProfileScreenDestination.route) {
             MyProfileScreen(
                 navController = navController,
                 healthConnectManager = healthConnectManager,
@@ -57,45 +62,45 @@ fun Router(
         }
 
         composable(
-            route = MyHomeDetailDestination.routeWithArgs,
-            arguments = MyHomeDetailDestination.arguments
+            route = MyHouseDetailScreenDestination.routeWithArgs,
+            arguments = MyHouseDetailScreenDestination.arguments
         ){ backStackEntry ->
-            val homeId = backStackEntry.arguments?.getString(MyHomeDetailDestination.homeIdTypeArg)
-            val home = myHomeViewModel.getHome(homeId?.toLong())
-            if (home == null) {
-                navController.navigate(MyHomeDestination.route) {
+            val houseId = backStackEntry.arguments?.getString(MyHouseDetailScreenDestination.houseIdTypeArg)
+            val house = myHouseViewModel.queryHouse(myHouseUiState, houseId!!.toLong())
+            if (house == null) {
+                navController.navigate(MyHouseScreenDestination.route) {
                     popUpTo(0)
                 }
                 return@composable
             }
-            MyHomeDetailScreen(
+            MyHouseDetailScreen(
                 navController = navController,
-                home = home,
-                isCurrentHome = myHomeViewModel.isCurrentHome(home.homeId),
-                myItems = Any(),
-                anotherPeopleItems = Any(),
-                qrCodeViewModel = qrCodeViewModel,
-                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
-                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
+                house = house,
+//                isCurrentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)?.id == house.id,
+//                myItems = Any(),
+//                anotherPeopleItems = Any(),
+//                qrCodeViewModel = qrCodeViewModel,
+//                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
+//                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
             )
             return@composable
         }
 
         composable(
-            route = HomeHubListScreen.routeWithArgs,
-            arguments = HomeHubListScreen.arguments
+            route = MyHouseHubListScreen.routeWithArgs,
+            arguments = MyHouseHubListScreen.arguments
         ){ backStackEntry ->
-            val homeId = backStackEntry.arguments?.getString(HomeHubListScreen.homeIdTypeArg)
-            val home = myHomeViewModel.getHome(homeId?.toLong())
-            if (home == null) {
-                navController.navigate(MyHomeDestination.route) {
+            val houseId = backStackEntry.arguments?.getString(MyHouseHubListScreen.houseIdTypeArg)
+            val house = myHouseViewModel.queryHouse(myHouseUiState, houseId!!.toLong())
+            if (house == null) {
+                navController.navigate(MyHouseScreenDestination.route) {
                     popUpTo(0)
                 }
                 return@composable
             }
-            HomeHubListScreen(
+            MyHouseHubListScreen(
                 navController = navController,
-                home = home,
+                house = house,
             )
             return@composable
         }

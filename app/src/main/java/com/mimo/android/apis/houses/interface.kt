@@ -22,10 +22,9 @@ interface HousesApiService {
         @Body postRegisterHubToHouseRequest: PostAutoRegisterHubToHouseRequest
     ): Call<PostAutoRegisterHubToHouseResponse>
 
-    // TODO: Any 타입 변경 해야함
-    @Headers
-    @GET
+    @Headers("Content-Type: application/json")
+    @GET("houses")
     fun getHouseList(
         @Header("X-AUTH-TOKEN") accessToken: String,
-    ): Call<Any>
+    ): Call<List<House>>
 }

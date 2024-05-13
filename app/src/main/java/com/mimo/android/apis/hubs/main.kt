@@ -11,15 +11,15 @@ const val TAG = "/apis/mimo/hubs"
 fun postRegisterHubToHouse(
     accessToken: String,
     postRegisterHubToHomeRequest: PostRegisterHubToHouseRequest,
-    onSuccessCallback: (OnResponseSuccessCallback<Any>)? = null,
+    onSuccessCallback: (OnResponseSuccessCallback<String>)? = null,
     onFailureCallback: (onResponseFailureCallback)? = null
 ){
     val call = mimoApiService.postRegisterHubToHouse(
         accessToken = accessToken,
         postRegisterHubToHomeRequest = postRegisterHubToHomeRequest
     )
-    call.enqueue(object : retrofit2.Callback<Any> {
-        override fun onResponse(call: Call<Any>, response: retrofit2.Response<Any>) {
+    call.enqueue(object : retrofit2.Callback<String> {
+        override fun onResponse(call: Call<String>, response: retrofit2.Response<String>) {
             Log.i(TAG, response.toString())
             if (response.isSuccessful) {
                 onSuccessCallback?.invoke(response.body())
@@ -28,7 +28,7 @@ fun postRegisterHubToHouse(
             }
         }
 
-        override fun onFailure(call: Call<Any>, t: Throwable) {
+        override fun onFailure(call: Call<String>, t: Throwable) {
             Log.e(TAG, "Network request failed")
             onFailureCallback?.invoke()
         }

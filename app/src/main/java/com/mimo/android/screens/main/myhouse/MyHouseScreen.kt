@@ -1,4 +1,4 @@
-package com.mimo.android.screens.main.myhome
+package com.mimo.android.screens.main.myhouse
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,72 +29,76 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mimo.android.apis.houses.House
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
-import com.mimo.android.screens.MyHomeDetailDestination
+import com.mimo.android.screens.*
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.viewmodels.MyHouseViewModel
 
 private const val TAG = "MyHomeScreen"
 
 @Composable
-fun MyHomeScreen(
+fun MyHouseScreen(
     navController: NavHostController,
-    myHomeViewModel: MyHomeViewModel,
+    myHouseViewModel: MyHouseViewModel,
     qrCodeViewModel: QrCodeViewModel? = null,
     checkCameraPermissionHubToHouse: (() -> Unit)? = null,
     checkCameraPermissionMachineToHub: (() -> Unit)? = null,
 ){
+    val myHouseUiState by myHouseViewModel.uiState.collectAsState()
     var isShowModal by remember { mutableStateOf(false) }
-    var selectedHome by remember { mutableStateOf<Home?>(null) }
+    var selectedHouse by remember { mutableStateOf<House?>(null) }
+
+    LaunchedEffect(Unit) {
+        myHouseViewModel.fetchHouseList()
+    }
 
     ScrollView {
-        val myHomeUiState by myHomeViewModel.uiState.collectAsState()
 
-        fun navigateToMyHomeDetailScreen(home: Home){
-            if (home.homeId != null) {
-                navController.navigate("${MyHomeDetailDestination.route}/${home.homeId}")
-            }
+        val currentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)
+        val anotherHouseList = myHouseViewModel.getAnotherHouseList(myHouseUiState)
+
+        fun navigateToMyHouseDetailScreen(house: House){
+            navController.navigate("${MyHouseDetailScreenDestination.route}/${house.id}")
         }
 
-        fun handleShowModal(home: Home?){
+        fun handleShowModal(house: House){
             isShowModal = true
-            selectedHome = home
+            selectedHouse = house
         }
 
         fun handleCloseModal(){
             isShowModal = false
-            selectedHome = null
+            selectedHouse = null
         }
 
-        fun handleClickChangeCurrentHomeModalButton(home: Home){
+        fun handleClickChangeCurrentHouseModalButton(house: House){
             handleCloseModal()
-            if (myHomeUiState.currentHome?.homeId == home.homeId) {
+            if (currentHouse?.id == house.id) {
                 return
             }
-            myHomeViewModel.changeCurrentHome(home.homeId)
+            myHouseViewModel.changeCurrentHome(house)
         }
 
-        fun handleClickAddHubModalButton(home: Home){
+        fun handleClickAddHubModalButton(house: House){
             handleCloseModal()
-            if (home.homeId == null) {
-                Log.e(TAG, "homeId가 Null임...")
-            }
-            qrCodeViewModel?.initRegisterHubToHouse(houseId = home.homeId!!)
+            qrCodeViewModel?.initRegisterHubToHouse(houseId = house.id)
             checkCameraPermissionHubToHouse?.invoke()
         }
 
-        if (isShowModal && selectedHome != null) {
+        if (isShowModal && selectedHouse != null) {
             Modal(
                 onClose = ::handleCloseModal,
                 children = {
                     ModalContent(
-                        isCurrentHome = myHomeUiState.currentHome?.homeId == selectedHome?.homeId,
-                        home = selectedHome!!,
+                        isCurrentHouse = currentHouse?.id == selectedHouse!!.id,
+                        house = selectedHouse!!,
                         onClose = ::handleCloseModal,
-                        onClickChangeCurrentHomeModalButton = ::handleClickChangeCurrentHomeModalButton,
+                        onClickChangeCurrentHouseModalButton = ::handleClickChangeCurrentHouseModalButton,
                         onClickAddHubModalButton = ::handleClickAddHubModalButton
                     )
                 }
@@ -108,19 +113,22 @@ fun MyHomeScreen(
             HeadingLarge(text = "우리 집", fontSize = Size.lg)
             ButtonSmall(text = "거주지 추가")
         }
+
         Spacer(modifier = Modifier.padding(14.dp))
 
         HeadingSmall(text = "현재 거주지", fontSize = Size.lg)
         Spacer(modifier = Modifier.padding(4.dp))
-        if (myHomeUiState.currentHome == null) {
+
+
+        if (currentHouse == null) {
             Text(text = "등록된 거주지가 없어요")
         }
-        if (myHomeUiState.currentHome != null) {
+        if (currentHouse != null) {
             Card(
-                home = myHomeUiState.currentHome!!,
+                house = currentHouse,
                 isCurrentHome = true,
-                onClick = { home -> navigateToMyHomeDetailScreen(home) },
-                onClickMenu = { home -> handleShowModal(home) },
+                onClick = { house -> navigateToMyHouseDetailScreen(house) },
+                onClickMenu = { house -> handleShowModal(house) },
                 onLongClick = {}
             )
         }
@@ -129,20 +137,20 @@ fun MyHomeScreen(
 
         HeadingSmall(text = "다른 거주지")
         Spacer(modifier = Modifier.padding(4.dp))
-        if (myHomeUiState.anotherHomeList.isEmpty()) {
+        if (anotherHouseList.isEmpty()) {
             Text(text = "등록된 거주지가 없어요")
         }
-        if (myHomeUiState.anotherHomeList.isNotEmpty()) {
-            myHomeUiState.anotherHomeList.forEachIndexed { index, anotherHome ->
+        if (anotherHouseList.isNotEmpty()) {
+            anotherHouseList.forEachIndexed { index, anotherHouse ->
                 Card(
-                    home = anotherHome,
+                    house = anotherHouse,
                     isCurrentHome = false,
-                    onClick = { home -> navigateToMyHomeDetailScreen(home) },
-                    onClickMenu = { home -> handleShowModal(home) },
+                    onClick = { house -> navigateToMyHouseDetailScreen(house) },
+                    onClickMenu = { house -> handleShowModal(house) },
                     onLongClick = {}
                 )
 
-                if (index < myHomeUiState.anotherHomeList.size) {
+                if (index < anotherHouseList.size) {
                     Spacer(modifier = Modifier.padding(4.dp))
                 }
             }
@@ -153,18 +161,18 @@ fun MyHomeScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun Card(
-    home: Home,
+    house: House,
     isCurrentHome: Boolean,
-    onClick: ((home: Home) -> Unit)? = null,
-    onLongClick: ((home: Home) -> Unit)? = null,
-    onClickMenu: ((home: Home) -> Unit)? = null
+    onClick: ((house: House) -> Unit)? = null,
+    onLongClick: ((house: House) -> Unit)? = null,
+    onClickMenu: ((house: House) -> Unit)? = null
 ){
     Box(
         modifier = Modifier.combinedClickable(
-            onClick = { onClick?.invoke(home) },
+            onClick = { onClick?.invoke(house) },
             onLongClick = {
                 if (!isCurrentHome) {
-                    onLongClick?.invoke(home)
+                    onLongClick?.invoke(house)
                 }
             }
         )
@@ -182,32 +190,30 @@ private fun Card(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ){
                         Row {
-                            if (home.items != null) {
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    home.items.forEach { item -> CardType(text = item) }
-                                }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                house.devices.forEach { device -> CardType(text = device) }
                             }
                         }
 
                         Icon(
                             imageVector = Icons.Default.Menu,
                             size = 24.dp,
-                            onClick = { onClickMenu?.invoke(home) }
+                            onClick = { onClickMenu?.invoke(house) }
                         )
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     HorizontalScroll {
-                        HeadingSmall(text = home.homeName, Size.lg)
+                        HeadingSmall(text = house.nickname, Size.lg)
                     }
 
                     Spacer(modifier = Modifier.padding(4.dp))
 
                     HorizontalScroll {
-                        HeadingSmall(text = home.address, fontSize = Size.xs, color = Teal100)
+                        HeadingSmall(text = house.address, fontSize = Size.xs, color = Teal100)
                     }
                 }
             }
@@ -217,11 +223,11 @@ private fun Card(
 
 @Composable
 fun ModalContent(
-    isCurrentHome: Boolean,
-    home: Home,
+    isCurrentHouse: Boolean,
+    house: House,
     onClose: (() -> Unit)? = null,
-    onClickChangeCurrentHomeModalButton: ((home: Home) -> Unit)? = null,
-    onClickAddHubModalButton: ((home: Home) -> Unit)? = null
+    onClickChangeCurrentHouseModalButton: ((house: House) -> Unit)? = null,
+    onClickAddHubModalButton: ((house: House) -> Unit)? = null
 ){
     Box(
         modifier = Modifier
@@ -241,16 +247,16 @@ fun ModalContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadingSmall(text = home.homeName)
+            HeadingSmall(text = house.nickname)
 //            Spacer(modifier = Modifier.padding(2.dp))
 //            Text(text = "현재 거주지로 변경할까요?")
             Spacer(modifier = Modifier.padding(8.dp))
             Column {
-                if (!isCurrentHome) {
-                    Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHomeModalButton?.invoke(home) })
+                if (!isCurrentHouse) {
+                    Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHouseModalButton?.invoke(house) })
                     Spacer(modifier = Modifier.padding(4.dp))
                 }
-                Button(text = "허브 등록", onClick = { onClickAddHubModalButton?.invoke(home) })
+                Button(text = "허브 등록", onClick = { onClickAddHubModalButton?.invoke(house) })
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(
                         text = "닫기", color = Gray600, hasBorder = false,
@@ -277,32 +283,37 @@ fun ModalContent(
 
 @Preview
 @Composable
-private fun MyHomeScreenPreview(){
+private fun MyHouseScreenPreview(){
     val navController = NavHostController(LocalContext.current)
-    val currentHome = Home(
-        items = arrayOf("조명", "무드등"),
-        homeName = "상윤이의 자취방",
-        address = "서울특별시 관악구 봉천동 1234-56"
-    )
-    val anotherHomeList: List<Home> = mutableListOf(
-        Home(
-            items = arrayOf("조명", "창문", "커튼"),
-            homeName = "상윤이의 본가",
+    val houseList: List<House> = arrayListOf(
+        House(
+            id = 1,
+            isHome = true,
+            devices = arrayListOf("조명", "무드등"),
+            nickname = "상윤이의 자취방",
+            address = "서울특별시 관악구 봉천동 1234-56"
+        ),
+        House(
+            id = 2,
+            isHome = false,
+            devices = arrayListOf("조명", "창문", "커튼"),
+            nickname = "상윤이의 본가",
             address = "경기도 고양시 일산서구 산현로12"
         ),
-        Home(
-            items = arrayOf("조명", "커튼"),
-            homeName = "싸피",
+        House(
+            id = 3,
+            isHome = false,
+            devices = arrayListOf("조명", "커튼"),
+            nickname = "싸피",
             address = "서울특별시 강남구 테헤란로 212"
         )
     )
 
-    val myHomeViewModel = MyHomeViewModel()
-    myHomeViewModel.updateCurrentHome(currentHome)
-    myHomeViewModel.updateAnotherHomeList(anotherHomeList)
+    val myHouseViewModel = MyHouseViewModel()
+    myHouseViewModel.updateHouseList(houseList)
 
-    MyHomeScreen(
+    MyHouseScreen(
         navController = navController,
-        myHomeViewModel = myHomeViewModel
+        myHouseViewModel = myHouseViewModel
     )
 }

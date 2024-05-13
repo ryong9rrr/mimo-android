@@ -9,5 +9,5 @@ interface HubsApiService {
     fun postRegisterHubToHouse(
         @Header("X-AUTH-TOKEN") accessToken: String,
         @Body postRegisterHubToHomeRequest: PostRegisterHubToHouseRequest
-    ): Call<Any>
+    ): Call<String>
 }

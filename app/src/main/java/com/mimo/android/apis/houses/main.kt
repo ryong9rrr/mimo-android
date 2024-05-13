@@ -64,13 +64,12 @@ fun postAutoRegisterHubToHouse(
 
 fun getHouseList(
     accessToken: String,
-    onSuccessCallback: (OnResponseSuccessCallback<Any>)? = null,
+    onSuccessCallback: (OnResponseSuccessCallback<List<House>>)? = null,
     onFailureCallback: (onResponseFailureCallback)? = null
 ){
     val call = mimoApiService.getHouseList(accessToken = accessToken)
-    call.enqueue(object : retrofit2.Callback<Any> {
-        override fun onResponse(call: Call<Any>, response: retrofit2.Response<Any>) {
-            Log.i(TAG, response.toString())
+    call.enqueue(object : retrofit2.Callback<List<House>> {
+        override fun onResponse(call: Call<List<House>>, response: retrofit2.Response<List<House>>) {
             if (response.isSuccessful) {
                 onSuccessCallback?.invoke(response.body())
             } else {
@@ -78,7 +77,7 @@ fun getHouseList(
             }
         }
 
-        override fun onFailure(call: Call<Any>, t: Throwable) {
+        override fun onFailure(call: Call<List<House>>, t: Throwable) {
             Log.e(TAG, "Network request failed")
             onFailureCallback?.invoke()
         }

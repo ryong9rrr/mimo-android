@@ -18,4 +18,10 @@ data class PostAutoRegisterHubToHouseResponse(
     val address: String?
 )
 
-//data class GetHouseListResponse()
+data class House(
+    val id: Long,
+    val nickname: String,
+    val address: String,
+    val isHome: Boolean,
+    val devices: List<String>
+)

@@ -132,7 +132,6 @@ fun FunnelMatcher(
         FunnelAutoRegisterLocation(
             location = userAddress,
             onConfirm = {
-                // TODO: 그냥 여기서 바로 처리해버리기...
                 val qrCode = qrCodeUiState.qrCode
                 Log.i(TAG, "$qrCode")
                 if (qrCode == null) {

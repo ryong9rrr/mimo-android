@@ -1,4 +1,4 @@
-package com.mimo.android.screens.main.myhome
+package com.mimo.android.screens.main.myhouse
 
 import androidx.compose.runtime.Composable
 

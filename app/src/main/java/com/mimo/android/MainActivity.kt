@@ -21,7 +21,6 @@ import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.viewmodels.UserLocation
-import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.health.*
 import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.initializeKakaoSdk
@@ -29,6 +28,7 @@ import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
 import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.createSharedPreferences
+import com.mimo.android.viewmodels.MyHouseViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.time.*
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
     private val authViewModel = AuthViewModel()
     private val firstSettingFunnelsViewModel = FirstSettingFunnelsViewModel()
     private val qrCodeViewModel = QrCodeViewModel()
-    private val myHomeViewModel = MyHomeViewModel()
+    private val myHouseViewModel = MyHouseViewModel()
 
     // 초기세팅용 QR code Scanner
     private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
@@ -168,7 +168,7 @@ class MainActivity : ComponentActivity() {
                 healthConnectManager = healthConnectManager,
                 qrCodeViewModel = qrCodeViewModel,
                 firstSettingFunnelsViewModel = firstSettingFunnelsViewModel,
-                myHomeViewModel = myHomeViewModel,
+                myHouseViewModel = myHouseViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,

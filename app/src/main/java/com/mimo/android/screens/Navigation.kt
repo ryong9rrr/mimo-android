@@ -40,7 +40,7 @@ fun Navigation(
             contentPadding = PaddingValues(0.dp),
             shape = MaterialTheme.shapes.small,
             onClick = {
-                navController.navigate(MyHomeDestination.route) {
+                navController.navigate(MyHouseScreenDestination.route) {
                     popUpTo(0)
                 }
             }
@@ -52,7 +52,7 @@ fun Navigation(
             contentPadding = PaddingValues(0.dp),
             shape = MaterialTheme.shapes.small,
             onClick = {
-                navController.navigate(SleepDestination.route) {
+                navController.navigate(SleepScreenDestination.route) {
                     popUpTo(0)
                 }
             }
@@ -64,7 +64,7 @@ fun Navigation(
             contentPadding = PaddingValues(0.dp),
             shape = MaterialTheme.shapes.small,
             onClick = {
-                navController.navigate(MyProfileDestination.route) {
+                navController.navigate(MyProfileScreenDestination.route) {
                     popUpTo(0)
                 }
             }

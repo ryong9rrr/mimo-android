@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mimo.android.apis.houses.House
 import com.mimo.android.components.Button
 import com.mimo.android.components.ButtonSmall
 import com.mimo.android.components.CardType
@@ -46,9 +47,9 @@ import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.ui.theme.Teal400
 
 @Composable
-fun HomeHubListScreen(
+fun MyHouseHubListScreen(
     navController: NavHostController,
-    home: Home
+    house: House
 ){
     val hubList by remember { mutableStateOf<List<Hub>?>(null) }
 
@@ -63,18 +64,21 @@ fun HomeHubListScreen(
     ScrollView {
         Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
         Spacer(modifier = Modifier.padding(14.dp))
-        
+
         HeadingLarge(text = "허브 목록", fontSize = Size.lg)
         Spacer(modifier = Modifier.padding(8.dp))
         HorizontalScroll {
-            HeadingSmall(text = "${home.homeName} / ${home.address}", fontSize = Size.sm, color = Teal100)
+            HeadingSmall(text = "${house.nickname} / ${house.address}", fontSize = Size.sm, color = Teal100)
         }
-        
+
         Spacer(modifier = Modifier.padding(16.dp))
-        
+
         if (hubList == null) {
             Text(text = "Loading...")
         }
     }
 }
 
+data class Hub(
+    val id: Long
+)
