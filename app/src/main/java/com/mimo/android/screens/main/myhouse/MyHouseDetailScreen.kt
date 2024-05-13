@@ -1,5 +1,6 @@
 package com.mimo.android.screens.main.myhouse
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mimo.android.MainActivity
 import com.mimo.android.apis.houses.House
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
+import com.mimo.android.screens.MyHouseHubListScreen
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
@@ -45,6 +49,13 @@ fun MyHouseDetailScreen(
 ){
 //    val houseId = home.homeId!!
 //    var isShowScreenModal by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        Toast.makeText(
+            MainActivity.getMainActivityContext(),
+            "${house.id}",
+            Toast.LENGTH_SHORT
+        ).show()
+    }
 
     fun handleGoPrev(){
         navController.navigateUp()

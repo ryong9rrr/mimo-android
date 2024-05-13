@@ -25,3 +25,4 @@ data class House(
     val isHome: Boolean,
     val devices: List<String>
 )
+

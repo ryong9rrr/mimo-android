@@ -58,7 +58,6 @@ fun MyHouseScreen(
     }
 
     ScrollView {
-
         val currentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)
         val anotherHouseList = myHouseViewModel.getAnotherHouseList(myHouseUiState)
 
