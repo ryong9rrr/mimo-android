@@ -17,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.mimo.android.apis.createMimoApiService
+import com.mimo.android.apis.sleeps.PostSleepDataRequest
+import com.mimo.android.apis.sleeps.postSleepData
 import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
@@ -27,7 +29,9 @@ import com.mimo.android.services.kakao.initializeKakaoSdk
 import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
 import com.mimo.android.utils.os.printKeyHash
+import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
+import com.mimo.android.utils.preferences.getData
 import com.mimo.android.viewmodels.MyHouseViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -259,12 +263,6 @@ class MainActivity : ComponentActivity() {
             return
         }
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
-
-//        getMyInfo(
-//            accessToken = getData(ACCESS_TOKEN)!!,
-//            onSuccessCallback = {data -> Log.i(TAG, data.toString())},
-//            onFailureCallback = {}
-//        )
     }
 
     private suspend fun readSleepSession(
@@ -298,9 +296,21 @@ class MainActivity : ComponentActivity() {
         val lastSleepStage = healthConnectManager.readLastSleepStage(startOfDay.toInstant(), now)
         if (lastSleepStage == null) {
             Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ 수면기록이 감지되지 않음")
+            postSleepData(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                postSleepDataRequest = PostSleepDataRequest(
+                    sleepLevel = -1
+                )
+            )
             return
         }
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
+        postSleepData(
+            accessToken = getData(ACCESS_TOKEN) ?: "",
+            postSleepDataRequest = PostSleepDataRequest(
+                sleepLevel = lastSleepStage.stage
+            )
+        )
     }
 
     private suspend fun readSteps(){
