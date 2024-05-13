@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.mimo.android.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
+import com.mimo.android.screens.HomeHubListScreen
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
@@ -69,6 +70,7 @@ fun MyHomeDetailScreen(
 
     fun handleClickShowHubListButton(){
         // TODO: HomeHubListScreen으로 navigate
+        navController.navigate("${HomeHubListScreen.route}/${home.homeId}")
     }
 
     BackHandler {

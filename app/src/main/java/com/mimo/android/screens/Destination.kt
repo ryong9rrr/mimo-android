@@ -27,3 +27,12 @@ object MyProfileDestination: Destination {
 object SleepDestination: Destination {
     override val route = "main_sleep"
 }
+
+object HomeHubListScreen: Destination {
+    override val route = "main_myhomedetail_homehublist"
+    const val homeIdTypeArg = "homeId"
+    val routeWithArgs = "$route/{$homeIdTypeArg}"
+    val arguments = listOf(
+        navArgument(homeIdTypeArg) { type = NavType.StringType }
+    )
+}
