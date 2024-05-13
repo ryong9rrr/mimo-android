@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.mimo.android.apis.mimo.createMimoApiService
+import com.mimo.android.apis.mimo.users.GetMyInfoResponse
+import com.mimo.android.apis.mimo.users.getMyInfo
 import com.mimo.android.screens.main.myhome.Home
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.health.*
@@ -26,8 +28,11 @@ import com.mimo.android.services.kakao.initializeKakaoSdk
 import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
 import com.mimo.android.utils.os.printKeyHash
+import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
+import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.*
 import java.time.format.DateTimeFormatter
@@ -235,7 +240,8 @@ class MainActivity : ComponentActivity() {
     inner class Task: TimerTask() {
         override fun run() {
             lifecycleScope.launch {
-                readFifteenMinutesAgoSleepStage()
+                //readFifteenMinutesAgoSleepStage()
+                readLastSleepStage()
                 if (timerTask == null) {
                     this.cancel()
                     return@launch
@@ -257,6 +263,12 @@ class MainActivity : ComponentActivity() {
             return
         }
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
+
+//        getMyInfo(
+//            accessToken = getData(ACCESS_TOKEN)!!,
+//            onSuccessCallback = {data -> Log.i(TAG, data.toString())},
+//            onFailureCallback = {}
+//        )
     }
 
     private suspend fun readSleepSession(
