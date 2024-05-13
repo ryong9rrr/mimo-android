@@ -1,9 +1,10 @@
-package com.mimo.android
+package com.mimo.android.viewmodels
 
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mimo.android.MainActivity
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.flow.MutableStateFlow

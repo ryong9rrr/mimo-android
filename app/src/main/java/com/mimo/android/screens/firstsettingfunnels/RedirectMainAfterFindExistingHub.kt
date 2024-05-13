@@ -9,7 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mimo.android.Hub
+import com.mimo.android.viewmodels.Hub
 import com.mimo.android.components.HeadingLarge
 import com.mimo.android.components.HeadingSmall
 import com.mimo.android.components.base.Size

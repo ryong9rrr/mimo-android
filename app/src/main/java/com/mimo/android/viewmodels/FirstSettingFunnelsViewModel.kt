@@ -1,13 +1,20 @@
-package com.mimo.android
+package com.mimo.android.viewmodels
 
 import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimo.android.apis.mimo.houses.*
-import com.mimo.android.apis.mimo.hubs.PostRegisterHubToHouseRequest
-import com.mimo.android.apis.mimo.hubs.postRegisterHubToHouse
+import com.mimo.android.MainActivity
+import com.mimo.android.R
+import com.mimo.android.apis.houses.PostAutoRegisterHubToHouseRequest
+import com.mimo.android.apis.houses.PostAutoRegisterHubToHouseResponse
+import com.mimo.android.apis.houses.PostRegisterHouseRequest
+import com.mimo.android.apis.houses.PostRegisterHouseResponse
+import com.mimo.android.apis.houses.postAutoRegisterHubToHouse
+import com.mimo.android.apis.houses.postRegisterHouse
+import com.mimo.android.apis.hubs.PostRegisterHubToHouseRequest
+import com.mimo.android.apis.hubs.postRegisterHubToHouse
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.delay

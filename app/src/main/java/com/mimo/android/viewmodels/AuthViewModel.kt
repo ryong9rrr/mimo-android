@@ -1,10 +1,12 @@
-package com.mimo.android
+package com.mimo.android.viewmodels
 
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimo.android.apis.mimo.users.GetMyInfoResponse
-import com.mimo.android.apis.mimo.users.getMyInfo
+import com.mimo.android.MainActivity
+import com.mimo.android.R
+import com.mimo.android.apis.users.GetMyInfoResponse
+import com.mimo.android.apis.users.getMyInfo
 import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
@@ -32,7 +34,7 @@ class AuthViewModel: ViewModel() {
                     if (data == null) {
                         return@getMyInfo
                     }
-                    
+
                     if (!data.hasHome && !data.hasHub) {
                         firstSettingFunnelsViewModel.updateCurrentStep(R.string.first_setting_funnel_first_setting_start)
                     }

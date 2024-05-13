@@ -23,7 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.QrCodeViewModel
+import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.screens.HomeHubListScreen
@@ -183,7 +183,6 @@ fun MyHomeDetailScreen(
 //                                        }
 //                                }
 
-                                println(nextValue)
                                 value = nextValue
                             },
                             valueRange = 0f..100f, // 슬라이더 값 범위

@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo
+package com.mimo.android.apis
 
 import com.mimo.android.MainActivity
 import com.mimo.android.apis.common.createApiService

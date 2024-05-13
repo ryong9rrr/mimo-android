@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.mimo.android.AuthViewModel
-import com.mimo.android.QrCodeViewModel
+import com.mimo.android.viewmodels.AuthViewModel
+import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.screens.main.myhome.*
 
 @Composable

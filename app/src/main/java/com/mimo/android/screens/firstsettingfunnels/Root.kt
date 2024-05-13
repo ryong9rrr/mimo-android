@@ -6,11 +6,11 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.mimo.android.FirstSettingFunnelsViewModel
+import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
 import com.mimo.android.MainActivity
-import com.mimo.android.QrCodeViewModel
+import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.R
-import com.mimo.android.UserLocation
+import com.mimo.android.viewmodels.UserLocation
 import com.mimo.android.services.gogglelocation.RequestPermissionsUtil
 
 private const val TAG = "FUNNEL_ROOT"

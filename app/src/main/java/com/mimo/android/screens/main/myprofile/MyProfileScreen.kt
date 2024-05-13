@@ -3,13 +3,12 @@ package com.mimo.android.screens.main.myprofile
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.AuthViewModel
+import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.components.Button
 import com.mimo.android.components.HeadingLarge
 import com.mimo.android.components.base.Size

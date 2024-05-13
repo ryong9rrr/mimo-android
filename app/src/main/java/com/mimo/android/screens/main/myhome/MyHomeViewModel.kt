@@ -6,8 +6,8 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.MainActivity
-import com.mimo.android.apis.mimo.houses.PostRegisterHouseRequest
-import com.mimo.android.apis.mimo.houses.postRegisterHouse
+import com.mimo.android.apis.houses.PostRegisterHouseRequest
+import com.mimo.android.apis.houses.postRegisterHouse
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.flow.MutableStateFlow

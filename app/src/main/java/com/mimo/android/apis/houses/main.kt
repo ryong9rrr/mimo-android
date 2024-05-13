@@ -1,9 +1,9 @@
-package com.mimo.android.apis.mimo.houses
+package com.mimo.android.apis.houses
 
 import android.util.Log
 import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
-import com.mimo.android.apis.mimo.mimoApiService
+import com.mimo.android.apis.mimoApiService
 import retrofit2.Call
 
 private const val TAG = "apis/houses/main"

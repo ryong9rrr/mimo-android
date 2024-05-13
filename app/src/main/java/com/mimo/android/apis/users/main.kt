@@ -1,10 +1,10 @@
-package com.mimo.android.apis.mimo.users
+package com.mimo.android.apis.users
 
 import android.util.Log
 import retrofit2.Call
 import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
-import com.mimo.android.apis.mimo.mimoApiService
+import com.mimo.android.apis.mimoApiService
 
 const val TAG = "/apis/mimo/users"
 

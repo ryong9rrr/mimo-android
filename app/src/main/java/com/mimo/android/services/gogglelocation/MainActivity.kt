@@ -5,7 +5,7 @@ import android.location.Location
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.mimo.android.MainActivity
-import com.mimo.android.UserLocation
+import com.mimo.android.viewmodels.UserLocation
 
 @SuppressLint("MissingPermission")
 fun MainActivity.launchGoogleLocationAndAddress(
@@ -20,10 +20,12 @@ fun MainActivity.launchGoogleLocationAndAddress(
                     lng = location.longitude,
                     context = this
                 )
-                cb(UserLocation(
+                cb(
+                    UserLocation(
                     location = location,
                     address = address
-                ))
+                )
+                )
             }
         }
         .addOnFailureListener { fail ->

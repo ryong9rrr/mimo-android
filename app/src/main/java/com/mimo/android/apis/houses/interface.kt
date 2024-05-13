@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo.houses
+package com.mimo.android.apis.houses
 
 import retrofit2.Call
 import retrofit2.http.Body

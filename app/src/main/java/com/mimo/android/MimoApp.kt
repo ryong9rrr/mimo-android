@@ -16,13 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.mimo.android.apis.mimo.users.postAccessToken
+import com.mimo.android.apis.users.postAccessToken
 import com.mimo.android.components.BackgroundImage
+import com.mimo.android.viewmodels.AuthViewModel
+import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
+import com.mimo.android.viewmodels.QrCodeViewModel
+import com.mimo.android.viewmodels.UserLocation
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
-import com.mimo.android.screens.main.myhome.Home
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
 import com.mimo.android.services.kakao.loginWithKakao
 

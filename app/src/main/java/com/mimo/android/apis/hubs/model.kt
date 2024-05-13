@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo.hubs
+package com.mimo.android.apis.hubs
 
 data class PostRegisterHubToHouseRequest(
     val serialNumber: String,

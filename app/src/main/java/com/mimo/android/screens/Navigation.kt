@@ -30,7 +30,6 @@ fun Navigation(
     val currentBackStack by navController.currentBackStackEntryAsState()
     // Fetch your currentDestination:
     val currentDestination = currentBackStack?.destination
-    println(currentDestination)
 
     Row(
         modifier = Modifier

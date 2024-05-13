@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo.hubs
+package com.mimo.android.apis.hubs
 
 import retrofit2.Call
 import retrofit2.http.*

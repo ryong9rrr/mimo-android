@@ -1,10 +1,10 @@
-package com.mimo.android.apis.mimo.hubs
+package com.mimo.android.apis.hubs
 
 import android.util.Log
 import retrofit2.Call
 import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
-import com.mimo.android.apis.mimo.mimoApiService
+import com.mimo.android.apis.mimoApiService
 
 const val TAG = "/apis/mimo/hubs"
 

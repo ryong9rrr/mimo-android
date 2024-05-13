@@ -1,4 +1,4 @@
-package com.mimo.android.apis.mimo.houses
+package com.mimo.android.apis.houses
 
 data class PostRegisterHouseRequest(
     val address: String,
