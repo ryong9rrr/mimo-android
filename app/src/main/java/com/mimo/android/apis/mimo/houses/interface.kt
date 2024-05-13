@@ -9,11 +9,18 @@ import retrofit2.http.POST
 
 interface HousesApiService {
     @Headers("Content-Type: application/json")
-    @POST("houses")
+    @POST("houses/new")
     fun postRegisterHouse(
         @Header("X-AUTH-TOKEN") accessToken: String,
         @Body postRegisterHouseRequest: PostRegisterHouseRequest
     ): Call<PostRegisterHouseResponse>
+
+    @Headers("Content-Type: application/json")
+    @POST("houses")
+    fun postAutoRegisterHubToHouse(
+        @Header("X-AUTH-TOKEN") accessToken: String,
+        @Body postRegisterHubToHouseRequest: PostAutoRegisterHubToHouseRequest
+    ): Call<PostAutoRegisterHubToHouseResponse>
 
     // TODO: Any 타입 변경 해야함
     @Headers

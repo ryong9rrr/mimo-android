@@ -21,18 +21,6 @@ fun RedirectMainAfterFindExistingHub(
     goNext: () -> Unit,
     redirectAfterCatchError: () -> Unit,
 ){
-    if (hub == null) {
-        redirectAfterCatchError()
-        return
-    }
-
-    val homeName = hub.locationAlias
-    val homeLocation = hub.location
-
-    if (homeName == null || homeLocation == null) {
-        redirectAfterCatchError()
-        return
-    }
 
     LaunchedEffect(Unit) {
         goNext()
@@ -43,9 +31,7 @@ fun RedirectMainAfterFindExistingHub(
     ) {
         Spacer(modifier = Modifier.padding(30.dp))
 
-        HeadingLarge(text = homeName, fontSize = Size.lg, color = Teal100)
-        Spacer(modifier = Modifier.padding(8.dp))
-        HeadingSmall(text = homeLocation, color = Teal100, fontSize = Size.sm)
+        HeadingSmall(text = hub?.address ?: "", color = Teal100, fontSize = Size.sm)
 
         Spacer(modifier = Modifier.padding(16.dp))
 
@@ -60,9 +46,7 @@ fun RedirectMainAfterFindExistingHub(
 fun RedirectMainAfterFindExistingHubPreview(){
     RedirectMainAfterFindExistingHub(
         hub = Hub(
-            location = "경기도 고양시 일산서구 산현로 34",
-            locationAlias = "상윤이의 본가",
-            qrCode = ""
+            address = "경기도 고양시 일산서구 산현로12"
         ),
         goNext = {},
         redirectAfterCatchError = {}

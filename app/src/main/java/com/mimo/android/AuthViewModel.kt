@@ -100,9 +100,7 @@ class AuthViewModel: ViewModel() {
     fun logout(){
         removeData(ACCESS_TOKEN)
         logoutWithKakao()
-        _uiState.update { prevState ->
-            prevState.copy(user = null)
-        }
+        _uiState.value = AuthUiState()
     }
 }
 
