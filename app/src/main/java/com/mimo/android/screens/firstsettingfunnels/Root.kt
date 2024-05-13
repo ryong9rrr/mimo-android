@@ -133,8 +133,9 @@ fun FunnelMatcher(
             location = userAddress,
             onConfirm = {
                 // TODO: 그냥 여기서 바로 처리해버리기...
-                val hubQrCode = qrCodeUiState.qrCode
-                if (hubQrCode == null) {
+                val qrCode = qrCodeUiState.qrCode
+                Log.i(TAG, "$qrCode")
+                if (qrCode == null) {
                     Toast.makeText(
                         MainActivity.getMainActivityContext(),
                         "다시 시도해주세요",
@@ -143,7 +144,7 @@ fun FunnelMatcher(
                     firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.first_setting_funnel_first_setting_start)
                     return@FunnelAutoRegisterLocation
                 }
-                firstSettingFunnelsViewModel.registerNewHubAndRedirectToMain(hubQrCode = hubQrCode)
+                firstSettingFunnelsViewModel.registerNewHubAndRedirectToMain(qrCode = qrCode)
             }
         )
         return

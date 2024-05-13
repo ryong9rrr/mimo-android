@@ -44,7 +44,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                 ),
                 onSuccessCallback = { data: PostAutoRegisterHubToHouseResponse? ->
                     if (data == null) {
-                        redirectToMainWhenOccurError()
+                        alertError()
                         return@postAutoRegisterHubToHouse
                     }
 
@@ -54,8 +54,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                             _uiState.update { prevState ->
                                 prevState.copy(
                                     userLocation = userLocation,
-                                    currentStepId = R.string.first_setting_funnel_auto_register_location,
-                                    scannedQrCode = qrCode
+                                    currentStepId = R.string.first_setting_funnel_auto_register_location
                                 )
                             }
                         }
@@ -71,8 +70,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                                 serialNumber = qrCode,
                                 address = data.address,
                                 houseId = data.houseId
-                            ),
-                            scannedQrCode = qrCode
+                            )
                         )
                     }
                 },
@@ -82,8 +80,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                         _uiState.update { prevState ->
                             prevState.copy(
                                 userLocation = userLocation,
-                                currentStepId = R.string.first_setting_funnel_auto_register_location,
-                                scannedQrCode = qrCode
+                                currentStepId = R.string.first_setting_funnel_auto_register_location
                             )
                         }
                     }
@@ -93,14 +90,12 @@ class FirstSettingFunnelsViewModel: ViewModel() {
     }
 
     fun registerNewHubAndRedirectToMain(
-        hubQrCode: String
+        qrCode: String
     ){
         viewModelScope.launch {
-            delay(1000)
             val address = _uiState.value.userLocation?.address
-            val qrCode = _uiState.value.scannedQrCode
-            if (address == null || qrCode == null) {
-                redirectToMainWhenOccurError()
+            if (address == null) {
+                alertError()
                 return@launch
             }
 
@@ -112,7 +107,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                 ),
                 onSuccessCallback = { data: PostRegisterHouseResponse? ->
                     if (data == null) {
-                        redirectToMainWhenOccurError()
+                        alertError()
                         return@postRegisterHouse
                     }
 
@@ -123,19 +118,18 @@ class FirstSettingFunnelsViewModel: ViewModel() {
                             houseId = data.houseId
                         ),
                         onSuccessCallback = { data ->
-                            Log.i(TAG, "허브 ${hubQrCode}를 ${address} 에 등록완료!!")
-                            Toast.makeText(
-                                MainActivity.getMainActivityContext(),
-                                "허브와 집을 등록했어요! Mimo를 시작할게요",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            _uiState.value = FirstSettingFunnelsUiState()
+                            Log.i(TAG, "허브 ${qrCode}를 $address 에 등록완료!!")
+                            redirectToMain()
                         },
-                        onFailureCallback = {}
+                        onFailureCallback = {
+                            Log.e(TAG, "postRegisterHubToHouse에서 실패")
+                            alertError()
+                        }
                     )
                 },
                 onFailureCallback = {
-                    redirectToMainWhenOccurError()
+                    Log.e(TAG, "postRegisterHouse에서 실패")
+                    alertError()
                 }
             )
         }
@@ -149,15 +143,12 @@ class FirstSettingFunnelsViewModel: ViewModel() {
         }
     }
 
-    private fun redirectToMainWhenOccurError(){
+    private fun alertError(){
         Toast.makeText(
             MainActivity.getMainActivityContext(),
-            "다시 시도해주세요",
+            "오류가 발생했습니다",
             Toast.LENGTH_SHORT
         ).show()
-        _uiState.value = FirstSettingFunnelsUiState(
-            currentStepId = R.string.first_setting_funnel_first_setting_start
-        )
     }
 
 //    fun redirectAutoRegisterLocationFunnel(userLocation: UserLocation?){
@@ -175,7 +166,6 @@ class FirstSettingFunnelsViewModel: ViewModel() {
 }
 
 data class FirstSettingFunnelsUiState (
-    val scannedQrCode: String? = null,
     val currentStepId: Int? = null,
     val hub: Hub? = null,
     val userLocation: UserLocation? = null,
