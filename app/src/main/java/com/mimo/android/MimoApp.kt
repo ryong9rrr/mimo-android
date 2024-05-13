@@ -100,8 +100,8 @@ fun MimoApp(
 
         Scaffold(
             bottomBar = {
-                Navigation(navController = navController)
-                return@Scaffold
+//                Navigation(navController = navController)
+//                return@Scaffold
                 if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
                     Navigation(navController = navController)
                 }
@@ -145,19 +145,20 @@ fun MimoApp(
                     myHomeViewModel.updateCurrentHome(currentHome)
                     myHomeViewModel.updateAnotherHomeList(anotherHomeList)
 
-                    Router(
-                        navController = navController,
-                        isActiveSleepForegroundService = isActiveSleepForegroundService,
-                        healthConnectManager = healthConnectManager,
-                        onStartSleepForegroundService = onStartSleepForegroundService,
-                        onStopSleepForegroundService = onStopSleepForegroundService,
-                        myHomeViewModel = myHomeViewModel,
-                        qrCodeViewModel = qrCodeViewModel,
-                        checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
-                        checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
-                    )
-
-                    return@BackgroundImage
+//                    Router(
+//                        navController = navController,
+//                        isActiveSleepForegroundService = isActiveSleepForegroundService,
+//                        healthConnectManager = healthConnectManager,
+//                        onStartSleepForegroundService = onStartSleepForegroundService,
+//                        onStopSleepForegroundService = onStopSleepForegroundService,
+//                        myHomeViewModel = myHomeViewModel,
+//                        qrCodeViewModel = qrCodeViewModel,
+//                        checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
+//                        checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,
+//                        authViewModel = authViewModel
+//                    )
+//
+//                    return@BackgroundImage
 
                     if (firstSettingFunnelsUiState.currentStepId != null) {
                         FirstSettingFunnelsRoot(
@@ -177,8 +178,6 @@ fun MimoApp(
                         return@BackgroundImage
                     }
 
-
-
                     if (authUiState.user != null) {
                         Router(
                             navController = navController,
@@ -189,7 +188,8 @@ fun MimoApp(
                             myHomeViewModel = myHomeViewModel,
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
-                            checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
+                            checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,
+                            authViewModel = authViewModel
                         )
                     }
                 }

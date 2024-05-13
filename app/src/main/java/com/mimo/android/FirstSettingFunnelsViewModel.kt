@@ -91,7 +91,7 @@ class FirstSettingFunnelsViewModel: ViewModel() {
             Log.i(TAG, "허브 ${hubQrCode}를 ${address} 에 등록완료!!")
             Toast.makeText(
                 MainActivity.getMainActivityContext(),
-                "허브와 거주지를 등록했어요. 메인화면으로 이동할게요.",
+                "허브와 집을 등록했어요! Mimo를 시작할게요",
                 Toast.LENGTH_SHORT
             ).show()
             _uiState.value = FirstSettingFunnelsUiState()

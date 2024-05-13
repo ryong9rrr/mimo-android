@@ -196,7 +196,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         Log.i(TAG, "App destroy")
     }
 

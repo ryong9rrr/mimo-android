@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.apis.mimo.users.GetMyInfoResponse
 import com.mimo.android.apis.mimo.users.getMyInfo
+import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.preferences.removeData
 import com.mimo.android.utils.preferences.saveData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -96,8 +98,8 @@ class AuthViewModel: ViewModel() {
     }
 
     fun logout(){
-        //removeData(ACCESS_TOKEN)
-        //logoutWithKakao()
+        removeData(ACCESS_TOKEN)
+        logoutWithKakao()
         _uiState.update { prevState ->
             prevState.copy(user = null)
         }

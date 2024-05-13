@@ -215,7 +215,6 @@ private fun Card(
     }
 }
 
-
 @Composable
 fun ModalContent(
     isCurrentHome: Boolean,

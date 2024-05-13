@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mimo.android.AuthViewModel
 import com.mimo.android.QrCodeViewModel
 import com.mimo.android.screens.main.myhome.MyHomeDetailScreen
 import com.mimo.android.screens.main.myhome.MyHomeViewModel
@@ -23,6 +24,7 @@ fun Router(
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
+    authViewModel: AuthViewModel
 ){
     NavHost(navController = navController, startDestination = SleepDestination.route) {
         //val availability by healthConnectManager.availability
@@ -35,7 +37,6 @@ fun Router(
                 qrCodeViewModel = qrCodeViewModel,
                 checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                 checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
-
             )
             return@composable
         }
@@ -51,7 +52,8 @@ fun Router(
         composable(MyProfileDestination.route) {
             MyProfileScreen(
                 navController = navController,
-                healthConnectManager = healthConnectManager
+                healthConnectManager = healthConnectManager,
+                authViewModel = authViewModel
             )
             return@composable
         }
@@ -72,7 +74,10 @@ fun Router(
                 home = home,
                 isCurrentHome = myHomeViewModel.isCurrentHome(home.homeId),
                 myItems = Any(),
-                anotherPeopleItems = Any()
+                anotherPeopleItems = Any(),
+                qrCodeViewModel = qrCodeViewModel,
+                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
+                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
             )
             return@composable
         }

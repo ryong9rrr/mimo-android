@@ -1,12 +1,16 @@
 package com.mimo.android.screens.main.myhome
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +23,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mimo.android.QrCodeViewModel
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
+import com.mimo.android.ui.theme.Gray300
+import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.ui.theme.Teal400
 
@@ -30,10 +37,38 @@ fun MyHomeDetailScreen(
     home: Home,
     isCurrentHome: Boolean,
     myItems: Any,
-    anotherPeopleItems: Any
+    anotherPeopleItems: Any,
+    qrCodeViewModel: QrCodeViewModel? = null,
+    checkCameraPermissionHubToHouse: (() -> Unit)? = null,
+    checkCameraPermissionMachineToHub: (() -> Unit)? = null,
 ){
+    val houseId = home.homeId!!
+    var isShowScreenModal by remember { mutableStateOf(false) }
+
     fun handleGoPrev(){
         navController.navigateUp()
+    }
+
+    fun handleShowScreenModal(){
+        isShowScreenModal = true
+    }
+
+    fun handleCloseScreenModal(){
+        isShowScreenModal = false
+    }
+
+    fun handleClickAddHubModalButton(){
+        // TODO : 이 집에 허브 추가하고 뷰 업데이트 (뷰 업데이트 때문에 viewModel을 인자로 받아야할듯;;)
+        qrCodeViewModel?.initRegisterHubToHouse(houseId = houseId)
+        checkCameraPermissionHubToHouse?.invoke()
+    }
+
+    fun handleClickChangeHouseNicknameButton(){
+        // TODO: HomeNicknameChangeScreen으로 navigate
+    }
+
+    fun handleClickShowHubListButton(){
+        // TODO: HomeHubListScreen으로 navigate
     }
 
     BackHandler {
@@ -41,7 +76,34 @@ fun MyHomeDetailScreen(
     }
 
     ScrollView {
-        Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
+
+        if (isShowScreenModal) {
+            Modal(
+                onClose = ::handleCloseScreenModal,
+                children = {
+                    ScreenModalContent(
+                        home = home,
+                        onClose = { handleCloseScreenModal() },
+                        onClickAddHubModalButton = { handleClickAddHubModalButton() },
+                        onClickChangeHouseNicknameButton = { handleClickChangeHouseNicknameButton() },
+                        onClickShowHubListButton = { handleClickShowHubListButton() }
+                    )
+                }
+            )
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
+            Icon(
+                imageVector = Icons.Default.Menu,
+                size = 32.dp,
+                onClick = ::handleShowScreenModal
+            )
+        }
+
         Spacer(modifier = Modifier.padding(14.dp))
         HorizontalScroll {
             HeadingLarge(text = home.homeName, fontSize = Size.lg)
@@ -295,6 +357,50 @@ fun MyHomeDetailScreen(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun ScreenModalContent(
+    home: Home,
+    onClose: (() -> Unit)? = null,
+    onClickAddHubModalButton: (() -> Unit)? = null,
+    onClickChangeHouseNicknameButton: (() -> Unit)? = null,
+    onClickShowHubListButton: (() -> Unit)? = null
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HeadingSmall(text = home.homeName)
+            Spacer(modifier = Modifier.padding(8.dp))
+            Column {
+                Button(text = "집 이름 바꾸기", onClick = { onClickChangeHouseNicknameButton?.invoke() })
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(text = "허브 등록하기", onClick = { onClickAddHubModalButton?.invoke() })
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(text = "허브 목록 보기", onClick = { onClickShowHubListButton?.invoke() })
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(
+                    text = "닫기", color = Gray600, hasBorder = false,
+                    onClick = { onClose?.invoke() }
+                )
+            }
+        }
     }
 }
 
