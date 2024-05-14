@@ -239,7 +239,7 @@ fun ScreenModalContent(
             }
             Spacer(modifier = Modifier.padding(8.dp))
             Column {
-                Button(text = "집 이름 변경", onClick = { onClickChangeHouseNicknameButton() })
+                Button(text = "집 별칭 변경", onClick = { onClickChangeHouseNicknameButton() })
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(text = "허브 목록", onClick = { onClickShowHubListButton() })
                 Spacer(modifier = Modifier.padding(4.dp))

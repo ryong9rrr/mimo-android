@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
+import com.mimo.android.screens.MyHouseScreenDestination
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.viewmodels.MyHouseViewModel
 
@@ -38,7 +39,15 @@ fun ChangeHouseNicknameScreen(
         if (inputText.isEmpty()) {
             return
         }
-        myHouseViewModel.fetchChangeHouseNickname(inputText)
+        myHouseViewModel.fetchChangeHouseNickname(
+            house = house!!,
+            newNickname = inputText,
+            cb = {
+                navController?.navigate(MyHouseScreenDestination.route) {
+                    popUpTo(0)
+                }
+            }
+        )
     }
 
     fun handlePrev(){

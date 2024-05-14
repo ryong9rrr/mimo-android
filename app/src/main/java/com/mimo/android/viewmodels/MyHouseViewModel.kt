@@ -6,8 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.mimo.android.MainActivity
 import com.mimo.android.apis.houses.House
 import com.mimo.android.apis.houses.PostRegisterHouseRequest
+import com.mimo.android.apis.houses.PutChangeHouseNicknameRequest
 import com.mimo.android.apis.houses.getHouseList
 import com.mimo.android.apis.houses.postRegisterHouse
+import com.mimo.android.apis.houses.putChangeHouseNickname
+import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
@@ -89,9 +92,30 @@ class MyHouseViewModel: ViewModel() {
         }
     }
 
-    fun fetchChangeHouseNickname(newNickname: String){
+    fun fetchChangeHouseNickname(
+        house: House,
+        newNickname: String,
+        cb: (() -> Unit)? = null
+    ){
         viewModelScope.launch {
-            showToast(newNickname)
+            if (newNickname.isEmpty() || house.nickname == newNickname) {
+                showToast("집 별칭을 변경했어요")
+                cb?.invoke()
+                return@launch
+            }
+
+            putChangeHouseNickname(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                houseId = house.houseId,
+                putChangeHouseNicknameRequest = PutChangeHouseNicknameRequest(
+                    nickname = newNickname
+                ),
+                onSuccessCallback = { data ->
+                    showToast("집 별칭을 변경했어요")
+                    cb?.invoke()
+                },
+                onFailureCallback = { alertError() }
+            )
         }
     }
 

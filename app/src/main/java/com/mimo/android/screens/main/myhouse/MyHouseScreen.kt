@@ -291,7 +291,7 @@ fun CardModalContent(
                     Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHouseModalButton(house) })
                     Spacer(modifier = Modifier.padding(4.dp))
                 }
-                Button(text = "집 이름 변경", onClick = { onClickChangeHouseNicknameModalButton(house) })
+                Button(text = "집 별칭 변경", onClick = { onClickChangeHouseNicknameModalButton(house) })
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(text = "허브 등록", onClick = { onClickAddHubModalButton(house) })
                 Spacer(modifier = Modifier.padding(4.dp))

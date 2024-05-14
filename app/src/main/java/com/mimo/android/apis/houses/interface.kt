@@ -8,7 +8,6 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface HousesApiService {
     @Headers("Content-Type: application/json")
@@ -37,4 +36,12 @@ interface HousesApiService {
         @Header("X-AUTH-TOKEN") accessToken: String,
         @Path("houseId") houseId: Long
     ): Call<GetDeviceListByHouseIdResponse>
+
+    @Headers("Content-Type: application/json")
+    @PUT("houses/{houseId}")
+    fun putChangeHouseNickname(
+        @Header("X-AUTH-TOKEN") accessToken: String,
+        @Path("houseId") houseId: Long,
+        @Body putChangeHouseNicknameRequest: PutChangeHouseNicknameRequest
+    ): Call<Unit>
 }
