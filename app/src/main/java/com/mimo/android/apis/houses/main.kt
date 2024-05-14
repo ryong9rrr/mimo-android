@@ -111,3 +111,29 @@ fun putChangeHouseNickname(
         }
     })
 }
+
+fun putChangeCurrentHouse(
+    accessToken: String,
+    houseId: Long,
+    onSuccessCallback: (OnResponseSuccessCallback<Unit>)? = null,
+    onFailureCallback: (onResponseFailureCallback)? = null
+){
+    val call = mimoApiService.putChangeCurrentHouse(
+        accessToken = accessToken,
+        houseId = houseId
+    )
+    call.enqueue(object : retrofit2.Callback<Unit> {
+        override fun onResponse(call: Call<Unit>, response: retrofit2.Response<Unit>) {
+            if (response.isSuccessful) {
+                onSuccessCallback?.invoke(response.body())
+            } else {
+                onFailureCallback?.invoke()
+            }
+        }
+
+        override fun onFailure(call: Call<Unit>, t: Throwable) {
+            Log.e(TAG, "putChangeCurrentHouse")
+            onFailureCallback?.invoke()
+        }
+    })
+}

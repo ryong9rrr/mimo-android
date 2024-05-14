@@ -44,4 +44,11 @@ interface HousesApiService {
         @Path("houseId") houseId: Long,
         @Body putChangeHouseNicknameRequest: PutChangeHouseNicknameRequest
     ): Call<Unit>
+
+    @Headers("Content-Type: application/json")
+    @PUT("houses/{houseId}/home")
+    fun putChangeCurrentHouse(
+        @Header("X-AUTH-TOKEN") accessToken: String,
+        @Path("houseId") houseId: Long
+    ): Call<Unit>
 }

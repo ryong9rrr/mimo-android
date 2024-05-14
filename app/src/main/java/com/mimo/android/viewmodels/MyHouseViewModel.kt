@@ -9,6 +9,7 @@ import com.mimo.android.apis.houses.PostRegisterHouseRequest
 import com.mimo.android.apis.houses.PutChangeHouseNicknameRequest
 import com.mimo.android.apis.houses.getHouseList
 import com.mimo.android.apis.houses.postRegisterHouse
+import com.mimo.android.apis.houses.putChangeCurrentHouse
 import com.mimo.android.apis.houses.putChangeHouseNickname
 import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
@@ -120,38 +121,19 @@ class MyHouseViewModel: ViewModel() {
     }
 
     fun changeCurrentHouse(house: House){
-
-//        if (_uiState.value.currentHome == null || anotherHomeId == null) {
-//            return
-//        }
-//
-//        if (_uiState.value.currentHome!!.homeId == anotherHomeId) {
-//            Toast.makeText(
-//                this.context,
-//                "이미 현재 거주지에요.",
-//                Toast.LENGTH_SHORT
-//            ).show()
-//            return
-//        }
-//
-//        viewModelScope.launch {
-//            // TODO : 현재 거주지 변경 API 호출
-//            val nextCurrentHome = _uiState.value.copy().anotherHomeList.find { it.homeId == anotherHomeId }
-//            var nextAnotherHomeList = _uiState.value.copy().anotherHomeList.filter { it.homeId != anotherHomeId }
-//            nextAnotherHomeList = nextAnotherHomeList.plus(_uiState.value.copy().currentHome!!)
-//            nextAnotherHomeList = nextAnotherHomeList.sortedBy { home -> home.homeId }
-//            _uiState.update { prevState ->
-//                prevState.copy(
-//                    currentHome = nextCurrentHome,
-//                    anotherHomeList = nextAnotherHomeList
-//                )
-//            }
-//            Toast.makeText(
-//                MainActivity.getMainActivityContext(),
-//                "현재 거주지를 변경했어요",
-//                Toast.LENGTH_SHORT
-//            ).show()
-//        }
+        viewModelScope.launch {
+            putChangeCurrentHouse(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                houseId = house.houseId,
+                onSuccessCallback = {
+                    showToast("현재 거주지를 변경했어요")
+                    fetchHouseList()
+                },
+                onFailureCallback = {
+                    alertError()
+                }
+            )
+        }
     }
 }
 
