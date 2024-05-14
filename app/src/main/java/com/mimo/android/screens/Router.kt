@@ -13,20 +13,24 @@ import com.mimo.android.screens.main.myhome.MyHouseHubListScreen
 import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.screens.main.myhouse.*
+import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.UserLocation
 
 @Composable
 fun Router(
     navController: NavHostController,
+    authViewModel: AuthViewModel,
     isActiveSleepForegroundService: Boolean,
     healthConnectManager: HealthConnectManager,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
     myHouseViewModel: MyHouseViewModel,
+    myHouseDetailViewModel: MyHouseDetailViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
-    authViewModel: AuthViewModel
+    launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
 
@@ -61,6 +65,15 @@ fun Router(
             return@composable
         }
 
+        composable(route = CreateHouseConfirmScreenDestination.route){
+            CreateHouseConfirmScreen(
+                navController = navController,
+                launchGoogleLocationAndAddress = launchGoogleLocationAndAddress,
+                myHouseViewModel = myHouseViewModel
+            )
+            return@composable
+        }
+
         composable(
             route = MyHouseDetailScreenDestination.routeWithArgs,
             arguments = MyHouseDetailScreenDestination.arguments
@@ -75,6 +88,7 @@ fun Router(
             }
             MyHouseDetailScreen(
                 navController = navController,
+                myHouseDetailViewModel = myHouseDetailViewModel,
                 house = house,
 //                isCurrentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)?.id == house.id,
 //                myItems = Any(),
@@ -87,10 +101,10 @@ fun Router(
         }
 
         composable(
-            route = MyHouseHubListScreen.routeWithArgs,
-            arguments = MyHouseHubListScreen.arguments
+            route = MyHouseHubListScreenDestination.routeWithArgs,
+            arguments = MyHouseHubListScreenDestination.arguments
         ){ backStackEntry ->
-            val houseId = backStackEntry.arguments?.getString(MyHouseHubListScreen.houseIdTypeArg)
+            val houseId = backStackEntry.arguments?.getString(MyHouseHubListScreenDestination.houseIdTypeArg)
             val house = myHouseViewModel.queryHouse(myHouseUiState, houseId!!.toLong())
             if (house == null) {
                 navController.navigate(MyHouseScreenDestination.route) {

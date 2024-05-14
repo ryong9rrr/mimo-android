@@ -1,45 +1,27 @@
 package com.mimo.android.screens.main.myhouse
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Slider
-import androidx.compose.material.SliderDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.MainActivity
 import com.mimo.android.apis.houses.House
-import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.components.*
-import com.mimo.android.components.base.Size
-import com.mimo.android.screens.MyHouseHubListScreen
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
-import com.mimo.android.ui.theme.Teal100
-import com.mimo.android.ui.theme.Teal400
+import com.mimo.android.viewmodels.MyHouseDetailViewModel
 
 @Composable
 fun MyHouseDetailScreen(
     navController: NavHostController,
     house: House,
+    myHouseDetailViewModel: MyHouseDetailViewModel,
 //    isCurrentHome: Boolean,
 //    myItems: Any,
 //    anotherPeopleItems: Any,
@@ -49,17 +31,21 @@ fun MyHouseDetailScreen(
 ){
 //    val houseId = home.homeId!!
 //    var isShowScreenModal by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        Toast.makeText(
-            MainActivity.getMainActivityContext(),
-            "${house.id}",
-            Toast.LENGTH_SHORT
-        ).show()
+        myHouseDetailViewModel.fetchHubListByHouseId(house.id)
     }
 
     fun handleGoPrev(){
         navController.navigateUp()
     }
+    BackHandler {
+        handleGoPrev()
+    }
+
+
+
+
 
 //    fun handleShowScreenModal(){
 //        isShowScreenModal = true
@@ -84,9 +70,7 @@ fun MyHouseDetailScreen(
 //        navController.navigate("${HomeHubListScreen.route}/${home.homeId}")
 //    }
 
-    BackHandler {
-        handleGoPrev()
-    }
+
 
     ScrollView {
 

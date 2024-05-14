@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.MainActivity
 import com.mimo.android.apis.houses.House
+import com.mimo.android.apis.houses.PostRegisterHouseRequest
 import com.mimo.android.apis.houses.getHouseList
+import com.mimo.android.apis.houses.postRegisterHouse
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,6 +78,24 @@ class MyHouseViewModel: ViewModel() {
         }
     }
 
+    fun fetchCreateNewHouse(
+        address: String,
+        onSuccessCallback: (() -> Unit)? = null,
+        onFailureCallback: (() -> Unit)? = null,
+    ){
+        viewModelScope.launch {
+            postRegisterHouse(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                postRegisterHouseRequest = PostRegisterHouseRequest(
+                    address = address,
+                    nickname = address
+                ),
+                onSuccessCallback = { onSuccessCallback?.invoke() },
+                onFailureCallback = { onFailureCallback?.invoke() }
+            )
+        }
+    }
+
     fun changeCurrentHome(house: House){
 //        if (_uiState.value.currentHome == null || anotherHomeId == null) {
 //            return
@@ -108,23 +128,6 @@ class MyHouseViewModel: ViewModel() {
 //                Toast.LENGTH_SHORT
 //            ).show()
 //        }
-    }
-
-    fun createNewHouse(
-        address: String,
-        nickname: String
-    ){
-        viewModelScope.launch {
-//            postRegisterHouse(
-//                accessToken = getData(ACCESS_TOKEN) ?: "",
-//                postRegisterHouseRequest = PostRegisterHouseRequest(
-//                    address = address,
-//                    nickname = nickname
-//                ),
-//                onSuccessCallback = {},
-//                onFailureCallback = {}
-//            )
-        }
     }
 }
 

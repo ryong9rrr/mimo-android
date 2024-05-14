@@ -27,6 +27,7 @@ import com.mimo.android.screens.*
 import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
+import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 
 private const val TAG = "MimoApp"
@@ -39,14 +40,15 @@ fun MimoApp(
     authViewModel: AuthViewModel,
     qrCodeViewModel: QrCodeViewModel,
     firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel,
+    myHouseViewModel: MyHouseViewModel,
+    myHouseDetailViewModel: MyHouseDetailViewModel,
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
     onStartSleepForegroundService: (() -> Unit)? = null,
     onStopSleepForegroundService: (() -> Unit)? = null,
     checkCameraPermissionFirstSetting: () -> Unit,
     checkCameraPermissionHubToHouse: () -> Unit,
-    checkCameraPermissionMachineToHub: () -> Unit,
-    myHouseViewModel: MyHouseViewModel
+    checkCameraPermissionMachineToHub: () -> Unit
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -132,15 +134,17 @@ fun MimoApp(
                     if (authUiState.user != null) {
                         Router(
                             navController = navController,
+                            authViewModel = authViewModel,
                             isActiveSleepForegroundService = isActiveSleepForegroundService,
                             healthConnectManager = healthConnectManager,
                             onStartSleepForegroundService = onStartSleepForegroundService,
                             onStopSleepForegroundService = onStopSleepForegroundService,
                             myHouseViewModel = myHouseViewModel,
+                            myHouseDetailViewModel = myHouseDetailViewModel,
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                             checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,
-                            authViewModel = authViewModel
+                            launchGoogleLocationAndAddress = launchGoogleLocationAndAddress
                         )
                     }
                 }

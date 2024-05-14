@@ -50,53 +50,78 @@ fun MyHouseScreen(
     checkCameraPermissionMachineToHub: (() -> Unit)? = null,
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
-    var isShowModal by remember { mutableStateOf(false) }
+    var isShowCardModal by remember { mutableStateOf(false) }
     var selectedHouse by remember { mutableStateOf<House?>(null) }
+    var isShowCreateHouseButtonModal by remember { mutableStateOf(false) }
+
+    val currentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)
+    val anotherHouseList = myHouseViewModel.getAnotherHouseList(myHouseUiState)
 
     LaunchedEffect(Unit) {
         myHouseViewModel.fetchHouseList()
     }
 
+    fun handleShowCreateHouseButtonModal(){
+        isShowCreateHouseButtonModal = true
+    }
+
+    fun handleCloseCreateHouseButtonModal(){
+        isShowCreateHouseButtonModal = false
+    }
+
+    fun navigateToCreateHouseConfirmScreen(){
+        navController.navigate(CreateHouseConfirmScreenDestination.route)
+    }
+
+    fun navigateToMyHouseDetailScreen(house: House){
+        navController.navigate("${MyHouseDetailScreenDestination.route}/${house.id}")
+    }
+
+    fun handleShowCardModal(house: House){
+        isShowCardModal = true
+        selectedHouse = house
+    }
+
+    fun handleCloseCardModal(){
+        isShowCardModal = false
+        selectedHouse = null
+    }
+
+    fun handleClickChangeCurrentHouseModalButton(house: House){
+        handleCloseCardModal()
+        if (currentHouse?.id == house.id) {
+            return
+        }
+        myHouseViewModel.changeCurrentHome(house)
+    }
+
+    fun handleClickAddHubModalButton(house: House){
+        handleCloseCardModal()
+        qrCodeViewModel?.initRegisterHubToHouse(houseId = house.id)
+        checkCameraPermissionHubToHouse?.invoke()
+    }
+
     ScrollView {
-        val currentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)
-        val anotherHouseList = myHouseViewModel.getAnotherHouseList(myHouseUiState)
-
-        fun navigateToMyHouseDetailScreen(house: House){
-            navController.navigate("${MyHouseDetailScreenDestination.route}/${house.id}")
-        }
-
-        fun handleShowModal(house: House){
-            isShowModal = true
-            selectedHouse = house
-        }
-
-        fun handleCloseModal(){
-            isShowModal = false
-            selectedHouse = null
-        }
-
-        fun handleClickChangeCurrentHouseModalButton(house: House){
-            handleCloseModal()
-            if (currentHouse?.id == house.id) {
-                return
-            }
-            myHouseViewModel.changeCurrentHome(house)
-        }
-
-        fun handleClickAddHubModalButton(house: House){
-            handleCloseModal()
-            qrCodeViewModel?.initRegisterHubToHouse(houseId = house.id)
-            checkCameraPermissionHubToHouse?.invoke()
-        }
-
-        if (isShowModal && selectedHouse != null) {
+        if (isShowCreateHouseButtonModal) {
             Modal(
-                onClose = ::handleCloseModal,
+                onClose = ::handleCloseCreateHouseButtonModal,
                 children = {
-                    ModalContent(
+                    CreateHouseButtonModalContent(
+                        onClose = ::handleCloseCreateHouseButtonModal,
+                        onClickCreateHouseWithCurrentLocation = ::navigateToCreateHouseConfirmScreen
+                    )
+                }
+            )
+        }
+
+        if (isShowCardModal && selectedHouse != null) {
+            Modal(
+                onClose = ::handleCloseCardModal,
+                children = {
+                    CardModalContent(
                         isCurrentHouse = currentHouse?.id == selectedHouse!!.id,
                         house = selectedHouse!!,
-                        onClose = ::handleCloseModal,
+                        onClose = ::handleCloseCardModal,
                         onClickChangeCurrentHouseModalButton = ::handleClickChangeCurrentHouseModalButton,
                         onClickAddHubModalButton = ::handleClickAddHubModalButton
                     )
@@ -110,7 +135,7 @@ fun MyHouseScreen(
             verticalAlignment = Alignment.CenterVertically
         ){
             HeadingLarge(text = "우리 집", fontSize = Size.lg)
-            ButtonSmall(text = "거주지 추가")
+            ButtonSmall(text = "집 추가", onClick = ::handleShowCreateHouseButtonModal)
         }
 
         Spacer(modifier = Modifier.padding(14.dp))
@@ -127,7 +152,7 @@ fun MyHouseScreen(
                 house = currentHouse,
                 isCurrentHome = true,
                 onClick = { house -> navigateToMyHouseDetailScreen(house) },
-                onClickMenu = { house -> handleShowModal(house) },
+                onClickMenu = { house -> handleShowCardModal(house) },
                 onLongClick = {}
             )
         }
@@ -145,7 +170,7 @@ fun MyHouseScreen(
                     house = anotherHouse,
                     isCurrentHome = false,
                     onClick = { house -> navigateToMyHouseDetailScreen(house) },
-                    onClickMenu = { house -> handleShowModal(house) },
+                    onClickMenu = { house -> handleShowCardModal(house) },
                     onLongClick = {}
                 )
 
@@ -221,7 +246,7 @@ private fun Card(
 }
 
 @Composable
-fun ModalContent(
+fun CardModalContent(
     isCurrentHouse: Boolean,
     house: House,
     onClose: (() -> Unit)? = null,
@@ -246,9 +271,15 @@ fun ModalContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            HeadingSmall(text = house.nickname)
-//            Spacer(modifier = Modifier.padding(2.dp))
-//            Text(text = "현재 거주지로 변경할까요?")
+            if (house.nickname.length > 20) {
+                HorizontalScroll {
+                    HeadingSmall(text = house.nickname)
+                }
+            }
+            if (house.nickname.length <= 20) {
+                HeadingSmall(text = house.nickname)
+            }
+
             Spacer(modifier = Modifier.padding(8.dp))
             Column {
                 if (!isCurrentHouse) {
@@ -262,20 +293,41 @@ fun ModalContent(
                         onClick = { onClose?.invoke() }
                     )
             }
-//            LazyVerticalGrid(
-//                columns = GridCells.Fixed(2),
-//                horizontalArrangement = Arrangement.spacedBy(8.dp)
-//            ) {
-//                item {
-//                    Button(
-//                        text = "닫기", color = Gray600, hasBorder = false,
-//                        onClick = { onClose?.invoke() }
-//                    )
-//                }
-//                item {
-//                    Button(text = "변경할게요", onClick = { onConfirm?.invoke(home) })
-//                }
-//            }
+        }
+    }
+}
+
+@Composable
+fun CreateHouseButtonModalContent(
+    onClose: () -> Unit,
+    onClickCreateHouseWithCurrentLocation: () -> Unit
+){
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .background(
+                color = Gray300,
+                shape = RoundedCornerShape(16.dp)
+            )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            HeadingSmall(text = "집 추가하기")
+            Spacer(modifier = Modifier.padding(8.dp))
+            Button(text = "현재 위치로 추가", onClick = onClickCreateHouseWithCurrentLocation)
+            Spacer(modifier = Modifier.padding(4.dp))
+            Button(
+                text = "닫기", color = Gray600, hasBorder = false,
+                onClick = onClose
+            )
         }
     }
 }

@@ -32,6 +32,7 @@ import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -52,6 +53,7 @@ class MainActivity : ComponentActivity() {
     private val firstSettingFunnelsViewModel = FirstSettingFunnelsViewModel()
     private val qrCodeViewModel = QrCodeViewModel()
     private val myHouseViewModel = MyHouseViewModel()
+    private val myHouseDetailViewModel = MyHouseDetailViewModel()
 
     // 초기세팅용 QR code Scanner
     private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
@@ -173,6 +175,7 @@ class MainActivity : ComponentActivity() {
                 qrCodeViewModel = qrCodeViewModel,
                 firstSettingFunnelsViewModel = firstSettingFunnelsViewModel,
                 myHouseViewModel = myHouseViewModel,
+                myHouseDetailViewModel = myHouseDetailViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,
