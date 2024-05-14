@@ -23,7 +23,7 @@ data class GetDeviceListByHouseIdResponse(
     val nickname: String,
     val address: String,
     val isHome: Boolean,
-    val devices: Device
+    val devices: List<Device>
 )
 
 data class House(
