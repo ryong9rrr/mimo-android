@@ -25,7 +25,9 @@ class MyHouseHubListViewModel: ViewModel() {
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 houseId = houseId,
                 onSuccessCallback = { hubList ->
-                    Log.i(TAG, hubList?.toString() ?: "[]")
+                    _uiState.value = MyHouseHubListUiState(
+                        hubList = hubList ?: mutableListOf()
+                    )
                 },
                 onFailureCallback = {
                     Log.e(TAG, "fetchHubListByHouseId")
@@ -37,5 +39,5 @@ class MyHouseHubListViewModel: ViewModel() {
 }
 
 data class MyHouseHubListUiState(
-    val hubList: List<Hub> = mutableListOf()
+    val hubList: List<Hub>? = null
 )

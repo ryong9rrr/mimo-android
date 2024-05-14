@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimo.android.apis.houses.House
+import com.mimo.android.apis.hubs.Hub
 import com.mimo.android.components.Button
 import com.mimo.android.components.ButtonSmall
 import com.mimo.android.components.CardType
@@ -77,15 +78,22 @@ fun MyHouseHubListScreen(
         HorizontalScroll {
             HeadingSmall(text = "${house.nickname} / ${house.address}", fontSize = Size.sm, color = Teal100)
         }
-
         Spacer(modifier = Modifier.padding(16.dp))
-
-        if (myHouseHubListUiState.hubList.isEmpty()) {
-            Text(text = "Loading...")
-        }
+        HubList(hubList = myHouseHubListUiState.hubList)
     }
 }
 
-data class Hub(
-    val id: Long
-)
+@Composable
+fun HubList(hubList: List<Hub>?){
+    if (hubList == null) {
+        Text(text = "Loading...")
+        return
+    }
+
+    if (hubList.isEmpty()) {
+        Text(text = "등록된 허브가 없어요.")
+        return
+    }
+
+    Text(text = "허브있음~")
+}

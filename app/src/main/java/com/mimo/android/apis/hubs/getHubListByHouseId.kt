@@ -36,122 +36,14 @@ fun getHubListByHouseId(
 }
 
 data class Hub(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val house: House,
+    val hubId: Long,
     val serialNumber: String,
-    val lamp: DeviceLamp,
-    val light: List<DeviceLight>,
-    val slidingWindow: List<DeviceSlidingWindow>,
-    val curtain: List<DeviceCurtain>,
-    val registered: Boolean
-)
-
-data class House(
-    val id: Long,
     val registeredDttm: String,
-    val unregisteredDttm: String,
-    val address: String,
-    val userHouse: List<UserHouse>,
-    val hub: List<String>,
-    val active: Boolean
+    val devices: List<SimpleDevice>
 )
 
-data class UserHouse(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val user: User,
-    val house: String,
-    val home: Boolean,
-    val active: Boolean
-)
-
-data class User(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val keyCode: String,
-    val roles: List<String>,
-    val isSuperUser: Boolean,
-    val email: String,
-    val nickname: String,
-    val wakeupTime: WakeupTime,
-    val userHouse: List<String>,
-    val password: String,
-    val enabled: Boolean,
-    val username: String,
-    val authorities: List<Authority>,
-    val accountNonExpired: Boolean,
-    val accountNonLocked: Boolean,
-    val credentialsNonExpired: Boolean,
-    val active: Boolean
-)
-
-data class WakeupTime(
-    val hour: Long,
-    val minute: Long,
-    val second: Long,
-    val nano: Long
-)
-
-data class Authority(
-    val authority: String
-)
-
-data class DeviceLamp(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val user: User,
-    val hub: String,
+data class SimpleDevice(
+    val deviceId: Long,
     val macAddress: String,
-    val wakeupColor: String,
-    val curColor: String,
-    val accessible: Boolean,
-    val registered: Boolean
-)
-
-data class DeviceLight(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val user: User,
-    val hub: String,
-    val macAddress: String,
-    val wakeupColor: String,
-    val curColor: String,
-    val accessible: Boolean,
-    val registered: Boolean
-)
-
-data class DeviceSlidingWindow(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val user: User,
-    val hub: String,
-    val macAddress: String,
-    val openDegree: Long,
-    val accessible: Boolean,
-    val registered: Boolean
-)
-
-data class DeviceCurtain(
-    val id: Long,
-    val registeredDttm: String,
-    val unregisteredDttm: String,
-    val nickname: String,
-    val user: User,
-    val hub: String,
-    val macAddress: String,
-    val openDegree: Long,
-    val accessible: Boolean,
-    val registered: Boolean
+    val deviceType: String
 )
