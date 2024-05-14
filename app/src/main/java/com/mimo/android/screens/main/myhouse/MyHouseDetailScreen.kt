@@ -33,7 +33,7 @@ fun MyHouseDetailScreen(
 //    var isShowScreenModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        myHouseDetailViewModel.fetchHubListByHouseId(house.id)
+        myHouseDetailViewModel.fetchGetDeviceListByHouseId(house.houseId)
     }
 
     fun handleGoPrev(){

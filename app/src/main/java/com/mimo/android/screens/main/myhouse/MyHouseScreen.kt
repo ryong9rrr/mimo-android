@@ -74,7 +74,7 @@ fun MyHouseScreen(
     }
 
     fun navigateToMyHouseDetailScreen(house: House){
-        navController.navigate("${MyHouseDetailScreenDestination.route}/${house.id}")
+        navController.navigate("${MyHouseDetailScreenDestination.route}/${house.houseId}")
     }
 
     fun handleShowCardModal(house: House){
@@ -89,7 +89,7 @@ fun MyHouseScreen(
 
     fun handleClickChangeCurrentHouseModalButton(house: House){
         handleCloseCardModal()
-        if (currentHouse?.id == house.id) {
+        if (currentHouse?.houseId == house.houseId) {
             return
         }
         myHouseViewModel.changeCurrentHouse(house)
@@ -97,12 +97,12 @@ fun MyHouseScreen(
 
     fun handleClickAddHubModalButton(house: House){
         handleCloseCardModal()
-        qrCodeViewModel?.initRegisterHubToHouse(houseId = house.id)
+        qrCodeViewModel?.initRegisterHubToHouse(houseId = house.houseId)
         checkCameraPermissionHubToHouse?.invoke()
     }
 
     fun navigateToChangeHouseNicknameScreen(house: House){
-        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.id}")
+        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.houseId}")
     }
 
     ScrollView {
@@ -123,7 +123,7 @@ fun MyHouseScreen(
                 onClose = ::handleCloseCardModal,
                 children = {
                     CardModalContent(
-                        isCurrentHouse = currentHouse?.id == selectedHouse!!.id,
+                        isCurrentHouse = currentHouse?.houseId == selectedHouse!!.houseId,
                         house = selectedHouse!!,
                         onClose = ::handleCloseCardModal,
                         onClickChangeCurrentHouseModalButton = ::handleClickChangeCurrentHouseModalButton,
@@ -346,21 +346,21 @@ private fun MyHouseScreenPreview(){
     val navController = NavHostController(LocalContext.current)
     val houseList: List<House> = arrayListOf(
         House(
-            id = 1,
+            houseId = 1,
             isHome = true,
             devices = arrayListOf("조명", "무드등"),
             nickname = "상윤이의 자취방",
             address = "서울특별시 관악구 봉천동 1234-56"
         ),
         House(
-            id = 2,
+            houseId = 2,
             isHome = false,
             devices = arrayListOf("조명", "창문", "커튼"),
             nickname = "상윤이의 본가",
             address = "경기도 고양시 일산서구 산현로12"
         ),
         House(
-            id = 3,
+            houseId = 3,
             isHome = false,
             devices = arrayListOf("조명", "커튼"),
             nickname = "싸피",

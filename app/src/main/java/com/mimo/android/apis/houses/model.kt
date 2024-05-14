@@ -18,11 +18,27 @@ data class PostAutoRegisterHubToHouseResponse(
     val address: String?
 )
 
+data class GetDeviceListByHouseIdResponse(
+    val houseId: Long,
+    val nickname: String,
+    val address: String,
+    val isHome: Boolean,
+    val devices: Device
+)
+
 data class House(
-    val id: Long,
+    val houseId: Long,
     val nickname: String,
     val address: String,
     val isHome: Boolean,
     val devices: List<String>
 )
 
+data class Device(
+    val userId: Long,
+    val hubId: Long,
+    val deviceId: Long,
+    val type: String,
+    val nickname: String,
+    val isAccessible: Boolean
+)

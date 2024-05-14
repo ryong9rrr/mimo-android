@@ -10,3 +10,11 @@ fun showToast(text: String){
         Toast.LENGTH_SHORT
     ).show()
 }
+
+fun alertError(){
+    Toast.makeText(
+        MainActivity.getMainActivityContext(),
+        "오류가 발생했습니다",
+        Toast.LENGTH_SHORT
+    ).show()
+}

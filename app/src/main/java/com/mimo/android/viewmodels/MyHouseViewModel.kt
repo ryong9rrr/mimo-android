@@ -48,7 +48,7 @@ class MyHouseViewModel: ViewModel() {
         myHouseUiState: MyHouseUiState,
         houseId: Long
     ): House? {
-        return myHouseUiState.houseList.find { house -> house.id == houseId }
+        return myHouseUiState.houseList.find { house -> house.houseId == houseId }
     }
 
     fun fetchHouseList(){

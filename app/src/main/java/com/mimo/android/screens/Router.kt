@@ -89,7 +89,7 @@ fun Router(
 
             ChangeHouseNicknameScreen(
                 navController = navController,
-                houseId = house.id,
+                houseId = house.houseId,
                 myHouseViewModel = myHouseViewModel)
         }
 

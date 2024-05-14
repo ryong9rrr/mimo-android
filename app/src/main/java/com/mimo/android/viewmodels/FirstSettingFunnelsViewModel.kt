@@ -15,6 +15,7 @@ import com.mimo.android.apis.houses.postAutoRegisterHubToHouse
 import com.mimo.android.apis.houses.postRegisterHouse
 import com.mimo.android.apis.hubs.PostRegisterHubToHouseRequest
 import com.mimo.android.apis.hubs.postRegisterHubToHouse
+import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import kotlinx.coroutines.delay
@@ -148,14 +149,6 @@ class FirstSettingFunnelsViewModel: ViewModel() {
             // TODO: Loading UI State
             _uiState.value = FirstSettingFunnelsUiState()
         }
-    }
-
-    private fun alertError(){
-        Toast.makeText(
-            MainActivity.getMainActivityContext(),
-            "오류가 발생했습니다",
-            Toast.LENGTH_SHORT
-        ).show()
     }
 }
 
