@@ -61,20 +61,24 @@ fun MyHouseScreen(
         myHouseViewModel.fetchHouseList()
     }
 
-    fun handleShowCreateHouseButtonModal(){
-        isShowCreateHouseButtonModal = true
-    }
-
-    fun handleCloseCreateHouseButtonModal(){
-        isShowCreateHouseButtonModal = false
-    }
-
     fun navigateToCreateHouseConfirmScreen(){
         navController.navigate(CreateHouseConfirmScreenDestination.route)
     }
 
     fun navigateToMyHouseDetailScreen(house: House){
         navController.navigate("${MyHouseDetailScreenDestination.route}/${house.houseId}")
+    }
+
+    fun navigateToChangeHouseNicknameScreen(house: House){
+        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.houseId}")
+    }
+
+    fun handleShowCreateHouseButtonModal(){
+        isShowCreateHouseButtonModal = true
+    }
+
+    fun handleCloseCreateHouseButtonModal(){
+        isShowCreateHouseButtonModal = false
     }
 
     fun handleShowCardModal(house: House){
@@ -99,10 +103,6 @@ fun MyHouseScreen(
         handleCloseCardModal()
         qrCodeViewModel?.initRegisterHubToHouse(houseId = house.houseId)
         checkCameraPermissionHubToHouse?.invoke()
-    }
-
-    fun navigateToChangeHouseNicknameScreen(house: House){
-        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.houseId}")
     }
 
     ScrollView {
@@ -254,10 +254,10 @@ private fun Card(
 fun CardModalContent(
     isCurrentHouse: Boolean,
     house: House,
-    onClose: (() -> Unit)? = null,
-    onClickChangeCurrentHouseModalButton: ((house: House) -> Unit)? = null,
-    onClickAddHubModalButton: ((house: House) -> Unit)? = null,
-    onClickChangeHouseNicknameModalButton: ((house: House) -> Unit)? = null
+    onClose: () -> Unit,
+    onClickChangeCurrentHouseModalButton: (house: House) -> Unit,
+    onClickAddHubModalButton: (house: House) -> Unit,
+    onClickChangeHouseNicknameModalButton: (house: House) -> Unit
 ){
     Box(
         modifier = Modifier
@@ -281,24 +281,23 @@ fun CardModalContent(
                 HorizontalScroll {
                     HeadingSmall(text = house.nickname)
                 }
-            }
-            if (house.nickname.length <= 20) {
+            } else {
                 HeadingSmall(text = house.nickname)
             }
 
             Spacer(modifier = Modifier.padding(8.dp))
             Column {
                 if (!isCurrentHouse) {
-                    Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHouseModalButton?.invoke(house) })
+                    Button(text = "현재 거주지로 변경", onClick = { onClickChangeCurrentHouseModalButton(house) })
                     Spacer(modifier = Modifier.padding(4.dp))
                 }
-                Button(text = "허브 등록", onClick = { onClickAddHubModalButton?.invoke(house) })
+                Button(text = "집 이름 변경", onClick = { onClickChangeHouseNicknameModalButton(house) })
                 Spacer(modifier = Modifier.padding(4.dp))
-                Button(text = "별칭 변경", onClick = { onClickChangeHouseNicknameModalButton?.invoke(house) })
+                Button(text = "허브 등록", onClick = { onClickAddHubModalButton(house) })
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(
                         text = "닫기", color = Gray600, hasBorder = false,
-                        onClick = { onClose?.invoke() }
+                        onClick = { onClose() }
                     )
             }
         }

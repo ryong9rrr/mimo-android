@@ -32,6 +32,7 @@ import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.showToast
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 import kotlinx.coroutines.cancel
@@ -60,18 +61,10 @@ class MainActivity : ComponentActivity() {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
-            Toast.makeText(
-                this@MainActivity,
-                "취소",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast("취소")
             return@registerForActivityResult
         }
-        Toast.makeText(
-            this@MainActivity,
-            "허브를 찾고 있어요",
-            Toast.LENGTH_SHORT
-        ).show()
+        showToast("허브를 찾고 있어요")
         qrCodeViewModel.initRegisterFirstSetting(qrCode = result.contents)
         firstSettingFunnelsViewModel.updateCurrentStep(stepId = R.string.fsfunnel_waiting)
     }
@@ -84,11 +77,7 @@ class MainActivity : ComponentActivity() {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
-            Toast.makeText(
-                this@MainActivity,
-                "취소",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast("취소")
             return@registerForActivityResult
         }
         qrCodeViewModel.registerHubToHouse(qrCode = result.contents)
@@ -102,11 +91,7 @@ class MainActivity : ComponentActivity() {
             result ->
         if (result.contents == null) {
             qrCodeViewModel.removeQrCode()
-            Toast.makeText(
-                this@MainActivity,
-                "취소",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast("취소")
             return@registerForActivityResult
         }
         // TODO...

@@ -109,12 +109,9 @@ fun Router(
                 navController = navController,
                 myHouseDetailViewModel = myHouseDetailViewModel,
                 house = house,
-//                isCurrentHouse = myHouseViewModel.getCurrentHouse(myHouseUiState)?.id == house.id,
-//                myItems = Any(),
-//                anotherPeopleItems = Any(),
-//                qrCodeViewModel = qrCodeViewModel,
-//                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
-//                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
+                qrCodeViewModel = qrCodeViewModel,
+                checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
+                checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub
             )
             return@composable
         }

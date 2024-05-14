@@ -3,11 +3,13 @@ package com.mimo.android.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mimo.android.apis.houses.Device
 import com.mimo.android.apis.houses.GetDeviceListByHouseIdResponse
 import com.mimo.android.apis.houses.getDeviceListByHouseId
 import com.mimo.android.apis.houses.getHubListByHouseId
 import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
+import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,27 @@ private const val TAG = "viewmodels/MyHomeDetailViewModel"
 class MyHouseDetailViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHouseDetailUiState())
     val uiState: StateFlow<MyHouseDetailUiState> = _uiState.asStateFlow()
+
+    fun getDevices(): Devices{
+        val _userId = getData(USER_ID)
+        val myDeviceList = mutableListOf<Device>()
+        val anotherDeviceList = mutableListOf<Device>()
+
+        if (_uiState.value.house == null || _userId.isNullOrEmpty()) {
+            return Devices(myDeviceList = myDeviceList, anotherDeviceList = anotherDeviceList)
+        }
+
+        val userId = _userId.toLong()
+        val allDeviceList = _uiState.value.house!!.devices
+        for (device in allDeviceList) {
+            if (device.userId == userId) {
+                myDeviceList.add(device)
+            } else {
+                anotherDeviceList.add(device)
+            }
+        }
+        return Devices(myDeviceList = myDeviceList, anotherDeviceList = anotherDeviceList)
+    }
 
     fun fetchHubListByHouseId(houseId: Long){
         viewModelScope.launch {
@@ -43,7 +66,11 @@ class MyHouseDetailViewModel: ViewModel() {
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 houseId = houseId,
                 onSuccessCallback = { data: GetDeviceListByHouseIdResponse? ->
-                    Log.i(TAG, data.toString())
+                    if (data == null) {
+                        alertError()
+                        return@getDeviceListByHouseId
+                    }
+                    _uiState.value = MyHouseDetailUiState(house = data)
                 },
                 onFailureCallback = {
                     Log.e(TAG, "fetchGetDeviceListByHouseId")
@@ -55,6 +82,10 @@ class MyHouseDetailViewModel: ViewModel() {
 }
 
 data class MyHouseDetailUiState(
-    val hubList: List<Hub> =  mutableListOf(),
     val house: GetDeviceListByHouseIdResponse? = null
+)
+
+data class Devices(
+    val myDeviceList: List<Device>,
+    val anotherDeviceList: List<Device>,
 )

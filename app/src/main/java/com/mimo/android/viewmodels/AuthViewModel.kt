@@ -9,6 +9,7 @@ import com.mimo.android.apis.users.GetMyInfoResponse
 import com.mimo.android.apis.users.getMyInfo
 import com.mimo.android.services.kakao.logoutWithKakao
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
+import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.preferences.removeData
 import com.mimo.android.utils.preferences.saveData
@@ -85,6 +86,8 @@ class AuthViewModel: ViewModel() {
                         firstSettingFunnelsViewModel.updateCurrentStep(R.string.fsfunnel_start)
                     }
 
+                    saveData(USER_ID, data.userId.toString())
+
                     _uiState.update { prevState ->
                         prevState.copy(
                             accessToken = accessToken,
@@ -101,6 +104,7 @@ class AuthViewModel: ViewModel() {
 
     fun logout(){
         removeData(ACCESS_TOKEN)
+        removeData(USER_ID)
         logoutWithKakao()
         _uiState.value = AuthUiState()
     }

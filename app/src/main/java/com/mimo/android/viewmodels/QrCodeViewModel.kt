@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.mimo.android.MainActivity
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -41,11 +42,7 @@ class QrCodeViewModel: ViewModel() {
             }
 
             // TODO: 아래 토스트 코드를 지우고 실제 API 호출
-            Toast.makeText(
-                MainActivity.getMainActivityContext(),
-                "${houseId}에 ${qrCode}를 등록함!",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast("${houseId}에 ${qrCode}를 등록함!")
 //            postRegisterHubToHouse(
 //                accessToken = accessToken,
 //                postRegisterHubToHomeRequest = PostRegisterHubToHouseRequest(
