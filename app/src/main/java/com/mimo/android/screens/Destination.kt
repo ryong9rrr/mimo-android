@@ -28,6 +28,19 @@ object SleepScreenDestination: Destination {
     override val route = "SleepScreenDestination"
 }
 
+object CreateHouseConfirmScreenDestination: Destination {
+    override val route = "CreateHouseConfirmScreen"
+}
+
+object ChangeHouseNicknameScreenDestination: Destination {
+    override val route = "ChangeHouseNicknameScreenDestination"
+    const val houseIdTypeArg = "houseId"
+    val routeWithArgs = "${route}/{$houseIdTypeArg}"
+    val arguments = listOf(
+        navArgument(houseIdTypeArg) { type = NavType.StringType }
+    )
+}
+
 object MyHouseHubListScreenDestination: Destination {
     override val route = "MyHouseHubListScreen"
     const val houseIdTypeArg = "houseId"
@@ -35,8 +48,4 @@ object MyHouseHubListScreenDestination: Destination {
     val arguments = listOf(
         navArgument(houseIdTypeArg) { type = NavType.StringType }
     )
-}
-
-object CreateHouseConfirmScreenDestination: Destination {
-    override val route = "CreateHouseConfirmScreen"
 }

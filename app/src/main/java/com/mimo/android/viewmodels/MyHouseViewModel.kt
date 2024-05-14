@@ -10,6 +10,7 @@ import com.mimo.android.apis.houses.getHouseList
 import com.mimo.android.apis.houses.postRegisterHouse
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,11 +57,7 @@ class MyHouseViewModel: ViewModel() {
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 onSuccessCallback = { houses ->
                     if (houses == null) {
-                        Toast.makeText(
-                            MainActivity.getMainActivityContext(),
-                            "집 목록을 불러오지 못했어요",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        showToast("집 목록을 불러오지 못했어요")
                         return@getHouseList
                     }
                     _uiState.update { prevState ->
@@ -68,11 +65,7 @@ class MyHouseViewModel: ViewModel() {
                     }
                 },
                 onFailureCallback = {
-                    Toast.makeText(
-                        MainActivity.getMainActivityContext(),
-                        "집 목록을 불러오지 못했어요",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast("집 목록을 불러오지 못했어요")
                 }
             )
         }
@@ -96,7 +89,14 @@ class MyHouseViewModel: ViewModel() {
         }
     }
 
-    fun changeCurrentHome(house: House){
+    fun fetchChangeHouseNickname(newNickname: String){
+        viewModelScope.launch {
+            showToast(newNickname)
+        }
+    }
+
+    fun changeCurrentHouse(house: House){
+
 //        if (_uiState.value.currentHome == null || anotherHomeId == null) {
 //            return
 //        }

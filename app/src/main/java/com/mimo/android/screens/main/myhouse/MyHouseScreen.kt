@@ -92,13 +92,17 @@ fun MyHouseScreen(
         if (currentHouse?.id == house.id) {
             return
         }
-        myHouseViewModel.changeCurrentHome(house)
+        myHouseViewModel.changeCurrentHouse(house)
     }
 
     fun handleClickAddHubModalButton(house: House){
         handleCloseCardModal()
         qrCodeViewModel?.initRegisterHubToHouse(houseId = house.id)
         checkCameraPermissionHubToHouse?.invoke()
+    }
+
+    fun navigateToChangeHouseNicknameScreen(house: House){
+        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.id}")
     }
 
     ScrollView {
@@ -123,7 +127,8 @@ fun MyHouseScreen(
                         house = selectedHouse!!,
                         onClose = ::handleCloseCardModal,
                         onClickChangeCurrentHouseModalButton = ::handleClickChangeCurrentHouseModalButton,
-                        onClickAddHubModalButton = ::handleClickAddHubModalButton
+                        onClickAddHubModalButton = ::handleClickAddHubModalButton,
+                        onClickChangeHouseNicknameModalButton = ::navigateToChangeHouseNicknameScreen
                     )
                 }
             )
@@ -251,7 +256,8 @@ fun CardModalContent(
     house: House,
     onClose: (() -> Unit)? = null,
     onClickChangeCurrentHouseModalButton: ((house: House) -> Unit)? = null,
-    onClickAddHubModalButton: ((house: House) -> Unit)? = null
+    onClickAddHubModalButton: ((house: House) -> Unit)? = null,
+    onClickChangeHouseNicknameModalButton: ((house: House) -> Unit)? = null
 ){
     Box(
         modifier = Modifier
@@ -287,6 +293,8 @@ fun CardModalContent(
                     Spacer(modifier = Modifier.padding(4.dp))
                 }
                 Button(text = "허브 등록", onClick = { onClickAddHubModalButton?.invoke(house) })
+                Spacer(modifier = Modifier.padding(4.dp))
+                Button(text = "별칭 변경", onClick = { onClickChangeHouseNicknameModalButton?.invoke(house) })
                 Spacer(modifier = Modifier.padding(4.dp))
                 Button(
                         text = "닫기", color = Gray600, hasBorder = false,

@@ -87,7 +87,7 @@ fun _FunnelInput(
             onValueChange = onChange,
             textStyle = TextStyle(
                 color = Color.White,
-                fontSize = TextSizeMatcher.getOrElse(Size.xl3) { 28.sp },
+                fontSize = TextSizeMatcher.getOrElse(Size.xl) { 28.sp },
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -99,7 +99,7 @@ fun _FunnelInput(
                     Text(
                         text = placeholder,
                         color = Gray400,
-                        fontSize = Size.xl3,
+                        fontSize = Size.xl,
                     )
                 }
 

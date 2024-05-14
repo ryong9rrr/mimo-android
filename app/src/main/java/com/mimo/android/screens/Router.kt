@@ -75,6 +75,25 @@ fun Router(
         }
 
         composable(
+            route = ChangeHouseNicknameScreenDestination.routeWithArgs,
+            arguments = ChangeHouseNicknameScreenDestination.arguments
+        ) { backStackEntry ->
+            val houseId = backStackEntry.arguments?.getString(ChangeHouseNicknameScreenDestination.houseIdTypeArg)
+            val house = myHouseViewModel.queryHouse(myHouseUiState, houseId!!.toLong())
+            if (house == null) {
+                navController.navigate(ChangeHouseNicknameScreenDestination.route) {
+                    popUpTo(0)
+                }
+                return@composable
+            }
+
+            ChangeHouseNicknameScreen(
+                navController = navController,
+                houseId = house.id,
+                myHouseViewModel = myHouseViewModel)
+        }
+
+        composable(
             route = MyHouseDetailScreenDestination.routeWithArgs,
             arguments = MyHouseDetailScreenDestination.arguments
         ){ backStackEntry ->
