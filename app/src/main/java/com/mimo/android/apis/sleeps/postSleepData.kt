@@ -6,20 +6,20 @@ import com.mimo.android.apis.common.onResponseFailureCallback
 import com.mimo.android.apis.mimoApiService
 import retrofit2.Call
 
-const val TAG = "/apis/sleep/postSleepData"
+private const val TAG = "/apis/sleep/postSleepData"
 
 fun postSleepData(
     accessToken: String,
     postSleepDataRequest: PostSleepDataRequest,
-    onSuccessCallback: (OnResponseSuccessCallback<String>)? = null,
+    onSuccessCallback: (OnResponseSuccessCallback<Unit>)? = null,
     onFailureCallback: (onResponseFailureCallback)? = null
 ){
     val call = mimoApiService.postSleepData(
         accessToken = accessToken,
         postSleepDataRequest = postSleepDataRequest
     )
-    call.enqueue(object : retrofit2.Callback<String> {
-        override fun onResponse(call: Call<String>, response: retrofit2.Response<String>) {
+    call.enqueue(object : retrofit2.Callback<Unit> {
+        override fun onResponse(call: Call<Unit>, response: retrofit2.Response<Unit>) {
             Log.i(TAG, response.toString())
             if (response.isSuccessful) {
                 onSuccessCallback?.invoke(response.body())
@@ -28,7 +28,7 @@ fun postSleepData(
             }
         }
 
-        override fun onFailure(call: Call<String>, t: Throwable) {
+        override fun onFailure(call: Call<Unit>, t: Throwable) {
             Log.e(TAG, "Network request failed")
             onFailureCallback?.invoke()
         }

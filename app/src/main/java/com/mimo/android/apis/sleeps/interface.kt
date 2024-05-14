@@ -12,5 +12,11 @@ interface SleepsApiService {
     fun postSleepData(
         @Header("X-AUTH-TOKEN") accessToken: String,
         @Body postSleepDataRequest: PostSleepDataRequest
-    ): Call<String>
+    ): Call<Unit>
+
+    @Headers("Content-Type: application/json")
+    @POST("sleep-data/phone-on")
+    fun postPhoneOn(
+        @Header("X-AUTH-TOKEN") accessToken: String,
+    ): Call<Unit>
 }
