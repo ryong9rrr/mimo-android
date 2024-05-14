@@ -14,6 +14,7 @@ import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.screens.main.myhouse.*
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
+import com.mimo.android.viewmodels.MyHouseHubListViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 import com.mimo.android.viewmodels.UserLocation
 
@@ -27,6 +28,7 @@ fun Router(
     onStopSleepForegroundService: (() -> Unit)? = null,
     myHouseViewModel: MyHouseViewModel,
     myHouseDetailViewModel: MyHouseDetailViewModel,
+    myHouseHubListViewModel: MyHouseHubListViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
@@ -131,6 +133,7 @@ fun Router(
             MyHouseHubListScreen(
                 navController = navController,
                 house = house,
+                myHouseHubListViewModel = myHouseHubListViewModel,
             )
             return@composable
         }

@@ -6,7 +6,7 @@ import com.mimo.android.apis.common.OnResponseSuccessCallback
 import com.mimo.android.apis.common.onResponseFailureCallback
 import com.mimo.android.apis.mimoApiService
 
-const val TAG = "/apis/mimo/hubs"
+private const val TAG = "/apis/mimo/hubs"
 
 fun postRegisterHubToHouse(
     accessToken: String,

@@ -6,18 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.mimo.android.apis.houses.Device
 import com.mimo.android.apis.houses.GetDeviceListByHouseIdResponse
 import com.mimo.android.apis.houses.getDeviceListByHouseId
-import com.mimo.android.apis.houses.getHubListByHouseId
+import com.mimo.android.apis.hubs.getHubListByHouseId
 import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
-import com.mimo.android.utils.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-private const val TAG = "viewmodels/MyHomeDetailViewModel"
+private const val TAG = "MyHouseDetailViewModel"
 
 class MyHouseDetailViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHouseDetailUiState())
@@ -42,22 +41,6 @@ class MyHouseDetailViewModel: ViewModel() {
             }
         }
         return Devices(myDeviceList = myDeviceList, anotherDeviceList = anotherDeviceList)
-    }
-
-    fun fetchHubListByHouseId(houseId: Long){
-        viewModelScope.launch {
-            getHubListByHouseId(
-                accessToken = getData(ACCESS_TOKEN) ?: "",
-                houseId = houseId,
-                onSuccessCallback = { hubList ->
-                    Log.i(TAG, hubList?.toString() ?: "[]")
-                },
-                onFailureCallback = {
-                    Log.e(TAG, "fetchHubListByHouseId")
-                    alertError()
-                }
-            )
-        }
     }
 
     fun fetchGetDeviceListByHouseId(houseId: Long){

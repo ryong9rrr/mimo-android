@@ -19,6 +19,8 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,18 +47,23 @@ import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.ui.theme.Teal400
+import com.mimo.android.viewmodels.MyHouseHubListViewModel
 
 @Composable
 fun MyHouseHubListScreen(
     navController: NavHostController,
-    house: House
+    house: House,
+    myHouseHubListViewModel: MyHouseHubListViewModel,
 ){
-    val hubList by remember { mutableStateOf<List<Hub>?>(null) }
+    val myHouseHubListUiState by myHouseHubListViewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        myHouseHubListViewModel.fetchHubListByHouseId(house.houseId)
+    }
 
     fun handleGoPrev(){
         navController.navigateUp()
     }
-
     BackHandler {
         handleGoPrev()
     }
@@ -73,7 +80,7 @@ fun MyHouseHubListScreen(
 
         Spacer(modifier = Modifier.padding(16.dp))
 
-        if (hubList == null) {
+        if (myHouseHubListUiState.hubList.isEmpty()) {
             Text(text = "Loading...")
         }
     }

@@ -28,6 +28,7 @@ import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
+import com.mimo.android.viewmodels.MyHouseHubListViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 
 private const val TAG = "MimoApp"
@@ -42,6 +43,7 @@ fun MimoApp(
     firstSettingFunnelsViewModel: FirstSettingFunnelsViewModel,
     myHouseViewModel: MyHouseViewModel,
     myHouseDetailViewModel: MyHouseDetailViewModel,
+    myHouseHubListViewModel: MyHouseHubListViewModel,
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
     onStartSleepForegroundService: (() -> Unit)? = null,
@@ -141,6 +143,7 @@ fun MimoApp(
                             onStopSleepForegroundService = onStopSleepForegroundService,
                             myHouseViewModel = myHouseViewModel,
                             myHouseDetailViewModel = myHouseDetailViewModel,
+                            myHouseHubListViewModel = myHouseHubListViewModel,
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                             checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,

@@ -37,11 +37,4 @@ interface HousesApiService {
         @Header("X-AUTH-TOKEN") accessToken: String,
         @Path("houseId") houseId: Long
     ): Call<GetDeviceListByHouseIdResponse>
-
-    @Headers("Content-Type: application/json")
-    @GET("hubs/list")
-    fun getHubListByHouseId(
-        @Header("X-AUTH-TOKEN") accessToken: String,
-        @Query("houseId") houseId: Long
-    ): Call<List<Hub>>
 }

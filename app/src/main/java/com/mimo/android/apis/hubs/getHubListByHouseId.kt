@@ -1,4 +1,5 @@
-package com.mimo.android.apis.houses
+package com.mimo.android.apis.hubs
+
 import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.mimo.android.apis.common.OnResponseSuccessCallback
@@ -6,7 +7,7 @@ import com.mimo.android.apis.common.onResponseFailureCallback
 import com.mimo.android.apis.mimoApiService
 import retrofit2.Call
 
-private const val TAG = "apis/houses/getHubListByHouseId"
+private const val TAG = "apis/hubs/getHubListByHouseId"
 
 fun getHubListByHouseId(
     accessToken: String,
@@ -35,51 +36,33 @@ fun getHubListByHouseId(
 }
 
 data class Hub(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
-    val house: RegisteredHouse,
+    val house: House,
     val serialNumber: String,
-    val lamp: List<Lamp>,
-    val light: List<Light>,
-    val slidingWindow: List<SlidingWindow>,
-    val curtain: List<Curtain>,
+    val lamp: DeviceLamp,
+    val light: List<DeviceLight>,
+    val slidingWindow: List<DeviceSlidingWindow>,
+    val curtain: List<DeviceCurtain>,
     val registered: Boolean
 )
 
-data class RegisteredHouse(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+data class House(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val address: String,
     val userHouse: List<UserHouse>,
     val hub: List<String>,
     val active: Boolean
 )
 
-data class WakeUpTime(
-    val hour: Long,
-    val minute: Long,
-    val second: Long,
-    val nano: Long,
-)
-
-data class User (
-    val id: Long,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
-    val isSuperUser: Boolean,
-    val nickname: String,
-    val wakeupTime: WakeUpTime,
-    val userHouse: List<String>,
-    val username: String,
-)
-
 data class UserHouse(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
     val user: User,
     val house: String,
@@ -87,10 +70,42 @@ data class UserHouse(
     val active: Boolean
 )
 
-data class Lamp(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+data class User(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
+    val keyCode: String,
+    val roles: List<String>,
+    val isSuperUser: Boolean,
+    val email: String,
+    val nickname: String,
+    val wakeupTime: WakeupTime,
+    val userHouse: List<String>,
+    val password: String,
+    val enabled: Boolean,
+    val username: String,
+    val authorities: List<Authority>,
+    val accountNonExpired: Boolean,
+    val accountNonLocked: Boolean,
+    val credentialsNonExpired: Boolean,
+    val active: Boolean
+)
+
+data class WakeupTime(
+    val hour: Long,
+    val minute: Long,
+    val second: Long,
+    val nano: Long
+)
+
+data class Authority(
+    val authority: String
+)
+
+data class DeviceLamp(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
     val user: User,
     val hub: String,
@@ -101,10 +116,10 @@ data class Lamp(
     val registered: Boolean
 )
 
-data class Light(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+data class DeviceLight(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
     val user: User,
     val hub: String,
@@ -115,28 +130,28 @@ data class Light(
     val registered: Boolean
 )
 
-data class SlidingWindow(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+data class DeviceSlidingWindow(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
     val user: User,
     val hub: String,
     val macAddress: String,
-    val openDegree: Int,
+    val openDegree: Long,
     val accessible: Boolean,
     val registered: Boolean
 )
 
-data class Curtain(
-    val id: Int,
-    @SerializedName("registeredDttm") val registeredDateTime: String,
-    @SerializedName("unregisteredDttm") val unregisteredDateTime: String,
+data class DeviceCurtain(
+    val id: Long,
+    val registeredDttm: String,
+    val unregisteredDttm: String,
     val nickname: String,
     val user: User,
     val hub: String,
     val macAddress: String,
-    val openDegree: Int,
+    val openDegree: Long,
     val accessible: Boolean,
     val registered: Boolean
 )
