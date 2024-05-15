@@ -50,6 +50,15 @@ object MyHouseHubListScreenDestination: Destination {
     )
 }
 
+object MyHouseSimpleDeviceListDestination: Destination {
+    override val route = "MyHouseSimpleDeviceListDestination"
+    const val hubIdTypeArg = "hubId"
+    val routeWithArgs = "$route/{$hubIdTypeArg}"
+    val arguments = listOf(
+        navArgument(hubIdTypeArg) { type = NavType.StringType }
+    )
+}
+
 fun isShowNavigation(currentRoute: String?): Boolean{
     if (currentRoute == null) {
         return true

@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.mimo.android.screens.main.myhome.MyHouseHubListScreen
+import com.mimo.android.screens.main.myhouse.MyHouseHubListScreen
 import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.screens.main.myhouse.*
@@ -139,6 +139,21 @@ fun Router(
                 myHouseHubListViewModel = myHouseHubListViewModel,
             )
             return@composable
+        }
+
+        composable(
+            route = MyHouseSimpleDeviceListDestination.routeWithArgs,
+            arguments = MyHouseSimpleDeviceListDestination.arguments
+        ) { backStackEntry ->
+            val hubId = backStackEntry.arguments?.getString(MyHouseSimpleDeviceListDestination.hubIdTypeArg)
+            val hub = myHouseHubListViewModel.queryHub(hubId!!.toLong())
+            if (hub == null) {
+                navController.navigate(MyHouseScreenDestination.route) {
+                    popUpTo(0)
+                }
+                return@composable
+            }
+            MyHouseSimpleDeviceListScreen(navController = navController, hub = hub)
         }
     }
 }

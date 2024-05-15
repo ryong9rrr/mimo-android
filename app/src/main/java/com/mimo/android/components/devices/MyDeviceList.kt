@@ -17,7 +17,7 @@ import com.mimo.android.ui.theme.*
 
 @Composable
 fun MyDeviceList(
-    myDeviceList: List<Device>,
+    myDeviceList: List<Device>?,
     onToggleDevice: ((deviceId: Long) -> Unit)? = null
 ){
 
@@ -25,8 +25,17 @@ fun MyDeviceList(
         onToggleDevice?.invoke(deviceId)
     }
 
-    myDeviceList.forEachIndexed { index, device ->
-        Column {
+    if (myDeviceList == null) {
+        return
+    }
+
+    if (myDeviceList.isEmpty()) {
+        Text(text = "등록된 허브가 없어요.")
+        return
+    }
+
+    Column {
+        myDeviceList.forEachIndexed { index, device ->
             TransparentCard(
                 borderRadius = 8.dp,
                 children = {
@@ -82,9 +91,7 @@ fun MyDeviceList(
 @Preview
 @Composable
 private fun MyDeviceListPreview(){
-    Column {
-        MyDeviceList(myDeviceList = fakeGetMyDeviceList())
-    }
+    MyDeviceList(myDeviceList = fakeGetMyDeviceList())
 }
 
 fun fakeGetMyDeviceList(): List<Device>{

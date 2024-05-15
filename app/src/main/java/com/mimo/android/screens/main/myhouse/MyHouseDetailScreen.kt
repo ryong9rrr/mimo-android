@@ -139,16 +139,16 @@ fun MyHouseDetailScreen(
         }
         Spacer(modifier = Modifier.padding(8.dp))
 
-        // TODO: DUMMY
+        // TODO: DUMMY를 진짜로...
+        MyDeviceList(
+            myDeviceList = fakeGetMyDeviceList(),
+            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) }
+        )
 //        if (myDeviceList.isEmpty()) {
 //            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
 //        } else {
 //            MyDeviceList(myDeviceList = myDeviceList)
 //        }
-        MyDeviceList(
-            myDeviceList = fakeGetMyDeviceList(),
-            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) }
-        )
         Spacer(modifier = Modifier.padding(16.dp))
 
         HeadingSmall(text = "다른 사람의 기기")
@@ -234,23 +234,3 @@ fun ScreenModalContent(
         }
     }
 }
-
-//@Preview
-//@Composable
-//private fun MyHomeDetailScreenPreview(){
-//    val navController = NavHostController(LocalContext.current)
-//    val home = Home(
-//        homeId = 1,
-//        homeName = "낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가 낙성대 7번출구 어딘가",
-//        address = "서울특별시 관악구 봉천동 1234-56",
-//        devices = arrayListOf("조명", "커튼")
-//    )
-//
-//    MyHomeDetailScreen(
-//        navController = navController,
-//        home = home,
-//        isCurrentHome = true,
-//        myItems = Any(),
-//        anotherPeopleItems = Any()
-//    )
-//}
