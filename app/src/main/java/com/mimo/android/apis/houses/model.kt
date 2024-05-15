@@ -44,5 +44,7 @@ data class Device(
     val deviceId: Long,
     val type: String,
     val nickname: String,
-    val isAccessible: Boolean
+    val isAccessible: Boolean,
+    val curColor: Long,
+    val openDegree: Long
 )

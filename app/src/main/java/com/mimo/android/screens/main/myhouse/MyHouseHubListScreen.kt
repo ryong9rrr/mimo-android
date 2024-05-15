@@ -75,9 +75,11 @@ fun MyHouseHubListScreen(
 
         HeadingLarge(text = "허브 목록", fontSize = Size.lg)
         Spacer(modifier = Modifier.padding(8.dp))
-        HorizontalScroll {
-            HeadingSmall(text = "${house.nickname} / ${house.address}", fontSize = Size.sm, color = Teal100)
-        }
+        HorizontalScroll(
+            children = {
+                HeadingSmall(text = "${house.nickname} / ${house.address}", fontSize = Size.sm, color = Teal100)
+            }
+        )
         Spacer(modifier = Modifier.padding(16.dp))
         HubList(hubList = myHouseHubListUiState.hubList)
     }

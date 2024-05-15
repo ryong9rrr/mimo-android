@@ -11,6 +11,7 @@ import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.utils.showToast
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -61,6 +62,11 @@ class MyHouseDetailViewModel: ViewModel() {
                 }
             )
         }
+    }
+
+    fun fetchToggleMyDevice(deviceId: Long){
+        // TODO: 디바이스 토글, 디바이스의 현재 상태가 정의되어있지 않은 것 같다...
+        showToast("${deviceId} 토글함!")
     }
 }
 

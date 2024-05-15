@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,12 +22,11 @@ import androidx.navigation.NavHostController
 import com.mimo.android.apis.houses.House
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
-import com.mimo.android.components.devices.RangeController
+import com.mimo.android.components.devices.MyDeviceList
+import com.mimo.android.components.devices.fakeGetMyDeviceList
 import com.mimo.android.screens.ChangeHouseNicknameScreenDestination
 import com.mimo.android.screens.MyHouseHubListScreenDestination
-import com.mimo.android.ui.theme.Gray300
-import com.mimo.android.ui.theme.Gray600
-import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.ui.theme.*
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 
@@ -41,7 +39,6 @@ fun MyHouseDetailScreen(
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit
 ){
-    val myHouseDetailUiState by myHouseDetailViewModel.uiState.collectAsState()
     val devices = myHouseDetailViewModel.getDevices()
     val myDeviceList = devices.myDeviceList
     val anotherDeviceList = devices.anotherDeviceList
@@ -58,6 +55,10 @@ fun MyHouseDetailScreen(
         handleGoPrev()
     }
 
+    fun navigateToChangeHouseNicknameScreen(){
+        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.houseId}")
+    }
+
     fun handleShowScreenModal(){
         isShowScreenModal = true
     }
@@ -72,12 +73,12 @@ fun MyHouseDetailScreen(
         checkCameraPermissionHubToHouse()
     }
 
-    fun navigateToChangeHouseNicknameScreen(){
-        navController.navigate("${ChangeHouseNicknameScreenDestination.route}/${house.houseId}")
-    }
-
     fun handleClickShowHubListButton(){
         navController.navigate("${MyHouseHubListScreenDestination.route}/${house.houseId}")
+    }
+
+    fun handleToggleMyDevice(deviceId: Long){
+        myHouseDetailViewModel.fetchToggleMyDevice(deviceId)
     }
 
     ScrollView {
@@ -109,13 +110,17 @@ fun MyHouseDetailScreen(
         }
 
         Spacer(modifier = Modifier.padding(14.dp))
-        HorizontalScroll {
-            HeadingLarge(text = house.nickname, fontSize = Size.lg)
-        }
+        HorizontalScroll(
+            children = {
+                HeadingLarge(text = house.nickname, fontSize = Size.lg)
+            }
+        )
         Spacer(modifier = Modifier.padding(4.dp))
-        HorizontalScroll {
-            HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
-        }
+        HorizontalScroll(
+            children = {
+                HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
+            }
+        )
 
         Spacer(modifier = Modifier.padding(12.dp))
 
@@ -129,48 +134,21 @@ fun MyHouseDetailScreen(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 HeadingSmall(text = "나의 기기", fontSize = Size.lg)
-                ButtonSmall(text = "기기 추가") // TODO: "현재 거주지" 에서만 기기추가 가능
+                ButtonSmall(text = "기기 추가")
             }
         }
         Spacer(modifier = Modifier.padding(8.dp))
 
-        if (myDeviceList.isEmpty()) {
-            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
-        } else {
-            myDeviceList.forEachIndexed { index, device ->
-                TransparentCard(
-                    borderRadius = 8.dp,
-                    children = {
-                        Column(
-                            modifier = Modifier.padding(8.dp)
-                        ) {
-                            Row (
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                CardType(text = device.type)
-                                Icon(
-                                    imageVector = Icons.Filled.KeyboardArrowRight,
-                                    size = 24.dp
-                                )
-                            }
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            HorizontalScroll {
-                                Text(text = device.nickname, fontSize = Size.lg)
-                            }
-
-                            // TODO : 임시로 그냥..
-                            RangeController()
-
-                            if (index < myDeviceList.size - 1) {
-                                Spacer(modifier = Modifier.padding(4.dp))
-                            }
-                        }
-                    }
-                )
-            }
-        }
+        // TODO: DUMMY
+//        if (myDeviceList.isEmpty()) {
+//            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+//        } else {
+//            MyDeviceList(myDeviceList = myDeviceList)
+//        }
+        MyDeviceList(
+            myDeviceList = fakeGetMyDeviceList(),
+            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) }
+        )
         Spacer(modifier = Modifier.padding(16.dp))
 
         HeadingSmall(text = "다른 사람의 기기")
@@ -189,9 +167,11 @@ fun MyHouseDetailScreen(
                         ) {
                             CardType(text = device.type)
                             Spacer(modifier = Modifier.padding(4.dp))
-                            HorizontalScroll {
-                                Text(text = device.nickname, fontSize = Size.lg)
-                            }
+                            HorizontalScroll(
+                                children = {
+                                    Text(text = device.nickname, fontSize = Size.lg)
+                                }
+                            )
                         }
                     }
                 )
@@ -230,9 +210,11 @@ fun ScreenModalContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (house.nickname.length > 20) {
-                HorizontalScroll {
-                    HeadingSmall(text = house.nickname)
-                }
+                HorizontalScroll(
+                    children = {
+                        HeadingSmall(text = house.nickname)
+                    }
+                )
             } else {
                 HeadingSmall(text = house.nickname)
             }

@@ -235,15 +235,19 @@ private fun Card(
 
                     Spacer(modifier = Modifier.weight(1f))
 
-                    HorizontalScroll {
-                        HeadingSmall(text = house.nickname, Size.lg)
-                    }
+                    HorizontalScroll(
+                        children = {
+                            HeadingSmall(text = house.nickname, Size.lg)
+                        }
+                    )
 
                     Spacer(modifier = Modifier.padding(4.dp))
 
-                    HorizontalScroll {
-                        HeadingSmall(text = house.address, fontSize = Size.xs, color = Teal100)
-                    }
+                    HorizontalScroll(
+                        children = {
+                            HeadingSmall(text = house.address, fontSize = Size.xs, color = Teal100)
+                        }
+                    )
                 }
             }
         )
@@ -278,9 +282,11 @@ fun CardModalContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (house.nickname.length > 20) {
-                HorizontalScroll {
-                    HeadingSmall(text = house.nickname)
-                }
+                HorizontalScroll(
+                    children = {
+                        HeadingSmall(text = house.nickname)
+                    }
+                )
             } else {
                 HeadingSmall(text = house.nickname)
             }
