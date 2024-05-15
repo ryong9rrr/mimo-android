@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mimo.android.components.Icon
@@ -22,10 +23,10 @@ import com.mimo.android.components.Text
 import com.mimo.android.meanStage
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.ui.theme.Teal100
-import com.mimo.android.ui.theme.Teal400
 import com.mimo.android.utils.dateFormatter
 import com.mimo.android.viewmodels.MyProfileViewModel
-import com.mimo.android.viewmodels.convertDayOfWeekToString
+import com.mimo.android.viewmodels.convertCalendarDate
+import java.time.LocalDate
 
 @Composable
 fun SleepCalendarChart(
@@ -33,6 +34,19 @@ fun SleepCalendarChart(
     healthConnectManager: HealthConnectManager? = null,
 ){
     val myProfileUiState by myProfileViewModel.uiState.collectAsState()
+
+    fun isToday(): Boolean {
+        val stateDate = convertCalendarDate(myProfileUiState.date)
+        val todayDate = convertCalendarDate(LocalDate.now())
+        return stateDate.month == todayDate.month && stateDate.day == todayDate.day
+    }
+
+    fun getGoNextDayButtonColor(): Color {
+        if (isToday()) {
+            return Color.Gray
+        }
+        return Color.White
+    }
 
     fun handleClickPrevDate(){
         if (healthConnectManager == null) {
@@ -45,7 +59,19 @@ fun SleepCalendarChart(
         if (healthConnectManager == null) {
             return
         }
+        if (isToday()) {
+            return
+        }
         myProfileViewModel.updateToNextDate(healthConnectManager)
+    }
+
+    fun showDateString(): String {
+        val stateDate = convertCalendarDate(myProfileUiState.date)
+        val todayDate = convertCalendarDate(LocalDate.now())
+        if (stateDate.month == todayDate.month && stateDate.day == todayDate.day) {
+            return "오늘 (${todayDate.dayOfWeek})"
+        }
+        return "${stateDate.year}년 ${stateDate.month}월 ${stateDate.day}일 (${stateDate.dayOfWeek})"
     }
 
     LaunchedEffect(Unit) {
@@ -67,12 +93,13 @@ fun SleepCalendarChart(
                 onClick = ::handleClickPrevDate
             )
 
-            Text(text = "${myProfileUiState.date} (${convertDayOfWeekToString(myProfileUiState.date)})")
+            Text(text = showDateString())
 
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowRight,
                 size = 24.dp,
-                onClick = ::handleClickNextDate
+                onClick = ::handleClickNextDate,
+                color = getGoNextDayButtonColor()
             )
         }
         Spacer(modifier = Modifier.padding(4.dp))
@@ -96,7 +123,6 @@ fun SleepCalendarChart(
                     Text(text = "${dateFormatter.format(stage.startTime)} ~ ${dateFormatter.format(stage.endTime)} @@ ${meanStage(stage.stage)}")
                 }
             }
-
         }
     }
 }
