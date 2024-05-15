@@ -14,11 +14,14 @@ import com.mimo.android.apis.houses.Device
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.*
+import com.mimo.android.utils.preferences.USER_ID
+import com.mimo.android.utils.preferences.getData
 
 @Composable
 fun MyDeviceList(
     myDeviceList: List<Device>?,
-    onToggleDevice: ((deviceId: Long) -> Unit)? = null
+    onToggleDevice: ((deviceId: Long) -> Unit)? = null,
+    onClickNavigateToDetailDeviceScreen: ((device: Device) -> Unit)? = null,
 ){
 
     fun handleToggleDevice(deviceId: Long){
@@ -50,7 +53,8 @@ fun MyDeviceList(
                             CardType(text = device.type)
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowRight,
-                                size = 24.dp
+                                size = 24.dp,
+                                onClick = { onClickNavigateToDetailDeviceScreen?.invoke(device) }
                             )
                         }
                         Spacer(modifier = Modifier.padding(6.dp))
@@ -97,7 +101,7 @@ private fun MyDeviceListPreview(){
 fun fakeGetMyDeviceList(): List<Device>{
     return mutableListOf(
         Device(
-            userId = -1,
+            userId = getData(USER_ID)!!.toLong(),
             hubId = 1,
             deviceId = 2,
             type = "조명",
@@ -107,7 +111,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = -1,
+            userId = getData(USER_ID)!!.toLong(),
             hubId = 1,
             deviceId = 3,
             type = "무드등",
@@ -117,7 +121,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = -1,
+            userId = getData(USER_ID)!!.toLong(),
             hubId = 1,
             deviceId = 4,
             type = "커튼",
@@ -127,7 +131,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = -1,
+            userId = getData(USER_ID)!!.toLong(),
             hubId = 1,
             deviceId = 5,
             type = "창문",

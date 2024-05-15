@@ -35,9 +35,13 @@ import com.mimo.android.screens.firstsettingfunnels.*
 import com.mimo.android.screens.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
 import com.mimo.android.ui.theme.Teal900
+import com.mimo.android.viewmodels.MyHouseCurtainViewModel
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseHubListViewModel
+import com.mimo.android.viewmodels.MyHouseLampViewModel
+import com.mimo.android.viewmodels.MyHouseLightViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.MyHouseWindowViewModel
 import com.mimo.android.viewmodels.MyProfileViewModel
 
 private const val TAG = "MimoApp"
@@ -60,7 +64,11 @@ fun MimoApp(
     onStopSleepForegroundService: (() -> Unit)? = null,
     checkCameraPermissionFirstSetting: () -> Unit,
     checkCameraPermissionHubToHouse: () -> Unit,
-    checkCameraPermissionMachineToHub: () -> Unit
+    checkCameraPermissionMachineToHub: () -> Unit,
+    myHouseCurtainViewModel: MyHouseCurtainViewModel,
+    myHouseLampViewModel: MyHouseLampViewModel,
+    myHouseLightViewModel: MyHouseLightViewModel,
+    myHouseWindowViewModel: MyHouseWindowViewModel
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -185,7 +193,11 @@ fun MimoApp(
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                             checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,
-                            launchGoogleLocationAndAddress = launchGoogleLocationAndAddress
+                            launchGoogleLocationAndAddress = launchGoogleLocationAndAddress,
+                            myHouseCurtainViewModel = myHouseCurtainViewModel,
+                            myHouseLampViewModel = myHouseLampViewModel,
+                            myHouseLightViewModel = myHouseLightViewModel,
+                            myHouseWindowViewModel = myHouseWindowViewModel,
                         )
                     }
                 }

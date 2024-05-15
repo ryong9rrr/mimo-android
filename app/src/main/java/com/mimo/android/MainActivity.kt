@@ -7,7 +7,6 @@ import android.os.Build
 import com.journeyapps.barcodescanner.ScanContract
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -34,10 +33,7 @@ import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
-import com.mimo.android.viewmodels.MyHouseDetailViewModel
-import com.mimo.android.viewmodels.MyHouseHubListViewModel
-import com.mimo.android.viewmodels.MyHouseViewModel
-import com.mimo.android.viewmodels.MyProfileViewModel
+import com.mimo.android.viewmodels.*
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.time.*
@@ -60,6 +56,10 @@ class MainActivity : ComponentActivity() {
     private val myHouseDetailViewModel = MyHouseDetailViewModel()
     private val myHouseHubListViewModel = MyHouseHubListViewModel()
     private val myProfileViewModel = MyProfileViewModel()
+    private val myHouseCurtainViewModel = MyHouseCurtainViewModel()
+    private val myHouseLampViewModel = MyHouseLampViewModel()
+    private val myHouseLightViewModel = MyHouseLightViewModel()
+    private val myHouseWindowViewModel = MyHouseWindowViewModel()
 
     // 초기세팅용 QR code Scanner
     private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
@@ -168,6 +168,10 @@ class MainActivity : ComponentActivity() {
                 myHouseDetailViewModel = myHouseDetailViewModel,
                 myHouseHubListViewModel = myHouseHubListViewModel,
                 myProfileViewModel = myProfileViewModel,
+                myHouseCurtainViewModel = myHouseCurtainViewModel,
+                myHouseLampViewModel = myHouseLampViewModel,
+                myHouseLightViewModel = myHouseLightViewModel,
+                myHouseWindowViewModel = myHouseWindowViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,

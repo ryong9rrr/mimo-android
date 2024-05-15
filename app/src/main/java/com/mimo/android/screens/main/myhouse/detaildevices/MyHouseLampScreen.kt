@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.apis.devices.window.GetWindowResponse
+import com.mimo.android.apis.houses.Device
 import com.mimo.android.components.HeadingLarge
 import com.mimo.android.components.HeadingSmall
 import com.mimo.android.components.HorizontalScroll
@@ -17,12 +20,17 @@ import com.mimo.android.components.Icon
 import com.mimo.android.components.ScrollView
 import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.viewmodels.MyHouseLampViewModel
+import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 
 @Composable
-fun WindowScreen(
+fun MyHouseLampScreen(
     navController: NavHostController? = null,
-    window: GetWindowResponse? = null
+    device: Device,
+    myHouseLampViewModel: MyHouseLampViewModel
 ){
+    val myHouseLampUiState by myHouseLampViewModel.uiState.collectAsState()
+
     fun handleGoPrev() {
         navController?.navigateUp()
     }
@@ -30,8 +38,8 @@ fun WindowScreen(
         handleGoPrev()
     }
 
-    if (window == null) {
-        return
+    LaunchedEffect(Unit) {
+        myHouseLampViewModel.fetchGetDevice(device)
     }
 
     ScrollView {
@@ -40,18 +48,18 @@ fun WindowScreen(
 
         HorizontalScroll(
             children = {
-                HeadingLarge(text = window.nickname, fontSize = Size.lg)
+                HeadingLarge(text = device.nickname, fontSize = Size.lg)
             }
         )
         Spacer(modifier = Modifier.padding(4.dp))
         HorizontalScroll(
             children = {
-                HeadingSmall(text = window.macAddress, fontSize = Size.sm, color = Teal100)
+                HeadingSmall(text = "MAC 주소 : ${myHouseLampUiState.lamp?.macAddress}", fontSize = Size.sm, color = Teal100)
             }
         )
         Spacer(modifier = Modifier.padding(16.dp))
 
-        HeadingSmall(text = "조명 설정", fontSize = Size.lg)
+        HeadingSmall(text = "${convertDeviceTypeToKoreaName(device.type)} 설정", fontSize = Size.lg)
         Spacer(modifier = Modifier.padding(8.dp))
 
 

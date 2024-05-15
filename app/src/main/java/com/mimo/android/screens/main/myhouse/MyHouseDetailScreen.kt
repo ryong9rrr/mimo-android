@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,16 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mimo.android.apis.houses.House
+import com.mimo.android.apis.houses.*
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
-import com.mimo.android.components.devices.MyDeviceList
-import com.mimo.android.components.devices.fakeGetMyDeviceList
-import com.mimo.android.screens.ChangeHouseNicknameScreenDestination
-import com.mimo.android.screens.MyHouseHubListScreenDestination
+import com.mimo.android.components.devices.*
+import com.mimo.android.screens.*
 import com.mimo.android.ui.theme.*
-import com.mimo.android.viewmodels.MyHouseDetailViewModel
-import com.mimo.android.viewmodels.QrCodeViewModel
+import com.mimo.android.viewmodels.*
 
 @Composable
 fun MyHouseDetailScreen(
@@ -37,7 +33,11 @@ fun MyHouseDetailScreen(
     myHouseDetailViewModel: MyHouseDetailViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
-    checkCameraPermissionMachineToHub: () -> Unit
+    checkCameraPermissionMachineToHub: () -> Unit,
+    myHouseCurtainViewModel: MyHouseCurtainViewModel,
+    myHouseLampViewModel: MyHouseLampViewModel,
+    myHouseLightViewModel: MyHouseLightViewModel,
+    myHouseWindowViewModel: MyHouseWindowViewModel
 ){
     val devices = myHouseDetailViewModel.getDevices()
     val myDeviceList = devices.myDeviceList
@@ -53,6 +53,25 @@ fun MyHouseDetailScreen(
     }
     BackHandler {
         handleGoPrev()
+    }
+
+    fun navigateToDetailDeviceScreen(device: Device){
+        if (isWindowType(device.type)) {
+            navController.navigate("${MyHouseWindowScreenDestination.route}/${device.deviceId}")
+            return
+        }
+        if (isLightType(device.type)) {
+            navController.navigate("${MyHouseLightScreenDestination.route}/${device.deviceId}")
+            return
+        }
+        if (isLampType(device.type)) {
+            navController.navigate("${MyHouseLampScreenDestination.route}/${device.deviceId}")
+            return
+        }
+        if (isCurtainType(device.type)) {
+            navController.navigate("${MyHouseCurtainScreenDestination.route}/${device.deviceId}")
+            return
+        }
     }
 
     fun navigateToChangeHouseNicknameScreen(){
@@ -142,7 +161,8 @@ fun MyHouseDetailScreen(
         // TODO: DUMMY를 진짜로...
         MyDeviceList(
             myDeviceList = fakeGetMyDeviceList(),
-            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) }
+            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) },
+            onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
         )
 //        if (myDeviceList.isEmpty()) {
 //            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
