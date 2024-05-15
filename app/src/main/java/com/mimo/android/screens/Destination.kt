@@ -49,3 +49,19 @@ object MyHouseHubListScreenDestination: Destination {
         navArgument(houseIdTypeArg) { type = NavType.StringType }
     )
 }
+
+fun isShowNavigation(currentRoute: String?): Boolean{
+    if (currentRoute == null) {
+        return true
+    }
+
+    if (currentRoute.contains("ChangeHouseNicknameScreenDestination")) {
+        return false
+    }
+
+    if (currentRoute.contains("CreateHouseConfirmScreen")) {
+        return false
+    }
+
+    return true
+}
