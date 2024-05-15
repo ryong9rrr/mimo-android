@@ -48,7 +48,7 @@ class HealthConnectManager(private val context: Context) {
         return -1
     }
 
-    suspend fun readSleepSessionRecord(start: Instant, end: Instant): List<SleepSessionRecord>?{
+    suspend fun readSleepSessionRecordList(start: Instant, end: Instant): List<SleepSessionRecord>?{
         val result = ArrayList<SleepSessionRecord>()
         val request = ReadRecordsRequest(
             recordType = SleepSessionRecord::class,

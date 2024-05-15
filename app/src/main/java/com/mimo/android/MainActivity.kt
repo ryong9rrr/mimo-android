@@ -28,6 +28,7 @@ import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.initializeKakaoSdk
 import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
+import com.mimo.android.utils.dateFormatter
 import com.mimo.android.utils.os.printKeyHash
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
@@ -36,6 +37,7 @@ import com.mimo.android.utils.showToast
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseHubListViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.MyProfileViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.time.*
@@ -57,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private val myHouseViewModel = MyHouseViewModel()
     private val myHouseDetailViewModel = MyHouseDetailViewModel()
     private val myHouseHubListViewModel = MyHouseHubListViewModel()
+    private val myProfileViewModel = MyProfileViewModel()
 
     // 초기세팅용 QR code Scanner
     private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
@@ -164,6 +167,7 @@ class MainActivity : ComponentActivity() {
                 myHouseViewModel = myHouseViewModel,
                 myHouseDetailViewModel = myHouseDetailViewModel,
                 myHouseHubListViewModel = myHouseHubListViewModel,
+                myProfileViewModel = myProfileViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,
@@ -263,7 +267,7 @@ class MainActivity : ComponentActivity() {
         val startTime = ZonedDateTime.of(2024, month, dayOfMonth, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
         val endTime = ZonedDateTime.of(2024, month, dayOfMonth, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
 
-        val sleepSessionRecord = healthConnectManager.readSleepSessionRecord(startTime.toInstant(), endTime.toInstant())
+        val sleepSessionRecord = healthConnectManager.readSleepSessionRecordList(startTime.toInstant(), endTime.toInstant())
 
         if (sleepSessionRecord == null) {
             Log.d(TAG, "MIMO가 감지 중")
@@ -310,9 +314,6 @@ class MainActivity : ComponentActivity() {
         val step = healthConnectManager.readSteps(startOfDay.toInstant(), now)
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${step}")
     }
-
-    val dateFormatter = DateTimeFormatter.ofPattern("HH:mm")
-        .withZone(ZoneId.of("Asia/Seoul"))
 
     private fun getCurrentTime(): String{
         val zoneId = ZoneId.of("Asia/Seoul") // 한국 시간대 (KST)

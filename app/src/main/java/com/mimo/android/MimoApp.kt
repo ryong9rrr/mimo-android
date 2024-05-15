@@ -38,6 +38,7 @@ import com.mimo.android.ui.theme.Teal900
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseHubListViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.MyProfileViewModel
 
 private const val TAG = "MimoApp"
 
@@ -52,6 +53,7 @@ fun MimoApp(
     myHouseViewModel: MyHouseViewModel,
     myHouseDetailViewModel: MyHouseDetailViewModel,
     myHouseHubListViewModel: MyHouseHubListViewModel,
+    myProfileViewModel: MyProfileViewModel,
     healthConnectManager: HealthConnectManager,
     launchGoogleLocationAndAddress: (cb: (userLocation: UserLocation?) -> Unit) -> Unit,
     onStartSleepForegroundService: (() -> Unit)? = null,
@@ -179,6 +181,7 @@ fun MimoApp(
                             myHouseViewModel = myHouseViewModel,
                             myHouseDetailViewModel = myHouseDetailViewModel,
                             myHouseHubListViewModel = myHouseHubListViewModel,
+                            myProfileViewModel = myProfileViewModel,
                             qrCodeViewModel = qrCodeViewModel,
                             checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse,
                             checkCameraPermissionMachineToHub = checkCameraPermissionMachineToHub,

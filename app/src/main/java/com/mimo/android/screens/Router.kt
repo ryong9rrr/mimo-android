@@ -16,6 +16,7 @@ import com.mimo.android.screens.main.myhouse.*
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.MyHouseHubListViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.MyProfileViewModel
 import com.mimo.android.viewmodels.UserLocation
 
 @Composable
@@ -29,6 +30,7 @@ fun Router(
     myHouseViewModel: MyHouseViewModel,
     myHouseDetailViewModel: MyHouseDetailViewModel,
     myHouseHubListViewModel: MyHouseHubListViewModel,
+    myProfileViewModel: MyProfileViewModel,
     qrCodeViewModel: QrCodeViewModel,
     checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: () -> Unit,
@@ -61,8 +63,9 @@ fun Router(
         composable(MyProfileScreenDestination.route) {
             MyProfileScreen(
                 navController = navController,
-                healthConnectManager = healthConnectManager,
-                authViewModel = authViewModel
+                myProfileViewModel = myProfileViewModel,
+                authViewModel = authViewModel,
+                healthConnectManager = healthConnectManager
             )
             return@composable
         }

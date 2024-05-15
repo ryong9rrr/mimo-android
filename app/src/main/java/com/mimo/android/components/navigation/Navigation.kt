@@ -111,7 +111,7 @@ fun Navigation(
                     )
                 },
                 label = {
-                    Text(text = "나의 정보", modifier = Modifier.padding(top = 14.dp), color = getColor(activeMyProfile))
+                    Text(text = "내 정보", modifier = Modifier.padding(top = 14.dp), color = getColor(activeMyProfile))
                 },
                 alwaysShowLabel = true,
                 enabled = true

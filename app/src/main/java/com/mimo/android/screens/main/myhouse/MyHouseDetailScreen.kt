@@ -77,7 +77,6 @@ fun MyHouseDetailScreen(
     }
 
     fun handleClickShowHubListButton(){
-        // TODO: HomeHubListScreen으로 navigate
         navController.navigate("${MyHouseHubListScreenDestination.route}/${house.houseId}")
     }
 

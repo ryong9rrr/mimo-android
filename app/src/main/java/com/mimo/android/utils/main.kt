@@ -2,6 +2,8 @@ package com.mimo.android.utils
 
 import android.widget.Toast
 import com.mimo.android.MainActivity
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 fun showToast(text: String){
     Toast.makeText(
@@ -18,3 +20,6 @@ fun alertError(){
         Toast.LENGTH_SHORT
     ).show()
 }
+
+val dateFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    .withZone(ZoneId.of("Asia/Seoul"))
