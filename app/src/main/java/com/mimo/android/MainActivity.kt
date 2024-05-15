@@ -16,6 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.mimo.android.apis.createMimoApiService
 import com.mimo.android.apis.sleeps.PostSleepDataRequest
 import com.mimo.android.apis.sleeps.postSleepData
@@ -47,6 +49,10 @@ import java.util.TimerTask
 private const val TAG = "MainActivity"
 
 class MainActivity : ComponentActivity() {
+    // Firebase Realtime Database의 "messages" 노드에 참조를 가져옴
+    val database = Firebase.database("https://mimo-14710-default-rtdb.asia-southeast1.firebasedatabase.app")
+    val ref = database.getReference("messages")
+
     // health-connect
     private lateinit var healthConnectManager: HealthConnectManager
     private lateinit var healthConnectPermissionRequest: ActivityResultLauncher<Set<String>>
@@ -202,7 +208,7 @@ class MainActivity : ComponentActivity() {
 
             //job = createJob()
             timerTask = Task()
-            Timer().scheduleAtFixedRate(timerTask, 1000, FIFTEEN_MINUTES)
+            Timer().scheduleAtFixedRate(timerTask, 1000, 60 * 15 * 1000) // 15분마다 호출
             isActiveSleepForegroundService = true
         }
     }
@@ -228,11 +234,19 @@ class MainActivity : ComponentActivity() {
 //        }
 //    }
 
+    val currentDate = LocalDate.now(ZoneId.of("Asia/Seoul"))
+
+    // 월과 일을 Int로 가져옵니다.
+    val month = currentDate.monthValue
+    val day = currentDate.dayOfMonth
+
+
     inner class Task: TimerTask() {
         override fun run() {
             lifecycleScope.launch {
                 //readFifteenMinutesAgoSleepStage()
-                readLastSleepStage()
+                //readLastSleepStage()
+                readSleepSession()
                 if (timerTask == null) {
                     this.cancel()
                     return@launch
@@ -256,29 +270,38 @@ class MainActivity : ComponentActivity() {
         Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
     }
 
-    private suspend fun readSleepSession(
-        month: Int,
-        dayOfMonth: Int,
-    ){
-        val startTime = ZonedDateTime.of(2024, month, dayOfMonth, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
-        val endTime = ZonedDateTime.of(2024, month, dayOfMonth, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
+    private suspend fun readSleepSession(){
+        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        val now = Instant.now()
 
-        val sleepSessionRecord = healthConnectManager.readSleepSessionRecord(startTime.toInstant(), endTime.toInstant())
+        //val startTime = ZonedDateTime.of(2024, month, dayOfMonth, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
+        //val endTime = ZonedDateTime.of(2024, month, dayOfMonth, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
+        //val sleepSessionRecord = healthConnectManager.readSleepSessionRecord(startTime.toInstant(), endTime.toInstant())
+
+        val sleepSessionRecord = healthConnectManager.readSleepSessionRecord(startOfDay.toInstant(), now)
 
         if (sleepSessionRecord == null) {
             Log.d(TAG, "MIMO가 감지 중")
-            Log.d(TAG, "${dateFormatter.format(startTime)} ~ ${dateFormatter.format(endTime)} 까지 수면기록 없음")
+            Log.d(TAG, "${dateFormatter.format(startOfDay)} ~ ${dateFormatter.format(now)} 까지 수면기록 없음")
+            ref.push().setValue("${getCurrentTime()} : 수면기록 없음")
             return
         }
+
+        var message = ""
         sleepSessionRecord.forEachIndexed() { sessionIndex, session ->
             val koreanStartTime = dateFormatter.format(session.startTime)
             val koreanEndTime = dateFormatter.format(session.endTime)
             Log.d(TAG, "@@@@@@@ 상세 수면 기록 @@@@@@@")
+            message += "@@@@@@@ 상세 수면 기록 @@@@@@@\n"
             Log.d(TAG, "수면 ${sessionIndex + 1} 전체 : $koreanStartTime ~ $koreanEndTime")
+            message += "수면 ${sessionIndex + 1} 전체 : $koreanStartTime ~ $koreanEndTime \n"
             session.stages.forEach() { stage ->
                 Log.d(TAG, "${dateFormatter.format(stage.startTime)} ~ ${dateFormatter.format(stage.endTime)} @@ ${meanStage(stage.stage)}")
+                message += "${dateFormatter.format(stage.startTime)} ~ ${dateFormatter.format(stage.endTime)} @@ ${meanStage(stage.stage)} \n"
             }
+            message += "\n"
         }
+        ref.push().setValue(message)
     }
 
     private suspend fun readLastSleepStage(){

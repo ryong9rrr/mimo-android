@@ -26,8 +26,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeadingLarge(text = "우리 집 미라클모닝", fontSize = Size.lg)
-        HeadingLarge(text = "MIMO", fontSize = Size.lg)
+        HeadingLarge(text = "스마트 슬립 MIMO", fontSize = Size.lg)
 
         Spacer(modifier = Modifier.padding(10.dp))
 
