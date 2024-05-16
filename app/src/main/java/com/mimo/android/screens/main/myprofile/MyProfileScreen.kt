@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,10 +31,13 @@ import com.mimo.android.components.HeadingSmall
 import com.mimo.android.components.Icon
 import com.mimo.android.components.Modal
 import com.mimo.android.components.ScrollView
+import com.mimo.android.components.Text
 import com.mimo.android.components.base.Size
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
+import com.mimo.android.utils.preferences.ACCESS_TOKEN
+import com.mimo.android.utils.preferences.getData
 import com.mimo.android.viewmodels.MyProfileViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,6 +48,7 @@ fun MyProfileScreen(
     myProfileViewModel: MyProfileViewModel,
     authViewModel: AuthViewModel,
 ){
+    val authUiState by authViewModel.uiState.collectAsState()
     var isShowScreenModal by remember { mutableStateOf(false) }
 
     fun handleShowScreenModal(){
@@ -92,6 +97,10 @@ fun MyProfileScreen(
             myProfileViewModel = myProfileViewModel,
             healthConnectManager = healthConnectManager,
         )
+
+        Text(text = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}")
+
+        Spacer(modifier = Modifier.padding(40.dp))
     }
 }
 
