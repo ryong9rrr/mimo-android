@@ -3,8 +3,6 @@ package com.mimo.android.components.devices
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,9 +11,12 @@ import androidx.compose.ui.unit.dp
 import com.mimo.android.apis.houses.Device
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
-import com.mimo.android.ui.theme.*
 import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.viewmodels.isCurtainType
+import com.mimo.android.viewmodels.isLampType
+import com.mimo.android.viewmodels.isLightType
+import com.mimo.android.viewmodels.isWindowType
 
 @Composable
 fun MyDeviceList(
@@ -59,27 +60,28 @@ fun MyDeviceList(
                         }
                         Spacer(modifier = Modifier.padding(6.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                Text(text = device.nickname, fontSize = Size.lg)
-                                Spacer(modifier = Modifier.padding(2.dp))
-                            }
-                            Switch(
-                                // TODO: 상태관리
-                                checked = true,
-                                onCheckedChange = { handleToggleDevice(device.deviceId) },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Teal100, // 체크된 상태의 썸 색상 변경
-                                    uncheckedThumbColor = Teal300, // 체크되지 않은 상태의 썸 색상 변경
-                                    checkedTrackColor = Teal600, // 체크된 상태의 트랙 색상 변경
-                                    uncheckedTrackColor = Teal600 // 체크되지 않은 상태의 트랙 색상 변경
-                                )
-                            )
+                        HorizontalScroll {
+                            HeadingSmall(text = device.nickname, fontSize = Size.sm)
                         }
+                        Spacer(modifier = Modifier.padding(8.dp))
+
+                        if ( isLightType(device.type) || isLampType(device.type) ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Switch(value = false, onToggle = { handleToggleDevice(device.deviceId) })
+                            }
+                        }
+
+                        if ( isCurtainType(device.type) ) {
+                            RangeController(leftDesc = "어둡게", rightDesc = "밝게")
+                        }
+
+                        if ( isWindowType(device.type) ) {
+                            RangeController(leftDesc = "닫힘", rightDesc = "열림")
+                        }
+
                         Spacer(modifier = Modifier.padding(4.dp))
                     }
                 }

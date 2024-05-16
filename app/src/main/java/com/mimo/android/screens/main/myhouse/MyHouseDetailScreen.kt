@@ -158,17 +158,15 @@ fun MyHouseDetailScreen(
         }
         Spacer(modifier = Modifier.padding(8.dp))
 
-        // TODO: DUMMY를 진짜로...
-        MyDeviceList(
-            myDeviceList = fakeGetMyDeviceList(),
-            onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) },
-            onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
-        )
-//        if (myDeviceList.isEmpty()) {
-//            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
-//        } else {
-//            MyDeviceList(myDeviceList = myDeviceList)
-//        }
+        if (myDeviceList.isEmpty()) {
+            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+        } else {
+            MyDeviceList(
+                myDeviceList = myDeviceList,
+                onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) },
+                onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
+            )
+        }
         Spacer(modifier = Modifier.padding(16.dp))
 
         HeadingSmall(text = "다른 사람의 기기")

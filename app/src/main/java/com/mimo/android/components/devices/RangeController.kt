@@ -1,9 +1,12 @@
 package com.mimo.android.components.devices
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
@@ -15,12 +18,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mimo.android.components.Text
 import com.mimo.android.ui.theme.Teal400
 
 @Composable
-fun RangeController(){
+fun RangeController(
+    leftDesc: String,
+    rightDesc: String
+){
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -29,9 +36,12 @@ fun RangeController(){
 
         var value by remember { mutableStateOf(50f) }
 
-        Text(text = "어둡게")
-
-        Spacer(modifier = Modifier.weight(1f))
+        Row (
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.Start
+        ){
+            Text(text = leftDesc)
+        }
 
         Slider(
             value = value, // 초기 값
@@ -52,7 +62,7 @@ fun RangeController(){
             },
             valueRange = 0f..100f, // 슬라이더 값 범위
             steps = 10000, // 슬라이더의 이동 단위
-            modifier = Modifier.width(260.dp), // 슬라이더의 너비 지정
+            modifier = Modifier.width(240.dp), // 슬라이더의 너비 지정
             colors = SliderDefaults.colors(
                 activeTickColor = Teal400,
                 inactiveTickColor = Color.Gray,
@@ -75,7 +85,21 @@ fun RangeController(){
 //                            onValueChangeFinishedInteractionSource: MutableInteractionSource = interactionSource, // 슬라이더 값 변경 후 상호 작용 소스를 지정하는 객체.
 //                            )
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Text(text = "어둡게")
+
+        Row (
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.End
+        ){
+            Text(text = rightDesc)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun RangeControllerPreview(){
+    Column {
+        RangeController(leftDesc = "어둡게", rightDesc = "밝게")
+        RangeController(leftDesc = "닫힘", rightDesc = "열림")
     }
 }
