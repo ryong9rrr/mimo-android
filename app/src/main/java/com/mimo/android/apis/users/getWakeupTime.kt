@@ -30,5 +30,5 @@ fun getWakeupTime(
 }
 
 data class GetWakeupTimeResponse(
-    val wakeupTime: WakeupTime
+    val wakeupTime: String
 )
