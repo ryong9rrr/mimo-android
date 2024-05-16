@@ -14,8 +14,8 @@ data class PostAutoRegisterHubToHouseRequest(
 )
 
 data class PostAutoRegisterHubToHouseResponse(
-    val houseId: Long,
-    val address: String
+    val houseId: Long?,
+    val address: String?
 )
 
 data class PutChangeHouseNicknameRequest(

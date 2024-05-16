@@ -1,11 +1,14 @@
 package com.mimo.android
 
 import android.Manifest
+import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.journeyapps.barcodescanner.ScanContract
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.mimo.android.apis.createMimoApiService
 import com.mimo.android.apis.sleeps.PostSleepDataRequest
@@ -150,6 +154,11 @@ class MainActivity : ComponentActivity() {
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 0
             )
+        }
+
+        // 알림감지 요청
+        if (!isSleepNotificationPermissionGranted()) {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
         }
 
         authViewModel.checkAlreadyLoggedIn(
@@ -335,6 +344,16 @@ class MainActivity : ComponentActivity() {
 
         // 포맷에 따라 날짜 및 시간을 문자열로 변환하여 반환
         return currentTimeKST.format(formatter)
+    }
+
+    private fun isSleepNotificationPermissionGranted(): Boolean {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            return notificationManager.isNotificationListenerAccessGranted(ComponentName(application, SleepNotificationListenerService::class.java))
+        }
+        else {
+            return NotificationManagerCompat.getEnabledListenerPackages(applicationContext).contains(applicationContext.packageName)
+        }
     }
 }
 
