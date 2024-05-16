@@ -183,7 +183,7 @@ fun MyHouseDetailScreen(
                                 .fillMaxWidth()
                                 .padding(8.dp),
                         ) {
-                            CardType(text = device.type)
+                            CardType(text = convertDeviceTypeToKoreaName(device.type))
                             Spacer(modifier = Modifier.padding(4.dp))
                             HorizontalScroll(
                                 children = {

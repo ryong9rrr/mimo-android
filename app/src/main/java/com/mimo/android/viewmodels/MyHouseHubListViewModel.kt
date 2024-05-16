@@ -27,11 +27,6 @@ class MyHouseHubListViewModel: ViewModel() {
     }
 
     fun fetchHubListByHouseId(houseId: Long){
-        // TODO: 더미 제거하고 확인하기...
-        _uiState.value = MyHouseHubListUiState(
-            hubList = fakeGetHubListByHouseId()
-        )
-        return
         viewModelScope.launch {
             getHubListByHouseId(
                 accessToken = getData(ACCESS_TOKEN) ?: "",

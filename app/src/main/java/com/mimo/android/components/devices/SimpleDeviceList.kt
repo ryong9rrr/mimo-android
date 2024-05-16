@@ -13,6 +13,7 @@ import com.mimo.android.components.Text
 import com.mimo.android.components.TransparentCard
 import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 
 @Composable
 fun SimpleDeviceList(
@@ -33,7 +34,7 @@ fun SimpleDeviceList(
                     ) {
                         HeadingSmall(text = simpleDevice.macAddress)
                         Spacer(modifier = Modifier.padding(4.dp))
-                        HeadingSmall(text = simpleDevice.deviceType, fontSize = Size.xs, color = Teal100)
+                        HeadingSmall(text = convertDeviceTypeToKoreaName(simpleDevice.deviceType), fontSize = Size.xs, color = Teal100)
                     }
                 }
             )

@@ -85,15 +85,9 @@ fun Router(
             arguments = ChangeHouseNicknameScreenDestination.arguments
         ) { backStackEntry ->
             val houseId = backStackEntry.arguments?.getString(ChangeHouseNicknameScreenDestination.houseIdTypeArg)
-            val house = myHouseViewModel.queryHouse(myHouseUiState, houseId!!.toLong())
-            if (house == null) {
-                alertError()
-                return@composable
-            }
-
             ChangeHouseNicknameScreen(
                 navController = navController,
-                houseId = house.houseId,
+                houseId = houseId!!.toLong(),
                 myHouseViewModel = myHouseViewModel)
         }
 

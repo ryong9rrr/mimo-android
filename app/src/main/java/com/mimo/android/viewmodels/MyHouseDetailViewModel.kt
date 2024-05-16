@@ -72,16 +72,6 @@ class MyHouseDetailViewModel: ViewModel() {
     }
 
     fun fetchGetDeviceListByHouseId(houseId: Long){
-        // TODO: 더미를 진짜로..
-        _uiState.value = MyHouseDetailUiState(house = GetDeviceListByHouseIdResponse(
-            devices = fakeGetMyDeviceList(),
-            houseId = 1,
-            nickname = "더미더미",
-            address = "더미 주소",
-            isHome = true,
-        ))
-        return
-
         viewModelScope.launch {
             getDeviceListByHouseId(
                 accessToken = getData(ACCESS_TOKEN) ?: "",

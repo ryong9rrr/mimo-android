@@ -13,6 +13,7 @@ import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
+import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 import com.mimo.android.viewmodels.isCurtainType
 import com.mimo.android.viewmodels.isLampType
 import com.mimo.android.viewmodels.isLightType
@@ -51,7 +52,7 @@ fun MyDeviceList(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            CardType(text = device.type)
+                            CardType(text = convertDeviceTypeToKoreaName(device.type))
                             Icon(
                                 imageVector = Icons.Filled.KeyboardArrowRight,
                                 size = 24.dp,

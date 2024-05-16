@@ -31,11 +31,11 @@ fun MyHouseHubListScreen(
     val myHouseHubListUiState by myHouseHubListViewModel.uiState.collectAsState()
 
     LaunchedEffect(Unit) {
-        myHouseHubListViewModel?.fetchHubListByHouseId(house.houseId)
+        myHouseHubListViewModel.fetchHubListByHouseId(house.houseId)
     }
 
     fun handleGoPrev() {
-        navController?.navigateUp()
+        navController.navigateUp()
     }
     BackHandler {
         handleGoPrev()
