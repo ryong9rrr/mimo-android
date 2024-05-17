@@ -42,7 +42,7 @@ data class PostControlRequest(
 
 data class Data(
     val requestName: String,
-    val color: String,
-    val time: Long,
-    val state: Long
+    val color: String? = null,
+    val time: Long? = null,
+    val state: Long? = null
 )

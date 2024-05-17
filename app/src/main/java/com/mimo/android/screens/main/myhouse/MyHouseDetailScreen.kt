@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mimo.android.apis.houses.*
@@ -98,10 +97,6 @@ fun MyHouseDetailScreen(
         navController.navigate("${MyHouseHubListScreenDestination.route}/${house.houseId}")
     }
 
-    fun handleToggleMyDevice(deviceId: Long){
-        myHouseDetailViewModel.fetchToggleMyDevice(deviceId)
-    }
-
     ScrollView {
         if (isShowScreenModal) {
             Modal(
@@ -165,7 +160,7 @@ fun MyHouseDetailScreen(
         } else {
             MyDeviceList(
                 myDeviceList = myDeviceList,
-                onToggleDevice = { deviceId -> handleToggleMyDevice(deviceId) },
+                myHouseDetailViewModel = myHouseDetailViewModel,
                 onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
             )
         }
@@ -264,7 +259,7 @@ fun AnotherDeviceCardTypeRow(device: Device){
             verticalAlignment = Alignment.CenterVertically
         ){
             CardType(text = convertDeviceTypeToKoreaName(device.type))
-            Text(text = "연결 끊김", fontSize = Size.xs, color = Teal100)
+            DisconnectIcon()
         }
         return
     }
@@ -276,10 +271,22 @@ fun AnotherDeviceCardTypeRow(device: Device){
             verticalAlignment = Alignment.CenterVertically
         ){
             CardType(text = convertDeviceTypeToKoreaName(device.type))
-            Text(text = "연결 끊김", fontSize = Size.xs, color = Teal100)
+            DisconnectIcon()
         }
         return
     }
 
     CardType(text = convertDeviceTypeToKoreaName(device.type))
+}
+
+@Composable
+private fun DisconnectIcon(){
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Column {
+            Spacer(modifier = Modifier.padding(1.dp))
+            Icon(imageVector = Icons.Filled.Warning, size = 10.dp, color = Teal100)
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+        Text(text = "연결 끊김", fontSize = Size.xs, color = Teal100)
+    }
 }

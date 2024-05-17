@@ -4,6 +4,11 @@ import android.util.Log
 import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mimo.android.apis.controls.Data
+import com.mimo.android.apis.controls.PostControlRequest
+import com.mimo.android.apis.controls.postControl
+import com.mimo.android.apis.devices.lamp.PutLampRequest
+import com.mimo.android.apis.devices.lamp.putLamp
 import com.mimo.android.apis.houses.Device
 import com.mimo.android.apis.houses.GetDeviceListByHouseIdResponse
 import com.mimo.android.apis.houses.getDeviceListByHouseId
@@ -14,10 +19,20 @@ import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.USER_ID
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 private const val TAG = "MyHouseDetailViewModel"
 
@@ -35,6 +50,7 @@ class MyHouseDetailViewModel: ViewModel() {
         }
 
         val userId = _userId.toLong()
+        //val userId: Long = 1
         val allDeviceList = _uiState.value.house!!.devices
         for (device in allDeviceList) {
             if (device.userId == userId) {
@@ -72,6 +88,16 @@ class MyHouseDetailViewModel: ViewModel() {
     }
 
     fun fetchGetDeviceListByHouseId(houseId: Long){
+//        _uiState.value = MyHouseDetailUiState(
+//            house = GetDeviceListByHouseIdResponse(
+//                houseId = 1,
+//                nickname = "safd",
+//                address = "afwqwe",
+//                isHome = true,
+//                devices = fakeGetMyDeviceList()
+//            )
+//        )
+
         viewModelScope.launch {
             getDeviceListByHouseId(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
@@ -91,9 +117,60 @@ class MyHouseDetailViewModel: ViewModel() {
         }
     }
 
-    fun fetchToggleMyDevice(deviceId: Long){
-        // TODO: 디바이스 토글, 디바이스의 현재 상태가 정의되어있지 않은 것 같다...
-        showToast("${deviceId} 토글함!")
+    fun fetchToggleDevice(
+        device: Device,
+        nextValue: Boolean
+    ){
+        Log.i(TAG, "${device.type} : ${nextValue}")
+
+        viewModelScope.launch {
+            if (!nextValue) {
+                postControl(
+                    accessToken = getData(ACCESS_TOKEN) ?: "",
+                    postControlRequest = PostControlRequest(
+                        type = device.type,
+                        deviceId = device.deviceId,
+                        data = Data(
+                            requestName = "setStateOff"
+                        )
+                    )
+                )
+                return@launch
+            }
+
+            postControl(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                postControlRequest = PostControlRequest(
+                    type = device.type,
+                    deviceId = device.deviceId,
+                    data = Data(
+                        requestName = "setCurrentColor",
+                        color = "FFFFFF"
+                    )
+                )
+            )
+        }
+    }
+
+    fun fetchControlDevice(
+        device: Device,
+        nextValue: Float
+    ) {
+        val value = nextValue.toLong()
+        println(value)
+        viewModelScope.launch {
+            postControl(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                postControlRequest = PostControlRequest(
+                    type = device.type,
+                    deviceId = device.deviceId,
+                    data = Data(
+                        requestName = "setState",
+                        state = value
+                    )
+                )
+            )
+        }
     }
 }
 
@@ -143,4 +220,20 @@ fun convertDeviceTypeToKoreaName(x: String): String {
         return "창문"
     }
     return ""
+}
+
+fun <T> debounce(
+    waitMs: Long = 300L,
+    scope: CoroutineScope,
+    destinationFunction: (T) -> Unit
+): (T) -> Unit {
+    var debounceJob: Job? = null
+
+    return { param: T ->
+        debounceJob?.cancel()
+        debounceJob = scope.launch {
+            delay(waitMs)
+            destinationFunction(param)
+        }
+    }
 }

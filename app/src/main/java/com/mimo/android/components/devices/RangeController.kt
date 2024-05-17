@@ -1,10 +1,7 @@
 package com.mimo.android.components.devices
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -18,15 +15,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mimo.android.components.Text
 import com.mimo.android.ui.theme.Teal400
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flow
 
 @Composable
 fun RangeController(
     leftDesc: String,
-    rightDesc: String
+    rightDesc: String,
+    value: Float,
+    onChange: (nextValue: Float) -> Unit
 ){
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -34,7 +34,7 @@ fun RangeController(
         horizontalArrangement = Arrangement.Center
     ){
 
-        var value by remember { mutableStateOf(50f) }
+        var _value by remember { mutableStateOf(value) }
 
         Row (
             modifier = Modifier.padding(8.dp),
@@ -44,7 +44,7 @@ fun RangeController(
         }
 
         Slider(
-            value = value, // 초기 값
+            value = _value, // 초기 값
             onValueChange = { nextValue ->
 
 //                                CoroutineScope(Dispatchers.Main).launch {
@@ -58,7 +58,7 @@ fun RangeController(
 //                                        }
 //                                }
 
-                value = nextValue
+                _value = nextValue
             },
             valueRange = 0f..100f, // 슬라이더 값 범위
             steps = 10000, // 슬라이더의 이동 단위
@@ -95,11 +95,11 @@ fun RangeController(
     }
 }
 
-@Preview
-@Composable
-private fun RangeControllerPreview(){
-    Column {
-        RangeController(leftDesc = "어둡게", rightDesc = "밝게")
-        RangeController(leftDesc = "닫힘", rightDesc = "열림")
-    }
-}
+//@Preview
+//@Composable
+//private fun RangeControllerPreview(){
+//    Column {
+//        RangeController(leftDesc = "어둡게", rightDesc = "밝게")
+//        RangeController(leftDesc = "닫힘", rightDesc = "열림")
+//    }
+//}

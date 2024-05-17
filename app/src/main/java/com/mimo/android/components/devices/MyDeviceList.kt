@@ -13,6 +13,7 @@ import com.mimo.android.apis.houses.Device
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
 import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.viewmodels.MyHouseDetailViewModel
 import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 import com.mimo.android.viewmodels.isCurtainType
 import com.mimo.android.viewmodels.isLampType
@@ -22,12 +23,15 @@ import com.mimo.android.viewmodels.isWindowType
 @Composable
 fun MyDeviceList(
     myDeviceList: List<Device>?,
-    onToggleDevice: ((deviceId: Long) -> Unit)? = null,
+    myHouseDetailViewModel: MyHouseDetailViewModel? = null,
     onClickNavigateToDetailDeviceScreen: ((device: Device) -> Unit)? = null,
 ){
+    fun handleToggleDevice(device: Device, nextValue: Boolean) {
+        myHouseDetailViewModel?.fetchToggleDevice(device, nextValue)
+    }
 
-    fun handleToggleDevice(deviceId: Long){
-        onToggleDevice?.invoke(deviceId)
+    fun handleControlRangeDevice(device: Device, nextValue: Float){
+        myHouseDetailViewModel?.fetchControlDevice(device, nextValue)
     }
 
     if (myDeviceList == null) {
@@ -68,7 +72,18 @@ fun MyDeviceList(
 
                         DeviceController(
                             device = device,
-                            onToggleDevice = { handleToggleDevice(device.deviceId) }
+                            onToggleDevice = { nextValue ->
+                                handleToggleDevice(
+                                    device = device,
+                                    nextValue = nextValue
+                                )
+                            },
+                            onControlRangeDevice = { nextValue ->
+                                handleControlRangeDevice(
+                                    device = device,
+                                    nextValue = nextValue
+                                )
+                            }
                         )
 
                         Spacer(modifier = Modifier.padding(4.dp))
@@ -86,7 +101,8 @@ fun MyDeviceList(
 @Composable
 private fun DeviceController(
     device: Device,
-    onToggleDevice: ((deviceId: Long) -> Unit)?
+    onToggleDevice: ((nextValue: Boolean) -> Unit)? = null,
+    onControlRangeDevice: ((nextValue: Float) -> Unit)? = null
 ){
     if ((isCurtainType(device.type) || isWindowType(device.type))) {
         if (device.openDegree == null) {
@@ -95,12 +111,22 @@ private fun DeviceController(
         }
 
         if (isCurtainType(device.type)) {
-            RangeController(leftDesc = "어둡게", rightDesc = "밝게")
+            RangeController(
+                leftDesc = "어둡게",
+                rightDesc = "밝게",
+                value = device.openDegree.toFloat(),
+                onChange = { nextValue -> onControlRangeDevice?.invoke(nextValue) }
+            )
             return
         }
 
         if (isWindowType(device.type)) {
-            RangeController(leftDesc = "   닫힘", rightDesc = "열림")
+            RangeController(
+                leftDesc = "닫힘",
+                rightDesc = "    열림",
+                value = device.openDegree.toFloat(),
+                onChange = { nextValue -> onControlRangeDevice?.invoke(nextValue) }
+            )
         }
 
         return
@@ -112,11 +138,13 @@ private fun DeviceController(
             return
         }
 
+        val curValue = device.curColor.toInt() == 1
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            Switch(value = false, onToggle = { onToggleDevice?.invoke(device.deviceId) })
+            Switch(value = curValue, onToggle = { onToggleDevice?.invoke(!curValue) })
         }
     }
 }
@@ -153,7 +181,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             nickname = "수지의 기깔난 조명",
             isAccessible = true,
             curColor = 30,
-            openDegree = 50
+            openDegree = null
         ),
         Device(
             userId = -1,
@@ -163,7 +191,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             nickname = "무드등",
             isAccessible = true,
             curColor = 30,
-            openDegree = 50
+            openDegree = null
         ),
         Device(
             userId = -1,
@@ -172,8 +200,8 @@ fun fakeGetMyDeviceList(): List<Device>{
             type = "커튼",
             nickname = "커튼",
             isAccessible = true,
-            curColor = 30,
-            openDegree = 50
+            curColor = null,
+            openDegree = 30
         ),
         Device(
             userId = -1,
@@ -182,8 +210,8 @@ fun fakeGetMyDeviceList(): List<Device>{
             type = "창문",
             nickname = "창문",
             isAccessible = true,
-            curColor = 30,
-            openDegree = 50
+            curColor = null,
+            openDegree = 80
         ),
         Device(
             userId = -1,
@@ -197,6 +225,66 @@ fun fakeGetMyDeviceList(): List<Device>{
         ),
         Device(
             userId = -1,
+            hubId = 1,
+            deviceId = 5,
+            type = "lamp",
+            nickname = "감성 충만한 나만의 작은 무드등",
+            isAccessible = true,
+            curColor = null,
+            openDegree = null
+        ),
+        Device(
+            userId = 1,
+            hubId = 1,
+            deviceId = 2,
+            type = "조명",
+            nickname = "수지의 기깔난 조명",
+            isAccessible = true,
+            curColor = 30,
+            openDegree = null
+        ),
+        Device(
+            userId = 1,
+            hubId = 1,
+            deviceId = 3,
+            type = "무드등",
+            nickname = "무드등",
+            isAccessible = true,
+            curColor = 30,
+            openDegree = null
+        ),
+        Device(
+            userId = 1,
+            hubId = 1,
+            deviceId = 4,
+            type = "커튼",
+            nickname = "커튼",
+            isAccessible = true,
+            curColor = null,
+            openDegree = 30
+        ),
+        Device(
+            userId = 1,
+            hubId = 1,
+            deviceId = 5,
+            type = "창문",
+            nickname = "창문",
+            isAccessible = true,
+            curColor = null,
+            openDegree = 80
+        ),
+        Device(
+            userId = 1,
+            hubId = 1,
+            deviceId = 5,
+            type = "window",
+            nickname = "미세먼지를 제대로 막아주는 창문",
+            isAccessible = true,
+            curColor = null,
+            openDegree = null
+        ),
+        Device(
+            userId = 1,
             hubId = 1,
             deviceId = 5,
             type = "lamp",
