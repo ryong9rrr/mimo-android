@@ -37,7 +37,7 @@ fun RangeController(
         var value by remember { mutableStateOf(50f) }
 
         Row (
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.Start
         ){
             Text(text = leftDesc)
@@ -87,7 +87,7 @@ fun RangeController(
         )
 
         Row (
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(8.dp),
             horizontalArrangement = Arrangement.End
         ){
             Text(text = rightDesc)

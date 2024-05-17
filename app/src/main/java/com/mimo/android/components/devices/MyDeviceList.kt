@@ -3,6 +3,7 @@ package com.mimo.android.components.devices
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -11,8 +12,7 @@ import androidx.compose.ui.unit.dp
 import com.mimo.android.apis.houses.Device
 import com.mimo.android.components.*
 import com.mimo.android.components.base.Size
-import com.mimo.android.utils.preferences.USER_ID
-import com.mimo.android.utils.preferences.getData
+import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 import com.mimo.android.viewmodels.isCurtainType
 import com.mimo.android.viewmodels.isLampType
@@ -66,22 +66,10 @@ fun MyDeviceList(
                         }
                         Spacer(modifier = Modifier.padding(8.dp))
 
-                        if ( isLightType(device.type) || isLampType(device.type) ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Switch(value = false, onToggle = { handleToggleDevice(device.deviceId) })
-                            }
-                        }
-
-                        if ( isCurtainType(device.type) ) {
-                            RangeController(leftDesc = "어둡게", rightDesc = "밝게")
-                        }
-
-                        if ( isWindowType(device.type) ) {
-                            RangeController(leftDesc = "닫힘", rightDesc = "열림")
-                        }
+                        DeviceController(
+                            device = device,
+                            onToggleDevice = { handleToggleDevice(device.deviceId) }
+                        )
 
                         Spacer(modifier = Modifier.padding(4.dp))
                     }
@@ -95,6 +83,60 @@ fun MyDeviceList(
     }
 }
 
+@Composable
+private fun DeviceController(
+    device: Device,
+    onToggleDevice: ((deviceId: Long) -> Unit)?
+){
+    if ((isCurtainType(device.type) || isWindowType(device.type))) {
+        if (device.openDegree == null) {
+            WarningIcon()
+            return
+        }
+
+        if (isCurtainType(device.type)) {
+            RangeController(leftDesc = "어둡게", rightDesc = "밝게")
+            return
+        }
+
+        if (isWindowType(device.type)) {
+            RangeController(leftDesc = "   닫힘", rightDesc = "열림")
+        }
+
+        return
+    }
+
+    if (isLightType(device.type) || isLampType(device.type)) {
+        if (device.curColor == null) {
+            WarningIcon()
+            return
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Switch(value = false, onToggle = { onToggleDevice?.invoke(device.deviceId) })
+        }
+    }
+}
+
+@Composable
+fun WarningIcon(){
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Spacer(modifier = Modifier.padding(1.dp))
+            Icon(imageVector = Icons.Filled.Warning, size = 18.dp, color = Teal100)
+        }
+        Spacer(modifier = Modifier.padding(2.dp))
+        Text(text = "연결 끊김", color = Teal100)
+    }
+}
+
 @Preview
 @Composable
 private fun MyDeviceListPreview(){
@@ -104,7 +146,7 @@ private fun MyDeviceListPreview(){
 fun fakeGetMyDeviceList(): List<Device>{
     return mutableListOf(
         Device(
-            userId = getData(USER_ID)!!.toLong(),
+            userId = -1,
             hubId = 1,
             deviceId = 2,
             type = "조명",
@@ -114,7 +156,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = getData(USER_ID)!!.toLong(),
+            userId = -1,
             hubId = 1,
             deviceId = 3,
             type = "무드등",
@@ -124,7 +166,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = getData(USER_ID)!!.toLong(),
+            userId = -1,
             hubId = 1,
             deviceId = 4,
             type = "커튼",
@@ -134,7 +176,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             openDegree = 50
         ),
         Device(
-            userId = getData(USER_ID)!!.toLong(),
+            userId = -1,
             hubId = 1,
             deviceId = 5,
             type = "창문",
@@ -142,6 +184,26 @@ fun fakeGetMyDeviceList(): List<Device>{
             isAccessible = true,
             curColor = 30,
             openDegree = 50
+        ),
+        Device(
+            userId = -1,
+            hubId = 1,
+            deviceId = 5,
+            type = "window",
+            nickname = "미세먼지를 제대로 막아주는 창문",
+            isAccessible = true,
+            curColor = null,
+            openDegree = null
+        ),
+        Device(
+            userId = -1,
+            hubId = 1,
+            deviceId = 5,
+            type = "lamp",
+            nickname = "감성 충만한 나만의 작은 무드등",
+            isAccessible = true,
+            curColor = null,
+            openDegree = null
         )
     )
 }
