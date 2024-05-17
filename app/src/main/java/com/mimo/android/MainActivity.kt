@@ -19,6 +19,8 @@ import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.mimo.android.apis.createMimoApiService
 import com.mimo.android.apis.sleeps.PostSleepDataRequest
 import com.mimo.android.apis.sleeps.postSleepData
