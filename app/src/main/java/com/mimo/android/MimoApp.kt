@@ -30,9 +30,9 @@ import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
 import com.mimo.android.viewmodels.UserLocation
 import com.mimo.android.services.health.HealthConnectManager
-import com.mimo.android.screens.*
-import com.mimo.android.screens.firstsettingfunnels.*
-import com.mimo.android.screens.login.LoginScreen
+import com.mimo.android.views.*
+import com.mimo.android.views.firstsettingfunnels.*
+import com.mimo.android.views.login.LoginScreen
 import com.mimo.android.services.kakao.loginWithKakao
 import com.mimo.android.ui.theme.Teal900
 import com.mimo.android.viewmodels.MyHouseCurtainViewModel

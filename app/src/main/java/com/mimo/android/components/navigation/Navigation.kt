@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.*
 import androidx.navigation.NavHostController
 import com.mimo.android.components.navigation.myicons.MyIconPack
 import com.mimo.android.components.navigation.myicons.myiconpack.MoonStarsFillIcon185549
-import com.mimo.android.screens.MyHouseScreenDestination
-import com.mimo.android.screens.MyProfileScreenDestination
-import com.mimo.android.screens.isShowNavigation
+import com.mimo.android.views.MyHouseScreenDestination
+import com.mimo.android.views.MyProfileScreenDestination
+import com.mimo.android.views.isShowNavigation
 import com.mimo.android.ui.theme.*
 
 val activeColor: Color = Teal100
