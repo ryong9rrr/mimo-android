@@ -49,7 +49,7 @@ fun MyHouseHubListScreen(
         Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
 
         if (myHouseHubListUiState.loading) {
-            LinearProgressbar()
+            LinearProgressbar2()
         } else {
             Spacer(modifier = Modifier.padding(14.dp))
 

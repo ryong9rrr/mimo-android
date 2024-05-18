@@ -15,12 +15,25 @@ import com.mimo.android.ui.theme.Teal900
 @Composable
 fun LinearProgressbar(){
     Column {
-        Spacer(modifier = Modifier.padding(6.dp))
+        Spacer(modifier = Modifier.padding(4.dp))
         LinearProgressIndicator(
             modifier = Modifier.fillMaxWidth().height(2.dp),
             color = Teal900,
             trackColor = Teal400
         )
-        Spacer(modifier = Modifier.padding(6.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
+    }
+}
+
+@Composable
+fun LinearProgressbar2(){
+    Column {
+        Spacer(modifier = Modifier.padding(10.dp))
+        LinearProgressIndicator(
+            modifier = Modifier.fillMaxWidth().height(2.dp),
+            color = Teal900,
+            trackColor = Teal400
+        )
+        Spacer(modifier = Modifier.padding(2.dp))
     }
 }

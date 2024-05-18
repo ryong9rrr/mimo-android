@@ -1,9 +1,7 @@
 package com.mimo.android.viewmodels
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mimo.android.MainActivity
 import com.mimo.android.apis.houses.House
 import com.mimo.android.apis.houses.PostRegisterHouseRequest
 import com.mimo.android.apis.houses.PutChangeHouseNicknameRequest
@@ -62,6 +60,7 @@ class MyHouseViewModel: ViewModel() {
 
     fun fetchHouseList(){
         viewModelScope.launch {
+            delay(300)
             getHouseList(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 onSuccessCallback = { houses ->
