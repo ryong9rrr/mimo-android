@@ -40,20 +40,16 @@ class MyHouseDetailViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHouseDetailUiState())
     val uiState: StateFlow<MyHouseDetailUiState> = _uiState.asStateFlow()
 
-    fun getDevices(): Devices{
-        val _userId = getData(USER_ID)
+    fun getDevices(): Devices? {
         val myDeviceList = mutableListOf<Device>()
         val anotherDeviceList = mutableListOf<Device>()
 
-        if (_uiState.value.house == null || _userId.isNullOrEmpty()) {
-            return Devices(myDeviceList = myDeviceList, anotherDeviceList = anotherDeviceList)
+        if (_uiState.value.house == null) {
+            return null
         }
-
-        val userId = _userId.toLong()
-        //val userId: Long = 1
         val allDeviceList = _uiState.value.house!!.devices
         for (device in allDeviceList) {
-            if (device.userId == userId) {
+            if (device.isAccessible) {
                 myDeviceList.add(device)
             } else {
                 anotherDeviceList.add(device)
@@ -66,24 +62,22 @@ class MyHouseDetailViewModel: ViewModel() {
         deviceId: Long,
         deviceType: DeviceType
     ): Device? {
-        val myDeviceList = getDevices().myDeviceList
+
+        val devices = getDevices() ?: return null
+        val myDeviceList = devices.myDeviceList
 
         if (deviceType == DeviceType.CURTAIN) {
-            return myDeviceList.find { _device -> isCurtainType(_device.type) && _device.deviceId == deviceId }
+            return myDeviceList.find { device -> isCurtainType(device.type) && device.deviceId == deviceId }
         }
-
         if (deviceType == DeviceType.LAMP) {
-            return myDeviceList.find { _device -> isLampType(_device.type) && _device.deviceId == deviceId }
+            return myDeviceList.find { device -> isLampType(device.type) && device.deviceId == deviceId }
         }
-
         if (deviceType == DeviceType.LIGHT) {
-            return myDeviceList.find { _device -> isLightType(_device.type) && _device.deviceId == deviceId }
+            return myDeviceList.find { device -> isLightType(device.type) && device.deviceId == deviceId }
         }
-
         if (deviceType == DeviceType.WINDOW) {
-            return myDeviceList.find { _device -> isWindowType(_device.type) && _device.deviceId == deviceId }
+            return myDeviceList.find { device -> isWindowType(device.type) && device.deviceId == deviceId }
         }
-
         return null
     }
 
@@ -97,6 +91,7 @@ class MyHouseDetailViewModel: ViewModel() {
 //                devices = fakeGetMyDeviceList()
 //            )
 //        )
+//        return
 
         viewModelScope.launch {
             getDeviceListByHouseId(
@@ -145,7 +140,7 @@ class MyHouseDetailViewModel: ViewModel() {
                     deviceId = device.deviceId,
                     data = Data(
                         requestName = "setCurrentColor",
-                        color = "FFFFFF"
+                        color = device.color ?: "FFFFFF"
                     )
                 )
             )
@@ -157,7 +152,6 @@ class MyHouseDetailViewModel: ViewModel() {
         nextValue: Float
     ) {
         val value = nextValue.toLong()
-        println(value)
         viewModelScope.launch {
             postControl(
                 accessToken = getData(ACCESS_TOKEN) ?: "",

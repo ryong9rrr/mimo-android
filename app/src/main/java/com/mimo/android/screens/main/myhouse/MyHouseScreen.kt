@@ -38,6 +38,7 @@ import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.viewmodels.MyHouseViewModel
+import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 
 private const val TAG = "MyHomeScreen"
 
@@ -222,7 +223,7 @@ private fun Card(
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                house.devices.forEach { device -> CardType(text = device) }
+                                house.devices.forEach { deviceType -> CardType(text = convertDeviceTypeToKoreaName(deviceType)) }
                             }
                         }
 

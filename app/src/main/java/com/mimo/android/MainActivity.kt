@@ -64,6 +64,7 @@ class MainActivity : ComponentActivity() {
     private val myHouseLampViewModel = MyHouseLampViewModel()
     private val myHouseLightViewModel = MyHouseLightViewModel()
     private val myHouseWindowViewModel = MyHouseWindowViewModel()
+    private val sleepViewModel = SleepViewModel()
 
     // 초기세팅용 QR code Scanner
     private val barCodeLauncherFirstSetting = registerForActivityResult(ScanContract()) {
@@ -181,6 +182,7 @@ class MainActivity : ComponentActivity() {
                 myHouseLampViewModel = myHouseLampViewModel,
                 myHouseLightViewModel = myHouseLightViewModel,
                 myHouseWindowViewModel = myHouseWindowViewModel,
+                sleepViewModel = sleepViewModel,
                 launchGoogleLocationAndAddress = { cb: (userLocation: UserLocation?) -> Unit -> launchGoogleLocationAndAddress(cb = cb) },
                 onStartSleepForegroundService = ::handleStartSleepForegroundService,
                 onStopSleepForegroundService = ::handleStopSleepForegroundService,

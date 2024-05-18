@@ -21,6 +21,6 @@ fun ScrollView(
             .verticalScroll(rememberScrollState())
     ) {
         children()
-        Spacer(modifier = Modifier.padding(24.dp))
+        Spacer(modifier = Modifier.padding(32.dp))
     }
 }

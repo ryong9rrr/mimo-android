@@ -36,6 +36,7 @@ fun Router(
     myHouseLampViewModel: MyHouseLampViewModel,
     myHouseLightViewModel: MyHouseLightViewModel,
     myHouseWindowViewModel: MyHouseWindowViewModel,
+    sleepViewModel: SleepViewModel
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
 
@@ -56,7 +57,9 @@ fun Router(
                 navController = navController,
                 isActiveSleepForegroundService = isActiveSleepForegroundService,
                 onStartSleepForegroundService = onStartSleepForegroundService,
-                onStopSleepForegroundService = onStopSleepForegroundService
+                onStopSleepForegroundService = onStopSleepForegroundService,
+                sleepViewModel = sleepViewModel,
+                myHouseViewModel = myHouseViewModel
             )
             return@composable
         }

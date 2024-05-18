@@ -27,7 +27,7 @@ class SleepViewModel: ViewModel() {
             getWakeupTime(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 onSuccessCallback = { data: GetWakeupTimeResponse? ->
-                    if (data == null) {
+                    if (data?.wakeupTime == null) {
                         return@getWakeupTime
                     }
                     _uiState.value = SleepUiState(convertStringWakeupTimeToMyTime(data.wakeupTime))
@@ -48,7 +48,7 @@ class SleepViewModel: ViewModel() {
                     wakeupTime = convertMyTimeToStringWakeupTime(time)
                 ),
                 onSuccessCallback = { data: PutWakeupTimeResponse? ->
-                    if (data == null) {
+                    if (data?.wakeupTime == null) {
                         return@putWakeupTime
                     }
                     _uiState.value = SleepUiState(convertStringWakeupTimeToMyTime(data.wakeupTime))

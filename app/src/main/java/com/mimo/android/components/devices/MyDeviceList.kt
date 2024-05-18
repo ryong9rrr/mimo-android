@@ -68,7 +68,7 @@ fun MyDeviceList(
                         HorizontalScroll {
                             HeadingSmall(text = device.nickname, fontSize = Size.sm)
                         }
-                        Spacer(modifier = Modifier.padding(8.dp))
+                        Spacer(modifier = Modifier.padding(4.dp))
 
                         DeviceController(
                             device = device,
@@ -86,7 +86,7 @@ fun MyDeviceList(
                             }
                         )
 
-                        Spacer(modifier = Modifier.padding(4.dp))
+                        Spacer(modifier = Modifier.padding(2.dp))
                     }
                 }
             )
@@ -112,8 +112,8 @@ private fun DeviceController(
 
         if (isCurtainType(device.type)) {
             RangeController(
-                leftDesc = "어둡게",
-                rightDesc = "밝게",
+                leftDesc = "닫힘",
+                rightDesc = "열림",
                 value = device.openDegree.toFloat(),
                 onChange = { nextValue -> onControlRangeDevice?.invoke(nextValue) }
             )
@@ -123,7 +123,7 @@ private fun DeviceController(
         if (isWindowType(device.type)) {
             RangeController(
                 leftDesc = "닫힘",
-                rightDesc = "    열림",
+                rightDesc = "열림",
                 value = device.openDegree.toFloat(),
                 onChange = { nextValue -> onControlRangeDevice?.invoke(nextValue) }
             )
@@ -177,7 +177,7 @@ fun fakeGetMyDeviceList(): List<Device>{
             userId = -1,
             hubId = 1,
             deviceId = 2,
-            type = "조명",
+            type = "light",
             nickname = "수지의 기깔난 조명",
             isAccessible = true,
             curColor = 30,
@@ -187,8 +187,8 @@ fun fakeGetMyDeviceList(): List<Device>{
             userId = -1,
             hubId = 1,
             deviceId = 3,
-            type = "무드등",
-            nickname = "무드등",
+            type = "lamp",
+            nickname = "윤지의 감성 넘치는 무드등",
             isAccessible = true,
             curColor = 30,
             openDegree = null
@@ -197,8 +197,8 @@ fun fakeGetMyDeviceList(): List<Device>{
             userId = -1,
             hubId = 1,
             deviceId = 4,
-            type = "커튼",
-            nickname = "커튼",
+            type = "curtain",
+            nickname = "동휘의 멋있는 커튼",
             isAccessible = true,
             curColor = null,
             openDegree = 30
@@ -207,91 +207,11 @@ fun fakeGetMyDeviceList(): List<Device>{
             userId = -1,
             hubId = 1,
             deviceId = 5,
-            type = "창문",
-            nickname = "창문",
+            type = "window",
+            nickname = "상윤이의 창문",
             isAccessible = true,
             curColor = null,
             openDegree = 80
         ),
-        Device(
-            userId = -1,
-            hubId = 1,
-            deviceId = 5,
-            type = "window",
-            nickname = "미세먼지를 제대로 막아주는 창문",
-            isAccessible = true,
-            curColor = null,
-            openDegree = null
-        ),
-        Device(
-            userId = -1,
-            hubId = 1,
-            deviceId = 5,
-            type = "lamp",
-            nickname = "감성 충만한 나만의 작은 무드등",
-            isAccessible = true,
-            curColor = null,
-            openDegree = null
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 2,
-            type = "조명",
-            nickname = "수지의 기깔난 조명",
-            isAccessible = true,
-            curColor = 30,
-            openDegree = null
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 3,
-            type = "무드등",
-            nickname = "무드등",
-            isAccessible = true,
-            curColor = 30,
-            openDegree = null
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 4,
-            type = "커튼",
-            nickname = "커튼",
-            isAccessible = true,
-            curColor = null,
-            openDegree = 30
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 5,
-            type = "창문",
-            nickname = "창문",
-            isAccessible = true,
-            curColor = null,
-            openDegree = 80
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 5,
-            type = "window",
-            nickname = "미세먼지를 제대로 막아주는 창문",
-            isAccessible = true,
-            curColor = null,
-            openDegree = null
-        ),
-        Device(
-            userId = 1,
-            hubId = 1,
-            deviceId = 5,
-            type = "lamp",
-            nickname = "감성 충만한 나만의 작은 무드등",
-            isAccessible = true,
-            curColor = null,
-            openDegree = null
-        )
     )
 }

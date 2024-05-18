@@ -43,6 +43,7 @@ import com.mimo.android.viewmodels.MyHouseLightViewModel
 import com.mimo.android.viewmodels.MyHouseViewModel
 import com.mimo.android.viewmodels.MyHouseWindowViewModel
 import com.mimo.android.viewmodels.MyProfileViewModel
+import com.mimo.android.viewmodels.SleepViewModel
 
 private const val TAG = "MimoApp"
 
@@ -68,7 +69,8 @@ fun MimoApp(
     myHouseCurtainViewModel: MyHouseCurtainViewModel,
     myHouseLampViewModel: MyHouseLampViewModel,
     myHouseLightViewModel: MyHouseLightViewModel,
-    myHouseWindowViewModel: MyHouseWindowViewModel
+    myHouseWindowViewModel: MyHouseWindowViewModel,
+    sleepViewModel: SleepViewModel
     ){
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
@@ -198,6 +200,7 @@ fun MimoApp(
                             myHouseLampViewModel = myHouseLampViewModel,
                             myHouseLightViewModel = myHouseLightViewModel,
                             myHouseWindowViewModel = myHouseWindowViewModel,
+                            sleepViewModel = sleepViewModel
                         )
                     }
                 }

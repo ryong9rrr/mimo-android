@@ -41,8 +41,8 @@ fun MyHouseDetailScreen(
     myHouseWindowViewModel: MyHouseWindowViewModel
 ){
     val devices = myHouseDetailViewModel.getDevices()
-    val myDeviceList = devices.myDeviceList
-    val anotherDeviceList = devices.anotherDeviceList
+    val myDeviceList = devices?.myDeviceList
+    val anotherDeviceList = devices?.anotherDeviceList
     var isShowScreenModal by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
@@ -142,7 +142,7 @@ fun MyHouseDetailScreen(
 
         // 현재 서비스 시스템 상 위치 등록은 현재 위치만 등록가능하므로 현재 거주지가 아니라면 그냥 기기추가 못하게 버튼 숨겨버리기
         if (!house.isHome) {
-            HeadingSmall(text = "나의 기기", fontSize = Size.lg)
+            HeadingSmall(text = "사용 가능한 기기", fontSize = Size.lg)
         } else {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -155,43 +155,52 @@ fun MyHouseDetailScreen(
         }
         Spacer(modifier = Modifier.padding(8.dp))
 
-        if (myDeviceList.isEmpty()) {
-            Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+        if (myDeviceList == null) {
+            Text(text = "")
         } else {
-            MyDeviceList(
-                myDeviceList = myDeviceList,
-                myHouseDetailViewModel = myHouseDetailViewModel,
-                onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
-            )
+            if (myDeviceList.isEmpty()) {
+                Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+            } else {
+                MyDeviceList(
+                    myDeviceList = myDeviceList,
+                    myHouseDetailViewModel = myHouseDetailViewModel,
+                    onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
+                )
+            }
         }
         Spacer(modifier = Modifier.padding(16.dp))
 
-        HeadingSmall(text = "다른 사람의 기기")
+        HeadingSmall(text = "다른 기기")
         Spacer(modifier = Modifier.padding(4.dp))
-        if (anotherDeviceList.isEmpty()) {
-            Text(text = "등록된 기기가 없어요.")
+
+        if (anotherDeviceList == null) {
+            Text(text = "")
         } else {
-            anotherDeviceList.forEachIndexed { index, device ->
-                TransparentCard(
-                    borderRadius = 8.dp,
-                    children = {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                        ) {
-                            AnotherDeviceCardTypeRow(device = device)
-                            Spacer(modifier = Modifier.padding(4.dp))
-                            HorizontalScroll(
-                                children = {
-                                    Text(text = device.nickname, fontSize = Size.lg)
-                                }
-                            )
+            if (anotherDeviceList.isEmpty()) {
+                Text(text = "등록된 기기가 없어요.")
+            } else {
+                anotherDeviceList.forEachIndexed { index, device ->
+                    TransparentCard(
+                        borderRadius = 8.dp,
+                        children = {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                            ) {
+                                AnotherDeviceCardTypeRow(device = device)
+                                Spacer(modifier = Modifier.padding(4.dp))
+                                HorizontalScroll(
+                                    children = {
+                                        Text(text = device.nickname, fontSize = Size.lg)
+                                    }
+                                )
+                            }
                         }
+                    )
+                    if (index < anotherDeviceList.size - 1) {
+                        Spacer(modifier = Modifier.padding(4.dp))
                     }
-                )
-                if (index < anotherDeviceList.size - 1) {
-                    Spacer(modifier = Modifier.padding(4.dp))
                 }
             }
         }

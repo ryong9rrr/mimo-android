@@ -45,6 +45,9 @@ fun RangeController(
 
         Slider(
             value = _value, // 초기 값
+            onValueChangeFinished = {
+                onChange(_value)
+            },
             onValueChange = { nextValue ->
 
 //                                CoroutineScope(Dispatchers.Main).launch {

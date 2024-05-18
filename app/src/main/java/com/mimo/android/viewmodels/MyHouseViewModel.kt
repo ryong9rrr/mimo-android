@@ -32,12 +32,16 @@ class MyHouseViewModel: ViewModel() {
     }
 
     fun getCurrentHouse(
-        myHouseUiState: MyHouseUiState,
+        myHouseUiState: MyHouseUiState? = null,
     ): House? {
-        val house = myHouseUiState.houseList.find { house ->
-            house.isHome
+        if (myHouseUiState != null) {
+            val house = myHouseUiState.houseList.find { house ->
+                house.isHome
+            }
+            return house
         }
-        return house
+
+        return _uiState.value.houseList.find { house -> house.isHome }
     }
 
     fun getAnotherHouseList(
