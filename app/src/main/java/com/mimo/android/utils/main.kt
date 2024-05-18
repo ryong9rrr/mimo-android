@@ -39,3 +39,24 @@ fun convertStringDateToKoreaTime(stringDate: String): String {
     // 포맷팅된 문자열 반환
     return "${dateTime.year}년 ${dateTime.monthValue}월 ${dateTime.dayOfMonth}일 $dayOfWeek"
 }
+
+fun getCurrentKoreaTime(): KoreaTime {
+    val zoneId = ZoneId.of("Asia/Seoul") // 한국 시간대 (KST)
+    val currentTimeKST = ZonedDateTime.now(zoneId) // 현재 한국 시간
+
+    // 월, 일, 시, 분, 초 추출
+    val month = currentTimeKST.monthValue
+    val day = currentTimeKST.dayOfMonth
+    val hour = currentTimeKST.hour
+    val minute = currentTimeKST.minute
+    val second = currentTimeKST.second
+    return KoreaTime(month, day, hour, minute, second)
+}
+
+data class KoreaTime(
+    val month: Int,
+    val day: Int,
+    val hour: Int,
+    val minute: Int,
+    val second: Int
+)

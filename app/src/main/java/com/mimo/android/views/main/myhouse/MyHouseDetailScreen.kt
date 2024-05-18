@@ -130,9 +130,7 @@ fun MyHouseDetailScreen(
         }
 
         if (myHouseDetailUiState.loading) {
-            Spacer(modifier = Modifier.padding(3.dp))
             LinearProgressbar()
-            Spacer(modifier = Modifier.padding(10.dp))
         } else {
             Spacer(modifier = Modifier.padding(14.dp))
             HorizontalScroll(

@@ -52,7 +52,7 @@ fun TimePicker(
             Box(
                 modifier = Modifier
                     .width(250.dp)
-                    .height(60.dp)
+                    .height(63.dp)
                     .background(Color.Transparent)
                     .border(
                         width = 3.dp,

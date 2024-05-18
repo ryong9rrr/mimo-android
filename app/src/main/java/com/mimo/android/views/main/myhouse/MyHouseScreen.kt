@@ -140,9 +140,7 @@ fun MyHouseScreen(
 
         if (myHouseUiState.loading) {
             HeadingLarge(text = "우리 집", fontSize = Size.lg)
-            Spacer(modifier = Modifier.padding(3.dp))
             LinearProgressbar()
-            Spacer(modifier = Modifier.padding(10.dp))
         } else {
             Row(
                 modifier = Modifier.fillMaxWidth(),

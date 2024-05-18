@@ -208,11 +208,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(TAG, "App destroy")
-    }
-
     private var isActiveSleepForegroundService by mutableStateOf(false)
     // private var job: Job? = null
     private var timerTask: TimerTask? = null
@@ -349,6 +344,12 @@ class MainActivity : ComponentActivity() {
 
         // 포맷에 따라 날짜 및 시간을 문자열로 변환하여 반환
         return currentTimeKST.format(formatter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "App destroy")
+        handleStopSleepForegroundService()
     }
 }
 

@@ -109,7 +109,7 @@ class MyHouseDetailViewModel: ViewModel() {
 
     private fun fakeFetchGetDeviceListByHouseId(){
         viewModelScope.launch {
-            delay(3000)
+            delay(5000)
             _uiState.value = MyHouseDetailUiState(
                 house = GetDeviceListByHouseIdResponse(
                     houseId = 1,

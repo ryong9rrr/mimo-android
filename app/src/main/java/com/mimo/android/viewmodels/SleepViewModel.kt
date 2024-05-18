@@ -35,7 +35,7 @@ class SleepViewModel: ViewModel() {
     * */
 
     fun fetchGetWakeupTime(){
-        fakeFetchGetWakeupTime()
+        fakeFetchGetWakeupTime(null)
         return
 
         viewModelScope.launch {
@@ -45,7 +45,10 @@ class SleepViewModel: ViewModel() {
                     if (data?.wakeupTime == null) {
                         return@getWakeupTime
                     }
-                    _uiState.value = SleepUiState(convertStringWakeupTimeToMyTime(data.wakeupTime))
+                    _uiState.value = SleepUiState(
+                        wakeupTime = if (data.wakeupTime == null) null else convertStringWakeupTimeToMyTime(data.wakeupTime),
+                        loading = false
+                    )
                 },
                 onFailureCallback = {
                     Log.e(TAG, "fetchGetWakeupTime")
@@ -55,17 +58,23 @@ class SleepViewModel: ViewModel() {
         }
     }
 
-    private fun fakeFetchGetWakeupTime(){
+    private fun fakeFetchGetWakeupTime(time: String?){
         viewModelScope.launch {
             delay(300)
             val data = GetWakeupTimeResponse(
-                wakeupTime = "07:00:30"
+                wakeupTime = time
             )
-            _uiState.value = SleepUiState(convertStringWakeupTimeToMyTime(data.wakeupTime!!))
+            _uiState.value = SleepUiState(
+                wakeupTime = if (data.wakeupTime == null) null else convertStringWakeupTimeToMyTime(data.wakeupTime),
+                loading = false
+            )
         }
     }
 
-    fun fetPutWakeupTime(time: MyTime){
+    fun fetchPutWakeupTime(time: MyTime){
+        fakeFetchPutWakeupTime(time)
+        return
+
         viewModelScope.launch {
             putWakeupTime(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
@@ -81,6 +90,31 @@ class SleepViewModel: ViewModel() {
                 onFailureCallback = {
                     alertError()
                 }
+            )
+        }
+    }
+
+    private fun fakeFetchPutWakeupTime(time: MyTime){
+        viewModelScope.launch {
+            delay(300)
+            _uiState.value = SleepUiState(
+                wakeupTime = time,
+                loading = false
+            )
+        }
+    }
+
+    fun fetchDeleteWakeupTime(){
+        fakeFetchDeleteWakeupTime()
+        return
+    }
+
+    private fun fakeFetchDeleteWakeupTime(){
+        viewModelScope.launch {
+            delay(300)
+            _uiState.value = SleepUiState(
+                wakeupTime = null,
+                loading = false
             )
         }
     }
