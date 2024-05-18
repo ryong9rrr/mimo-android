@@ -50,9 +50,9 @@ fun SleepScreen(
         Spacer(modifier = Modifier.padding(14.dp))
 
         if (currentHouseNickname != null) {
-            Row {
-                HeadingSmall(text = currentHouseNickname, color = Teal100, fontSize = Size.xs)
-                HeadingSmall(text = "에서", fontSize = Size.xs)
+            HorizontalScroll {
+                HeadingSmall(text = "$currentHouseNickname")
+                HeadingSmall(text = "에서")
             }
         }
         Spacer(modifier = Modifier.padding(4.dp))
@@ -94,43 +94,3 @@ private fun SleepScreenPreview(){
         sleepViewModel = sleepViewModel
     )
 }
-
-
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun DatePickerCompose() {
-//    val state = rememberDatePickerState()
-//    val openDialog = remember { mutableStateOf(true) }
-//
-//    if (openDialog.value) {
-//        DatePickerDialog(
-//            onDismissRequest = {
-//                openDialog.value = false
-//            },
-//            confirmButton = {
-//                TextButton(
-//                    onClick = {
-//                        openDialog.value = false
-//                    }
-//                ) {
-//                    Text("OK")
-//                }
-//            },
-//            dismissButton = {
-//                TextButton(
-//                    onClick = {
-//                        openDialog.value = false
-//                    }
-//                ) {
-//                    Text("CANCEL")
-//                }
-//            },
-//            colors = DatePickerDefaults.colors()
-//        ) {
-//            DatePicker(
-//                state = state
-//            )
-//        }
-//    }
-//}

@@ -1,10 +1,14 @@
 package com.mimo.android.services.health
 
 import android.app.AlertDialog
+import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.core.app.NotificationManagerCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.lifecycleScope
 import com.mimo.android.MainActivity
@@ -90,5 +94,15 @@ fun MainActivity.checkHealthConnectPermission(
             Toast.makeText(context, "Error: $exception", Toast.LENGTH_LONG)
                 .show()
         }
+    }
+}
+
+fun MainActivity.isSleepNotificationPermissionGranted(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.isNotificationListenerAccessGranted(ComponentName(application, SleepNotificationListenerService::class.java))
+    }
+    else {
+        return NotificationManagerCompat.getEnabledListenerPackages(applicationContext).contains(applicationContext.packageName)
     }
 }

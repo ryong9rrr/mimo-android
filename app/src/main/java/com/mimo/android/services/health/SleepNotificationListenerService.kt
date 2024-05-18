@@ -27,13 +27,16 @@ class SleepNotificationListenerService: NotificationListenerService() {
     private val handlerNotificationRemoved = Handler(Looper.getMainLooper())
     private var runnableNotificationPosted: Runnable? = null
     private var runnableNotificationRemoved: Runnable? = null
-    private val debounceDelay: Long = 10000 // 10 seconds
+    private val debounceDelay: Long = 5000 // 5 seconds
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
-        //debounceNotificationPosted(sbn)
+        debounceNotificationPosted(sbn)
     }
     private fun debounceNotificationPosted(sbn: StatusBarNotification?) {
+        // 5초전에 걸려있는 removed가 있다면 호출되지 않도록 제거
+        runnableNotificationRemoved?.let { handlerNotificationRemoved.removeCallbacks(it) }
+
         // Cancel the previous runnable if it exists
         runnableNotificationPosted?.let { handlerNotificationPosted.removeCallbacks(it) }
 
@@ -48,15 +51,12 @@ class SleepNotificationListenerService: NotificationListenerService() {
         handlerNotificationPosted.postDelayed(runnableNotificationPosted!!, debounceDelay)
     }
     private fun handleDebouncedNotificationPosted(sbn: StatusBarNotification) {
-        Log.i(TAG, "알림 리스너 서비스 onNotificationPosted")
         val packageName: String = sbn.packageName ?: "Null"
         val extras = sbn.notification?.extras
         val extraTitle: String = extras?.get(Notification.EXTRA_TITLE).toString()
         val extraText: String = extras?.get(Notification.EXTRA_TEXT).toString()
+        Log.i(TAG, "알림 리스너 서비스 onNotificationPosted : ${packageName} / ${extraTitle} / ${extraText}")
         if (packageName == "com.northcube.sleepcycle") {
-            Log.i(TAG, packageName)
-            Log.i(TAG, extraTitle)
-            Log.i(TAG, extraText)
             postSleepData(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 postSleepDataRequest = PostSleepDataRequest(
@@ -69,7 +69,7 @@ class SleepNotificationListenerService: NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
-        //debounceNotificationRemoved(sbn)
+        debounceNotificationRemoved(sbn)
     }
     private fun debounceNotificationRemoved(sbn: StatusBarNotification?) {
         // 슬립사이클 포그라운드가 종료될 때 notificationPosted가 먼저 한번 호출되므로 제거
@@ -89,15 +89,12 @@ class SleepNotificationListenerService: NotificationListenerService() {
         handlerNotificationRemoved.postDelayed(runnableNotificationRemoved!!, debounceDelay)
     }
     private fun handleDebouncedNotificationRemoved(sbn: StatusBarNotification) {
-        Log.i(TAG, "알림 리스너 서비스 onNotificationRemoved")
         val packageName: String = sbn.packageName ?: "Null"
         val extras = sbn.notification?.extras
         val extraTitle: String = extras?.get(Notification.EXTRA_TITLE).toString()
         val extraText: String = extras?.get(Notification.EXTRA_TEXT).toString()
+        Log.i(TAG, "알림 리스너 서비스 onNotificationRemoved : ${packageName} / ${extraTitle} / ${extraText}")
         if (packageName == "com.northcube.sleepcycle") {
-            Log.i(TAG, packageName)
-            Log.i(TAG, extraTitle)
-            Log.i(TAG, extraText)
             postSleepData(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 postSleepDataRequest = PostSleepDataRequest(
