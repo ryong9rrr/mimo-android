@@ -5,6 +5,8 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.MainActivity
+import com.mimo.android.apis.hubs.PostRegisterHubToHouseRequest
+import com.mimo.android.apis.hubs.postRegisterHubToHouse
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
@@ -19,12 +21,20 @@ class QrCodeViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(QrCodeUiState())
     val uiState: StateFlow<QrCodeUiState> = _uiState.asStateFlow()
 
+    private var _myHouseDetailViewModel: MyHouseDetailViewModel? = null
+
     fun initRegisterFirstSetting(qrCode: String){
         _uiState.value = QrCodeUiState(qrCode = qrCode)
     }
 
-    fun initRegisterHubToHouse(houseId: Long){
+    fun initRegisterHubToHouse(
+        houseId: Long,
+        myHouseDetailViewModel: MyHouseDetailViewModel? = null,
+        checkCameraPermissionHubToHouse: () -> Unit
+    ){
+        _myHouseDetailViewModel = myHouseDetailViewModel
         _uiState.value = QrCodeUiState(selectedHouseId = houseId)
+        checkCameraPermissionHubToHouse()
     }
 
     fun registerHubToHouse(qrCode: String){
@@ -41,23 +51,20 @@ class QrCodeViewModel: ViewModel() {
                 return@launch
             }
 
-            // TODO: 아래 토스트 코드를 지우고 실제 API 호출
-            showToast("${houseId}에 ${qrCode}를 등록함!")
-//            postRegisterHubToHouse(
-//                accessToken = accessToken,
-//                postRegisterHubToHomeRequest = PostRegisterHubToHouseRequest(
-//                    serialNumber = qrCode,
-//                    houseId = houseId
-//                ),
-//                onSuccessCallback = {
-//                    Toast.makeText(
-//                        MainActivity.getMainActivityContext(),
-//                        "허브를 등록했어요",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                },
-//                onFailureCallback = {}
-//            )
+            Log.i(TAG, "houseId가 ${houseId}인 집에 허브등록시도")
+
+            postRegisterHubToHouse(
+                accessToken = accessToken,
+                postRegisterHubToHomeRequest = PostRegisterHubToHouseRequest(
+                    serialNumber = qrCode,
+                    houseId = houseId
+                ),
+                onSuccessCallback = {
+                    showToast("허브를 등록했어요")
+                    _myHouseDetailViewModel?.fetchGetDeviceListByHouseId(houseId)
+                },
+                onFailureCallback = {}
+            )
         }
     }
 

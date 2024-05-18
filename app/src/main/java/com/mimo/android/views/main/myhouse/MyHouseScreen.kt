@@ -46,7 +46,7 @@ fun MyHouseScreen(
     navController: NavHostController,
     myHouseViewModel: MyHouseViewModel,
     qrCodeViewModel: QrCodeViewModel? = null,
-    checkCameraPermissionHubToHouse: (() -> Unit)? = null,
+    checkCameraPermissionHubToHouse: () -> Unit,
     checkCameraPermissionMachineToHub: (() -> Unit)? = null,
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
@@ -101,8 +101,10 @@ fun MyHouseScreen(
 
     fun handleClickAddHubModalButton(house: House){
         handleCloseCardModal()
-        qrCodeViewModel?.initRegisterHubToHouse(houseId = house.houseId)
-        checkCameraPermissionHubToHouse?.invoke()
+        qrCodeViewModel?.initRegisterHubToHouse(
+            houseId = house.houseId,
+            checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse
+        )
     }
 
     ScrollView {
@@ -378,6 +380,7 @@ private fun MyHouseScreenPreview(){
 
     MyHouseScreen(
         navController = navController,
-        myHouseViewModel = myHouseViewModel
+        myHouseViewModel = myHouseViewModel,
+        checkCameraPermissionHubToHouse = {}
     )
 }

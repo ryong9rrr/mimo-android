@@ -88,9 +88,11 @@ fun MyHouseDetailScreen(
     }
 
     fun handleClickAddHubModalButton(){
-        // TODO : 이 집에 허브 추가하고 뷰 업데이트 (뷰 업데이트 때문에 viewModel을 인자로 받아야할듯;;)
-        qrCodeViewModel.initRegisterHubToHouse(houseId = house.houseId)
-        checkCameraPermissionHubToHouse()
+        qrCodeViewModel.initRegisterHubToHouse(
+            houseId = house.houseId,
+            myHouseDetailViewModel = myHouseDetailViewModel,
+            checkCameraPermissionHubToHouse = checkCameraPermissionHubToHouse
+        )
     }
 
     fun handleClickShowHubListButton(){
