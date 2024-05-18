@@ -38,6 +38,7 @@ fun Router(
     sleepViewModel: SleepViewModel
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
+    val myHouseDetailUiState by myHouseDetailViewModel.uiState.collectAsState()
 
     NavHost(navController = navController, startDestination = SleepScreenDestination.route) {
         composable(MyHouseScreenDestination.route) {
@@ -157,7 +158,11 @@ fun Router(
             arguments = MyHouseCurtainScreenDestination.arguments
         ) { backStackEntry ->
             val deviceId = backStackEntry.arguments?.getString(MyHouseCurtainScreenDestination.deviceIdTypeArg)
-            val device = myHouseDetailViewModel.queryDevice(deviceId = deviceId!!.toLong(), deviceType = DeviceType.CURTAIN)
+            val device = myHouseDetailViewModel.queryDevice(
+                deviceId = deviceId!!.toLong(),
+                deviceType = DeviceType.CURTAIN,
+                myHouseDetailUiState = myHouseDetailUiState
+            )
             if (device == null) {
                 alertError()
                 return@composable
@@ -175,7 +180,11 @@ fun Router(
             arguments = MyHouseLampScreenDestination.arguments
         ) { backStackEntry ->
             val deviceId = backStackEntry.arguments?.getString(MyHouseLampScreenDestination.deviceIdTypeArg)
-            val device = myHouseDetailViewModel.queryDevice(deviceId = deviceId!!.toLong(), deviceType = DeviceType.LAMP)
+            val device = myHouseDetailViewModel.queryDevice(
+                deviceId = deviceId!!.toLong(),
+                deviceType = DeviceType.LAMP,
+                myHouseDetailUiState = myHouseDetailUiState
+            )
             if (device == null) {
                 alertError()
                 return@composable
@@ -193,7 +202,11 @@ fun Router(
             arguments = MyHouseLightScreenDestination.arguments
         ) { backStackEntry ->
             val deviceId = backStackEntry.arguments?.getString(MyHouseLightScreenDestination.deviceIdTypeArg)
-            val device = myHouseDetailViewModel.queryDevice(deviceId = deviceId!!.toLong(), deviceType = DeviceType.LIGHT)
+            val device = myHouseDetailViewModel.queryDevice(
+                deviceId = deviceId!!.toLong(),
+                deviceType = DeviceType.LIGHT,
+                myHouseDetailUiState = myHouseDetailUiState
+            )
             if (device == null) {
                 alertError()
                 return@composable
@@ -211,7 +224,11 @@ fun Router(
             arguments = MyHouseWindowScreenDestination.arguments
         ) { backStackEntry ->
             val deviceId = backStackEntry.arguments?.getString(MyHouseWindowScreenDestination.deviceIdTypeArg)
-            val device = myHouseDetailViewModel.queryDevice(deviceId = deviceId!!.toLong(), deviceType = DeviceType.WINDOW)
+            val device = myHouseDetailViewModel.queryDevice(
+                deviceId = deviceId!!.toLong(),
+                deviceType = DeviceType.WINDOW,
+                myHouseDetailUiState = myHouseDetailUiState
+            )
             if (device == null) {
                 alertError()
                 return@composable

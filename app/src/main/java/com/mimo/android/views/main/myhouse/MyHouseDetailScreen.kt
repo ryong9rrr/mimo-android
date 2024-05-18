@@ -9,8 +9,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +42,8 @@ fun MyHouseDetailScreen(
     myHouseLightViewModel: MyHouseLightViewModel,
     myHouseWindowViewModel: MyHouseWindowViewModel
 ){
-    val devices = myHouseDetailViewModel.getDevices()
+    val myHouseDetailUiState by myHouseDetailViewModel.uiState.collectAsState()
+    val devices = myHouseDetailViewModel.getDevices(myHouseDetailUiState)
     val myDeviceList = devices?.myDeviceList
     val anotherDeviceList = devices?.anotherDeviceList
     var isShowScreenModal by remember { mutableStateOf(false) }
@@ -127,81 +130,91 @@ fun MyHouseDetailScreen(
             )
         }
 
-        Spacer(modifier = Modifier.padding(14.dp))
-        HorizontalScroll(
-            children = {
-                HeadingLarge(text = house.nickname, fontSize = Size.lg)
-            }
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        HorizontalScroll(
-            children = {
-                HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
-            }
-        )
-
-        Spacer(modifier = Modifier.padding(12.dp))
-
-        // 현재 서비스 시스템 상 위치 등록은 현재 위치만 등록가능하므로 현재 거주지가 아니라면 그냥 기기추가 못하게 버튼 숨겨버리기
-        if (!house.isHome) {
-            HeadingSmall(text = "사용 가능한 기기", fontSize = Size.lg)
+        if (myHouseDetailUiState.loading) {
+            Spacer(modifier = Modifier.padding(3.dp))
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth().height(1.dp),
+                color = Teal900,
+                trackColor = Teal400
+            )
+            Spacer(modifier = Modifier.padding(10.dp))
         } else {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                HeadingSmall(text = "나의 기기", fontSize = Size.lg)
-                ButtonSmall(text = "기기 추가")
-            }
-        }
-        Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(14.dp))
+            HorizontalScroll(
+                children = {
+                    HeadingLarge(text = house.nickname, fontSize = Size.lg)
+                }
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            HorizontalScroll(
+                children = {
+                    HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
+                }
+            )
 
-        if (myDeviceList == null) {
-            Text(text = "")
-        } else {
-            if (myDeviceList.isEmpty()) {
-                Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+            Spacer(modifier = Modifier.padding(12.dp))
+
+            // 현재 서비스 시스템 상 위치 등록은 현재 위치만 등록가능하므로 현재 거주지가 아니라면 그냥 기기추가 못하게 버튼 숨겨버리기
+            if (!house.isHome) {
+                HeadingSmall(text = "사용 가능한 기기", fontSize = Size.lg)
             } else {
-                MyDeviceList(
-                    myDeviceList = myDeviceList,
-                    myHouseDetailViewModel = myHouseDetailViewModel,
-                    onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.Bottom,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    HeadingSmall(text = "나의 기기", fontSize = Size.lg)
+                    ButtonSmall(text = "기기 추가")
+                }
             }
-        }
-        Spacer(modifier = Modifier.padding(16.dp))
+            Spacer(modifier = Modifier.padding(8.dp))
 
-        HeadingSmall(text = "다른 기기")
-        Spacer(modifier = Modifier.padding(4.dp))
-
-        if (anotherDeviceList == null) {
-            Text(text = "")
-        } else {
-            if (anotherDeviceList.isEmpty()) {
-                Text(text = "등록된 기기가 없어요.")
+            if (myDeviceList == null) {
+                Text(text = "")
             } else {
-                anotherDeviceList.forEachIndexed { index, device ->
-                    TransparentCard(
-                        borderRadius = 8.dp,
-                        children = {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                            ) {
-                                AnotherDeviceCardTypeRow(device = device)
-                                Spacer(modifier = Modifier.padding(4.dp))
-                                HorizontalScroll(
-                                    children = {
-                                        Text(text = device.nickname, fontSize = Size.lg)
-                                    }
-                                )
-                            }
-                        }
+                if (myDeviceList.isEmpty()) {
+                    Text(text = "등록된 기기가 없어요. 기기를 등록해주세요.")
+                } else {
+                    MyDeviceList(
+                        myDeviceList = myDeviceList,
+                        myHouseDetailViewModel = myHouseDetailViewModel,
+                        onClickNavigateToDetailDeviceScreen = { device -> navigateToDetailDeviceScreen(device) }
                     )
-                    if (index < anotherDeviceList.size - 1) {
-                        Spacer(modifier = Modifier.padding(4.dp))
+                }
+            }
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            HeadingSmall(text = "다른 기기")
+            Spacer(modifier = Modifier.padding(4.dp))
+
+            if (anotherDeviceList == null) {
+                Text(text = "")
+            } else {
+                if (anotherDeviceList.isEmpty()) {
+                    Text(text = "등록된 기기가 없어요.")
+                } else {
+                    anotherDeviceList.forEachIndexed { index, device ->
+                        TransparentCard(
+                            borderRadius = 8.dp,
+                            children = {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                ) {
+                                    AnotherDeviceCardTypeRow(device = device)
+                                    Spacer(modifier = Modifier.padding(4.dp))
+                                    HorizontalScroll(
+                                        children = {
+                                            Text(text = device.nickname, fontSize = Size.lg)
+                                        }
+                                    )
+                                }
+                            }
+                        )
+                        if (index < anotherDeviceList.size - 1) {
+                            Spacer(modifier = Modifier.padding(4.dp))
+                        }
                     }
                 }
             }
@@ -262,7 +275,7 @@ fun ScreenModalContent(
 }
 
 @Composable
-fun AnotherDeviceCardTypeRow(device: Device){
+private fun AnotherDeviceCardTypeRow(device: Device){
     if ((isCurtainType(device.type) || isWindowType(device.type)) && device.openDegree == null) {
         Row(
             modifier = Modifier.fillMaxWidth(),

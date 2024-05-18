@@ -11,6 +11,7 @@ import com.mimo.android.apis.users.putWakeupTime
 import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +23,21 @@ class SleepViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(SleepUiState())
     val uiState: StateFlow<SleepUiState> = _uiState.asStateFlow()
 
+    /*
+    *
+    * 최초 wakeupTime을 가져온다..
+    * 1. 만약 null이면 알람을 설정안했다는 뜻이다 -> 알람 설정이 가능한 UI를 보여준다.
+    * 2. 그렇지 않다면 -> 설정된 알람시간을 보여주고 알람을 취소할 수 있는 UI를 보여준다
+    *
+    *
+    *
+    *
+    * */
+
     fun fetchGetWakeupTime(){
+        fakeFetchGetWakeupTime()
+        return
+
         viewModelScope.launch {
             getWakeupTime(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
@@ -37,6 +52,16 @@ class SleepViewModel: ViewModel() {
                     alertError()
                 }
             )
+        }
+    }
+
+    private fun fakeFetchGetWakeupTime(){
+        viewModelScope.launch {
+            delay(300)
+            val data = GetWakeupTimeResponse(
+                wakeupTime = "07:00:30"
+            )
+            _uiState.value = SleepUiState(convertStringWakeupTimeToMyTime(data.wakeupTime!!))
         }
     }
 

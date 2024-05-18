@@ -40,15 +40,17 @@ class MyHouseDetailViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHouseDetailUiState())
     val uiState: StateFlow<MyHouseDetailUiState> = _uiState.asStateFlow()
 
-    fun getDevices(): Devices? {
+    fun getDevices(
+        myHouseDetailUiState: MyHouseDetailUiState
+    ): Devices? {
         val myDeviceList = mutableListOf<Device>()
         val anotherDeviceList = mutableListOf<Device>()
 
-        if (_uiState.value.house == null) {
+        if (myHouseDetailUiState.house == null) {
             return null
         }
-        val allDeviceList = _uiState.value.house!!.devices
-        for (device in allDeviceList) {
+
+        for (device in myHouseDetailUiState.house.devices) {
             if (device.isAccessible) {
                 myDeviceList.add(device)
             } else {
@@ -60,10 +62,11 @@ class MyHouseDetailViewModel: ViewModel() {
 
     fun queryDevice(
         deviceId: Long,
-        deviceType: DeviceType
+        deviceType: DeviceType,
+        myHouseDetailUiState: MyHouseDetailUiState
     ): Device? {
 
-        val devices = getDevices() ?: return null
+        val devices = getDevices(myHouseDetailUiState) ?: return null
         val myDeviceList = devices.myDeviceList
 
         if (deviceType == DeviceType.CURTAIN) {
@@ -82,15 +85,7 @@ class MyHouseDetailViewModel: ViewModel() {
     }
 
     fun fetchGetDeviceListByHouseId(houseId: Long){
-//        _uiState.value = MyHouseDetailUiState(
-//            house = GetDeviceListByHouseIdResponse(
-//                houseId = 1,
-//                nickname = "safd",
-//                address = "afwqwe",
-//                isHome = true,
-//                devices = fakeGetMyDeviceList()
-//            )
-//        )
+//        fakeFetchGetDeviceListByHouseId()
 //        return
 
         viewModelScope.launch {
@@ -102,12 +97,28 @@ class MyHouseDetailViewModel: ViewModel() {
                         alertError()
                         return@getDeviceListByHouseId
                     }
-                    _uiState.value = MyHouseDetailUiState(house = data)
+                    _uiState.value = MyHouseDetailUiState(house = data, loading = false)
                 },
                 onFailureCallback = {
                     Log.e(TAG, "fetchGetDeviceListByHouseId")
                     alertError()
                 }
+            )
+        }
+    }
+
+    private fun fakeFetchGetDeviceListByHouseId(){
+        viewModelScope.launch {
+            delay(3000)
+            _uiState.value = MyHouseDetailUiState(
+                house = GetDeviceListByHouseIdResponse(
+                    houseId = 1,
+                    nickname = "safd",
+                    address = "afwqwe",
+                    isHome = true,
+                    devices = fakeGetMyDeviceList()
+                ),
+                loading = false
             )
         }
     }
@@ -169,6 +180,7 @@ class MyHouseDetailViewModel: ViewModel() {
 }
 
 data class MyHouseDetailUiState(
+    val loading: Boolean = true,
     val house: GetDeviceListByHouseIdResponse? = null
 )
 
