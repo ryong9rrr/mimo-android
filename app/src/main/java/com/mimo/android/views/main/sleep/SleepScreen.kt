@@ -44,6 +44,12 @@ fun SleepScreen(
     var selectedMinute by remember { mutableStateOf(30) }
 
     fun handleSetWakeupTime(){
+        val minus30MinutesLocalTime = getMinus30MinutesLocalTime(selectedHour, selectedMinute, 0)
+        if (calculateRemainingTime(minus30MinutesLocalTime).toInt() == 0) {
+            showToast("30분 전 시간을 설정해주세요")
+            return
+        }
+
         sleepViewModel.fetchPutWakeupTime(MyTime(
             hour = selectedHour,
             minute = selectedMinute,
@@ -57,11 +63,8 @@ fun SleepScreen(
         onStopSleepForegroundService?.invoke()
     }
 
-    fun handleFinishWakeupTime(){
-        // TODO: 알람 틀어주기
-        showToast("MIMO 시작")
-//        sleepViewModel.fetchDeleteWakeupTime()
-//        onStopSleepForegroundService?.invoke()
+    fun handleStartMIMO(){
+        sleepViewModel.fetchStartMIMO()
     }
 
     LaunchedEffect(Unit) {
@@ -129,14 +132,19 @@ fun SleepScreen(
                         hour = sleepUiState.wakeupTime!!.hour,
                         minute = sleepUiState.wakeupTime!!.minute
                     ), color = Teal100)
-                    HeadingSmall(text = "부터 알람이 울려요")
+                    HeadingSmall(text = "부터 MIMO 알람이 울려요")
                 }
                 Spacer(modifier = Modifier.weight(1f))
-                HeadingSmall(text = "남은 시간")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ){
+                    HeadingSmall(text = "MIMO 알람까지 남은 시간")
+                }
                 Spacer(modifier = Modifier.padding(8.dp))
                 Timer(
-                    targetTime = LocalTime.of(sleepUiState.wakeupTime!!.hour, sleepUiState.wakeupTime!!.minute, sleepUiState.wakeupTime!!.second).minusMinutes(30),
-                    onFinish = ::handleFinishWakeupTime
+                    targetTime = getMinus30MinutesLocalTime(sleepUiState.wakeupTime!!.hour, sleepUiState.wakeupTime!!.minute, sleepUiState.wakeupTime!!.second),
+                    onFinish = ::handleStartMIMO
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Row(
@@ -150,6 +158,14 @@ fun SleepScreen(
             }
         }
     }
+}
+
+private fun getMinus30MinutesLocalTime(
+    hour: Int,
+    minute: Int,
+    second: Int
+): LocalTime{
+    return LocalTime.of(hour, minute, second).minusMinutes(30)
 }
 
 private fun makeTextTimeMinus30Minutes(
