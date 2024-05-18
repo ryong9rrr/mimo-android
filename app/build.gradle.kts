@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    // firebase
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -101,4 +104,9 @@ dependencies {
 
     // workmanager
     implementation("androidx.work:work-runtime-ktx:2.7.1")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-database-ktx")
+    implementation("com.google.firebase:firebase-analytics")
 }
