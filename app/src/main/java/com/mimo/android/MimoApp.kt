@@ -130,7 +130,7 @@ fun MimoApp(
         val activeSleep = currentRoute?.contains("Sleep") ?: false
         androidx.compose.material.Scaffold(
             bottomBar = {
-                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && !sleepUiState.playingMusic) {
+                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && sleepUiState.wakeupTime == null) {
                     com.mimo.android.components.navigation.Navigation(
                         navController = navController,
                         currentRoute = currentRoute
@@ -138,7 +138,7 @@ fun MimoApp(
                 }
             },
             floatingActionButton = {
-                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && isShowNavigation(currentRoute) && !sleepUiState.playingMusic) {
+                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && isShowNavigation(currentRoute) && sleepUiState.wakeupTime == null) {
                     androidx.compose.material.FloatingActionButton(
                         onClick = { /*TODO*/ },
                         contentColor = getColor(activeSleep),

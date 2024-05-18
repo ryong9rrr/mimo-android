@@ -43,28 +43,26 @@ fun OnSleepView(
     val coroutineScope = rememberCoroutineScope()
     val maxVolume = 1f
 
+    var isPlaying by remember { mutableStateOf(false) }
     var volume by remember { mutableStateOf(0.1f) } // 볼륨 상태 추가
     val mediaPlayer = remember {
-        MediaPlayer.create(MainActivity.getMainActivityContext(), R.raw.mimo_music_1).apply {
+        MediaPlayer.create(MainActivity.getMainActivityContext(), R.raw.samsung_over_the_horizon).apply {
             setVolume(volume, volume) // 초기 볼륨 설정
         }
     }
     var job: Job? = null
 
     fun playMusic() {
-        if (!sleepUiState.playingMusic) {
-            mediaPlayer.start()
-            sleepViewModel.playMusic()
-            job = coroutineScope.launch {
-                while (true) {
-                    delay(1000)
-                    Log.i(TAG,"현재 볼륨 : ${volume}")
-                    //delay(3 * 60 * 1000L) // 3분 대기
-                    if (volume < maxVolume) {
-                        volume += 0.1f // 볼륨 10% 증가
-                        if (volume > maxVolume) volume = maxVolume
-                        mediaPlayer.setVolume(volume, volume)
-                    }
+        mediaPlayer.start()
+        job = coroutineScope.launch {
+            while (true) {
+                delay(1000)
+                Log.i(TAG,"현재 볼륨 : ${volume}")
+                //delay(3 * 60 * 1000L) // 3분 대기
+                if (volume < maxVolume) {
+                    volume += 0.1f // 볼륨 10% 증가
+                    if (volume > maxVolume) volume = maxVolume
+                    mediaPlayer.setVolume(volume, volume)
                 }
             }
         }
@@ -72,11 +70,8 @@ fun OnSleepView(
 
     fun stopMusic() {
         job?.cancel()
-        if (sleepUiState.playingMusic) {
-            mediaPlayer.stop()
-            sleepViewModel.stopMusic()
-            mediaPlayer.prepare()
-        }
+        mediaPlayer.stop()
+        mediaPlayer.prepare()
     }
 
     fun handleStartMIMO(){

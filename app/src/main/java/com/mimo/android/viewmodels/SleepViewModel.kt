@@ -24,18 +24,6 @@ class SleepViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(SleepUiState())
     val uiState: StateFlow<SleepUiState> = _uiState.asStateFlow()
 
-    fun playMusic(){
-        _uiState.update { prevState ->
-            prevState.copy(playingMusic = true)
-        }
-    }
-
-    fun stopMusic(){
-        _uiState.update { prevState ->
-            prevState.copy(playingMusic = false)
-        }
-    }
-
     fun fetchGetWakeupTime(
         onStartSleepForegroundService: (() -> Unit)? = null
     ){
@@ -161,8 +149,7 @@ class SleepViewModel: ViewModel() {
 
 data class SleepUiState(
     val wakeupTime: MyTime? = null,
-    val loading: Boolean = true,
-    val playingMusic: Boolean = false
+    val loading: Boolean = true
 )
 
 fun convertStringWakeupTimeToMyTime(stringWakeupTime: String): MyTime {

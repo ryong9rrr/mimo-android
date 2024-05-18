@@ -63,7 +63,7 @@ fun SleepScreen(
                 minute = selectedMinute,
                 second = 0
             ),
-            onStartSleepForegroundService = onStartSleepForegroundService
+            onStartSleepForegroundService = onStartSleepForegroundService,
         )
     }
 
