@@ -82,6 +82,7 @@ fun MimoApp(
 
         val authUiState by authViewModel.uiState.collectAsState()
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
+        val sleepUiState by sleepViewModel.uiState.collectAsState()
 
         // TODO: 실제 kakao-login 구현
         fun handleLoginWithKakao(){
@@ -129,7 +130,7 @@ fun MimoApp(
         val activeSleep = currentRoute?.contains("Sleep") ?: false
         androidx.compose.material.Scaffold(
             bottomBar = {
-                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null) {
+                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && !sleepUiState.playingMusic) {
                     com.mimo.android.components.navigation.Navigation(
                         navController = navController,
                         currentRoute = currentRoute
@@ -137,21 +138,26 @@ fun MimoApp(
                 }
             },
             floatingActionButton = {
-                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && isShowNavigation(currentRoute)) {
+                if (authUiState.user != null && firstSettingFunnelsUiState.currentStepId == null && isShowNavigation(currentRoute) && !sleepUiState.playingMusic) {
                     androidx.compose.material.FloatingActionButton(
                         onClick = { /*TODO*/ },
                         contentColor = getColor(activeSleep),
                         backgroundColor = Teal900,
-                        modifier = Modifier.width(80.dp).height(80.dp)
+                        modifier = Modifier
+                            .width(80.dp)
+                            .height(80.dp)
                     ) {
                         androidx.compose.material.Icon(
                             imageVector = MyIconPack.MoonStarsFillIcon185549,
                             contentDescription = null,
-                            modifier = Modifier.height(45.dp).width(45.dp).clickable {
-                                navController.navigate(SleepScreenDestination.route) {
-                                    popUpTo(0)
+                            modifier = Modifier
+                                .height(45.dp)
+                                .width(45.dp)
+                                .clickable {
+                                    navController.navigate(SleepScreenDestination.route) {
+                                        popUpTo(0)
+                                    }
                                 }
-                            }
                         )
                     }
                 }

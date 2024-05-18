@@ -20,12 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mimo.android.components.Icon
 import com.mimo.android.components.Text
-import com.mimo.android.meanStage
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.utils.dateFormatter
 import com.mimo.android.viewmodels.MyProfileViewModel
 import com.mimo.android.viewmodels.convertCalendarDate
+import com.mimo.android.viewmodels.meanStage
 import java.time.LocalDate
 
 @Composable

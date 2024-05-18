@@ -3,8 +3,8 @@ package com.mimo.android.views.main.myprofile
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.mimo.android.components.Text
-import com.mimo.android.meanStage
 import com.mimo.android.utils.dateFormatter
+import com.mimo.android.viewmodels.meanStage
 import java.time.Instant
 
 @Composable

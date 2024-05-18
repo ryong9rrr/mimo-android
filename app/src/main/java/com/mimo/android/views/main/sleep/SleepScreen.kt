@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -43,6 +44,12 @@ fun SleepScreen(
     var selectedHour by remember { mutableStateOf(7) }
     var selectedMinute by remember { mutableStateOf(30) }
 
+    LaunchedEffect(Unit) {
+        sleepViewModel.fetchGetWakeupTime(
+            onStartSleepForegroundService = onStartSleepForegroundService
+        )
+    }
+
     fun handleSetWakeupTime(){
         val minus30MinutesLocalTime = getMinus30MinutesLocalTime(selectedHour, selectedMinute, 0)
         if (calculateRemainingTime(minus30MinutesLocalTime).toInt() == 0) {
@@ -50,25 +57,20 @@ fun SleepScreen(
             return
         }
 
-        sleepViewModel.fetchPutWakeupTime(MyTime(
-            hour = selectedHour,
-            minute = selectedMinute,
-            second = 0
-        ))
-        onStartSleepForegroundService?.invoke()
+        sleepViewModel.fetchPutWakeupTime(
+            time = MyTime(
+                hour = selectedHour,
+                minute = selectedMinute,
+                second = 0
+            ),
+            onStartSleepForegroundService = onStartSleepForegroundService
+        )
     }
 
     fun handleRemoveWakeupTime(){
-        sleepViewModel.fetchDeleteWakeupTime()
-        onStopSleepForegroundService?.invoke()
-    }
-
-    fun handleStartMIMO(){
-        sleepViewModel.fetchStartMIMO()
-    }
-
-    LaunchedEffect(Unit) {
-        sleepViewModel.fetchGetWakeupTime()
+        sleepViewModel.fetchDeleteWakeupTime(
+            onStopSleepForegroundService = onStopSleepForegroundService
+        )
     }
 
     Column {
@@ -127,40 +129,16 @@ fun SleepScreen(
                 Spacer(modifier = Modifier.weight(2f))
                 Spacer(modifier = Modifier.padding(44.dp))
             } else {
-                Row {
-                    HeadingSmall(text = makeTextTimeMinus30Minutes(
-                        hour = sleepUiState.wakeupTime!!.hour,
-                        minute = sleepUiState.wakeupTime!!.minute
-                    ), color = Teal100)
-                    HeadingSmall(text = "부터 MIMO 알람이 울려요")
-                }
-                Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    HeadingSmall(text = "MIMO 알람까지 남은 시간")
-                }
-                Spacer(modifier = Modifier.padding(8.dp))
-                Timer(
-                    targetTime = getMinus30MinutesLocalTime(sleepUiState.wakeupTime!!.hour, sleepUiState.wakeupTime!!.minute, sleepUiState.wakeupTime!!.second),
-                    onFinish = ::handleStartMIMO
+                OnSleepView(
+                    sleepViewModel = sleepViewModel,
+                    onRemoveWakeupTime = ::handleRemoveWakeupTime
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    Button(text = "수면 끝", onClick = ::handleRemoveWakeupTime, width = 300.dp)
-                }
-                Spacer(modifier = Modifier.weight(2f))
-                Spacer(modifier = Modifier.padding(44.dp))
             }
         }
     }
 }
 
-private fun getMinus30MinutesLocalTime(
+fun getMinus30MinutesLocalTime(
     hour: Int,
     minute: Int,
     second: Int
@@ -168,7 +146,7 @@ private fun getMinus30MinutesLocalTime(
     return LocalTime.of(hour, minute, second).minusMinutes(30)
 }
 
-private fun makeTextTimeMinus30Minutes(
+fun makeTextTimeMinus30Minutes(
     hour: Int,
     minute: Int
 ): String {

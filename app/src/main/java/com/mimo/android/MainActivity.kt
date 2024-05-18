@@ -209,29 +209,43 @@ class MainActivity : ComponentActivity() {
     }
 
     private var isActiveSleepForegroundService by mutableStateOf(false)
-    // private var job: Job? = null
-    private var timerTask: TimerTask? = null
+//    // private var job: Job? = null
+//    private var timerTask: TimerTask? = null
 
     private fun handleStartSleepForegroundService(){
+        if (isActiveSleepForegroundService) {
+            return
+        }
+
         Intent(getMainActivityContext(), SleepForegroundService::class.java).also {
             it.action = SleepForegroundService.Actions.START.toString()
             startService(it)
 
-            //job = createJob()
-            timerTask = Task()
-            Timer().scheduleAtFixedRate(timerTask, 1000, FIFTEEN_MINUTES)
+//            //job = createJob()
+//            timerTask = Task()
+//            Timer().scheduleAtFixedRate(timerTask, 1000, FIFTEEN_MINUTES)
             isActiveSleepForegroundService = true
         }
     }
     private fun handleStopSleepForegroundService(){
+        if (!isActiveSleepForegroundService) {
+            return
+        }
+
         Intent(applicationContext, SleepForegroundService::class.java).also {
             it.action = SleepForegroundService.Actions.STOP.toString()
             startService(it)
-            //job?.cancel()
-            timerTask?.cancel()
-            timerTask = null
+//            //job?.cancel()
+//            timerTask?.cancel()
+//            timerTask = null
             isActiveSleepForegroundService = false
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "App destroy")
+        handleStopSleepForegroundService()
     }
 
 //    private fun createJob(): Job{
@@ -245,151 +259,107 @@ class MainActivity : ComponentActivity() {
 //        }
 //    }
 
-    inner class Task: TimerTask() {
-        override fun run() {
-            lifecycleScope.launch {
-                //readFifteenMinutesAgoSleepStage()
-                readLastSleepStage()
-                if (timerTask == null) {
-                    this.cancel()
-                    return@launch
-                }
-            }
-        }
+//    inner class Task: TimerTask() {
+//        override fun run() {
+//            lifecycleScope.launch {
+//                //readFifteenMinutesAgoSleepStage()
+//                readLastSleepStage()
+//                if (timerTask == null) {
+//                    this.cancel()
+//                    return@launch
+//                }
+//            }
+//        }
+//
+//        override fun cancel(): Boolean {
+//            return super.cancel()
+//        }
+//    }
 
-        override fun cancel(): Boolean {
-            return super.cancel()
-        }
-    }
-
-    private suspend fun readFifteenMinutesAgoSleepStage(){
-        val now = Instant.now()
-        val fifteenMinutesAgo = now.minus(15, ChronoUnit.MINUTES)
-        val lastSleepStage = healthConnectManager.readLastSleepStage(fifteenMinutesAgo, now)
-        if (lastSleepStage == null) {
-            Log.d(TAG, "MIMO가 감지 중 @@ ${dateFormatter.format(fifteenMinutesAgo)} ~ ${dateFormatter.format(now)} @@ 수면기록이 감지되지 않음")
-            return
-        }
-        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
-    }
-
-    private suspend fun readSleepSession(
-        month: Int,
-        dayOfMonth: Int,
-    ){
-        val startTime = ZonedDateTime.of(2024, month, dayOfMonth, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
-        val endTime = ZonedDateTime.of(2024, month, dayOfMonth, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
-
-        val sleepSessionRecord = healthConnectManager.readSleepSessionRecordList(startTime.toInstant(), endTime.toInstant())
-
-        if (sleepSessionRecord == null) {
-            Log.d(TAG, "MIMO가 감지 중")
-            Log.d(TAG, "${dateFormatter.format(startTime)} ~ ${dateFormatter.format(endTime)} 까지 수면기록 없음")
-            return
-        }
-        sleepSessionRecord.forEachIndexed() { sessionIndex, session ->
-            val koreanStartTime = dateFormatter.format(session.startTime)
-            val koreanEndTime = dateFormatter.format(session.endTime)
-            Log.d(TAG, "@@@@@@@ 상세 수면 기록 @@@@@@@")
-            Log.d(TAG, "수면 ${sessionIndex + 1} 전체 : $koreanStartTime ~ $koreanEndTime")
-            session.stages.forEach() { stage ->
-                Log.d(TAG, "${dateFormatter.format(stage.startTime)} ~ ${dateFormatter.format(stage.endTime)} @@ ${meanStage(stage.stage)}")
-            }
-        }
-    }
-
-    private suspend fun readLastSleepStage(){
-        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val now = Instant.now()
-        val lastSleepStage = healthConnectManager.readLastSleepStage(startOfDay.toInstant(), now)
-        if (lastSleepStage == null) {
-            Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ 수면기록이 감지되지 않음")
-            postSleepData(
-                accessToken = getData(ACCESS_TOKEN) ?: "",
-                postSleepDataRequest = PostSleepDataRequest(
-                    sleepLevel = -1
-                )
-            )
-            return
-        }
-        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
-        postSleepData(
-            accessToken = getData(ACCESS_TOKEN) ?: "",
-            postSleepDataRequest = PostSleepDataRequest(
-                sleepLevel = lastSleepStage.stage
-            )
-        )
-    }
-
-    private suspend fun readSteps(){
-        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val now = Instant.now()
-        val step = healthConnectManager.readSteps(startOfDay.toInstant(), now)
-        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${step}")
-    }
-
-    private fun getCurrentTime(): String{
-        val zoneId = ZoneId.of("Asia/Seoul") // 한국 시간대 (KST)
-        val currentTimeKST = ZonedDateTime.now(zoneId) // 현재 한국 시간
-
-        // 월, 일, 시, 분, 초 추출
-        val month = currentTimeKST.monthValue
-        val day = currentTimeKST.dayOfMonth
-        val hour = currentTimeKST.hour
-        val minute = currentTimeKST.minute
-        val second = currentTimeKST.second
-
-        // 형식 지정
-        val formatter = DateTimeFormatter.ofPattern("M월 d일 H시 m분 s초")
-
-        // 포맷에 따라 날짜 및 시간을 문자열로 변환하여 반환
-        return currentTimeKST.format(formatter)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(TAG, "App destroy")
-        handleStopSleepForegroundService()
-    }
+//    private suspend fun readFifteenMinutesAgoSleepStage(){
+//        val now = Instant.now()
+//        val fifteenMinutesAgo = now.minus(15, ChronoUnit.MINUTES)
+//        val lastSleepStage = healthConnectManager.readLastSleepStage(fifteenMinutesAgo, now)
+//        if (lastSleepStage == null) {
+//            Log.d(TAG, "MIMO가 감지 중 @@ ${dateFormatter.format(fifteenMinutesAgo)} ~ ${dateFormatter.format(now)} @@ 수면기록이 감지되지 않음")
+//            return
+//        }
+//        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
+//    }
+//
+//    private suspend fun readSleepSession(
+//        month: Int,
+//        dayOfMonth: Int,
+//    ){
+//        val startTime = ZonedDateTime.of(2024, month, dayOfMonth, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
+//        val endTime = ZonedDateTime.of(2024, month, dayOfMonth, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
+//
+//        val sleepSessionRecord = healthConnectManager.readSleepSessionRecordList(startTime.toInstant(), endTime.toInstant())
+//
+//        if (sleepSessionRecord == null) {
+//            Log.d(TAG, "MIMO가 감지 중")
+//            Log.d(TAG, "${dateFormatter.format(startTime)} ~ ${dateFormatter.format(endTime)} 까지 수면기록 없음")
+//            return
+//        }
+//        sleepSessionRecord.forEachIndexed() { sessionIndex, session ->
+//            val koreanStartTime = dateFormatter.format(session.startTime)
+//            val koreanEndTime = dateFormatter.format(session.endTime)
+//            Log.d(TAG, "@@@@@@@ 상세 수면 기록 @@@@@@@")
+//            Log.d(TAG, "수면 ${sessionIndex + 1} 전체 : $koreanStartTime ~ $koreanEndTime")
+//            session.stages.forEach() { stage ->
+//                Log.d(TAG, "${dateFormatter.format(stage.startTime)} ~ ${dateFormatter.format(stage.endTime)} @@ ${meanStage(stage.stage)}")
+//            }
+//        }
+//    }
+//
+//    private suspend fun readLastSleepStage(){
+//        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+//        val now = Instant.now()
+//        val lastSleepStage = healthConnectManager.readLastSleepStage(startOfDay.toInstant(), now)
+//        if (lastSleepStage == null) {
+//            Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ 수면기록이 감지되지 않음")
+//            postSleepData(
+//                accessToken = getData(ACCESS_TOKEN) ?: "",
+//                postSleepDataRequest = PostSleepDataRequest(
+//                    sleepLevel = -1
+//                )
+//            )
+//            return
+//        }
+//        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${dateFormatter.format(lastSleepStage.startTime)} ~ ${dateFormatter.format(lastSleepStage.endTime)} @@ ${meanStage(lastSleepStage.stage)}")
+//        postSleepData(
+//            accessToken = getData(ACCESS_TOKEN) ?: "",
+//            postSleepDataRequest = PostSleepDataRequest(
+//                sleepLevel = lastSleepStage.stage
+//            )
+//        )
+//    }
+//
+//    private suspend fun readSteps(){
+//        val startOfDay = ZonedDateTime.now().truncatedTo(ChronoUnit.DAYS)
+//        val now = Instant.now()
+//        val step = healthConnectManager.readSteps(startOfDay.toInstant(), now)
+//        Log.d(TAG, "MIMO가 감지 중 @@ ${getCurrentTime()} @@ ${step}")
+//    }
+//
+//    private fun getCurrentTime(): String{
+//        val zoneId = ZoneId.of("Asia/Seoul") // 한국 시간대 (KST)
+//        val currentTimeKST = ZonedDateTime.now(zoneId) // 현재 한국 시간
+//
+//        // 월, 일, 시, 분, 초 추출
+//        val month = currentTimeKST.monthValue
+//        val day = currentTimeKST.dayOfMonth
+//        val hour = currentTimeKST.hour
+//        val minute = currentTimeKST.minute
+//        val second = currentTimeKST.second
+//
+//        // 형식 지정
+//        val formatter = DateTimeFormatter.ofPattern("M월 d일 H시 m분 s초")
+//
+//        // 포맷에 따라 날짜 및 시간을 문자열로 변환하여 반환
+//        return currentTimeKST.format(formatter)
+//    }
 }
 
-const val FIFTEEN_MINUTES = 15 * 60 * 1000L
-
-enum class SleepStage {
-    UNKNOWN, // 0
-    AWAKE, // 1
-    SLEEPING, // 2
-    OUT_OF_BED, // 3
-    LIGHT, // 4
-    DEEP, // 5
-    REM, // 6
-    AWAKE_IN_BED // 7
-}
-
-// TODO: 수면기록은 AWAKE(수면 중 깸), LIGHT(얕은 잠), DEEP(깊은 잠), REM(렘 수면) 이렇게 4가지만 찍히는 걸로 확인됨..
-// TODO: 따라서 사실 상 이 기록이 찍히게 되면 수면이 시작됐다는 거고 AWAKE가 찍히면 수면 중 깼다는 것...
-// TODO: 그니까 이 기록이 찍히면 불 꺼주면 된다. 어차피 깨우는 건 30분 전부터 서서히 켜주면 되니까... 기상 감지는 못해도 괜찮을지도...
-fun meanStage(stage: Int): SleepStage {
-    if (stage == 1) {
-        return SleepStage.AWAKE
-    }
-    if (stage == 2) {
-        return SleepStage.SLEEPING
-    }
-    if (stage == 3) {
-        return SleepStage.OUT_OF_BED
-    }
-    if (stage == 4) {
-        return SleepStage.LIGHT
-    }
-    if (stage == 5) {
-        return SleepStage.DEEP
-    }
-    if (stage == 6) {
-        return SleepStage.REM
-    }
-    if (stage == 7) {
-        return SleepStage.AWAKE_IN_BED
-    }
-    return SleepStage.UNKNOWN
-}
+//const val FIFTEEN_MINUTES = 15 * 60 * 1000L
+//

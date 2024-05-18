@@ -39,6 +39,7 @@ import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.viewmodels.MyProfileViewModel
+import com.mimo.android.R
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable

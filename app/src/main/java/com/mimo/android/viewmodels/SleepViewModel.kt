@@ -11,11 +11,11 @@ import com.mimo.android.apis.users.putWakeupTime
 import com.mimo.android.utils.alertError
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
-import com.mimo.android.utils.showToast
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val TAG = "SleepViewModel"
@@ -24,30 +24,42 @@ class SleepViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(SleepUiState())
     val uiState: StateFlow<SleepUiState> = _uiState.asStateFlow()
 
-    /*
-    *
-    * 최초 wakeupTime을 가져온다..
-    * 1. 만약 null이면 알람을 설정안했다는 뜻이다 -> 알람 설정이 가능한 UI를 보여준다.
-    * 2. 그렇지 않다면 -> 설정된 알람시간을 보여주고 알람을 취소할 수 있는 UI를 보여준다
-    *
-    *
-    *
-    *
-    * */
+    fun playMusic(){
+        _uiState.update { prevState ->
+            prevState.copy(playingMusic = true)
+        }
+    }
 
-    fun fetchGetWakeupTime(){
-        fakeFetchGetWakeupTime(null)
+    fun stopMusic(){
+        _uiState.update { prevState ->
+            prevState.copy(playingMusic = false)
+        }
+    }
+
+    fun fetchGetWakeupTime(
+        onStartSleepForegroundService: (() -> Unit)? = null
+    ){
+        fakeFetchGetWakeupTime(null, onStartSleepForegroundService)
         return
 
         viewModelScope.launch {
             getWakeupTime(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 onSuccessCallback = { data: GetWakeupTimeResponse? ->
-                    if (data?.wakeupTime == null) {
+                    if (data == null) {
                         return@getWakeupTime
                     }
+                    if (data.wakeupTime == null) {
+                        _uiState.value = SleepUiState(
+                            wakeupTime = null,
+                            loading = false
+                        )
+                        return@getWakeupTime
+                    }
+
+                    onStartSleepForegroundService?.invoke()
                     _uiState.value = SleepUiState(
-                        wakeupTime = if (data.wakeupTime == null) null else convertStringWakeupTimeToMyTime(data.wakeupTime),
+                        wakeupTime = convertStringWakeupTimeToMyTime(data.wakeupTime),
                         loading = false
                     )
                 },
@@ -59,23 +71,41 @@ class SleepViewModel: ViewModel() {
         }
     }
 
-    private fun fakeFetchGetWakeupTime(time: String?){
+    private fun fakeFetchGetWakeupTime(
+        time: String?,
+        onStartSleepForegroundService: (() -> Unit)? = null
+    ){
         viewModelScope.launch {
             delay(300)
             val data = GetWakeupTimeResponse(
                 wakeupTime = time
             )
+
+            if (data.wakeupTime == null) {
+                _uiState.value = SleepUiState(
+                    wakeupTime = null,
+                    loading = false
+                )
+                return@launch
+            }
+
+            onStartSleepForegroundService?.invoke()
             _uiState.value = SleepUiState(
-                wakeupTime = if (data.wakeupTime == null) null else convertStringWakeupTimeToMyTime(data.wakeupTime),
+                wakeupTime = convertStringWakeupTimeToMyTime(data.wakeupTime),
                 loading = false
             )
         }
     }
 
-    fun fetchPutWakeupTime(time: MyTime){
+    fun fetchPutWakeupTime(
+        time: MyTime,
+        onStartSleepForegroundService: (() -> Unit)? = null
+    ){
+        onStartSleepForegroundService?.invoke()
         fakeFetchPutWakeupTime(time)
         return
 
+        onStartSleepForegroundService?.invoke()
         viewModelScope.launch {
             putWakeupTime(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
@@ -105,9 +135,17 @@ class SleepViewModel: ViewModel() {
         }
     }
 
-    fun fetchDeleteWakeupTime(){
+    fun fetchDeleteWakeupTime(
+        onStopSleepForegroundService: (() -> Unit)? = null
+    ){
+        onStopSleepForegroundService?.invoke()
         fakeFetchDeleteWakeupTime()
         return
+
+        onStopSleepForegroundService?.invoke()
+        viewModelScope.launch {
+
+        }
     }
 
     private fun fakeFetchDeleteWakeupTime(){
@@ -119,18 +157,12 @@ class SleepViewModel: ViewModel() {
             )
         }
     }
-
-    fun fetchStartMIMO(){
-        viewModelScope.launch {
-            showToast("MIMO 시작")
-            // 알람 울리기
-        }
-    }
 }
 
 data class SleepUiState(
     val wakeupTime: MyTime? = null,
-    val loading: Boolean = true
+    val loading: Boolean = true,
+    val playingMusic: Boolean = false
 )
 
 fun convertStringWakeupTimeToMyTime(stringWakeupTime: String): MyTime {
