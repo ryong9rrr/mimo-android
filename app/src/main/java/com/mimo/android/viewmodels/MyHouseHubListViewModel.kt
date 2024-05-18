@@ -20,8 +20,11 @@ class MyHouseHubListViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(MyHouseHubListUiState())
     val uiState: StateFlow<MyHouseHubListUiState> = _uiState.asStateFlow()
 
-    fun queryHub(hubId: Long): Hub? {
-        return _uiState.value.hubList?.find { hub ->
+    fun queryHub(
+        hubId: Long,
+        myHouseHubListUiState: MyHouseHubListUiState
+    ): Hub? {
+        return myHouseHubListUiState.hubList?.find { hub ->
             hub.hubId == hubId
         }
     }
@@ -33,7 +36,8 @@ class MyHouseHubListViewModel: ViewModel() {
                 houseId = houseId,
                 onSuccessCallback = { hubList ->
                     _uiState.value = MyHouseHubListUiState(
-                        hubList = hubList ?: mutableListOf()
+                        hubList = hubList ?: mutableListOf(),
+                        loading = false
                     )
                 },
                 onFailureCallback = {
@@ -46,5 +50,6 @@ class MyHouseHubListViewModel: ViewModel() {
 }
 
 data class MyHouseHubListUiState(
-    val hubList: List<Hub>? = null
+    val hubList: List<Hub>? = null,
+    val loading: Boolean = true
 )

@@ -36,6 +36,8 @@ import com.mimo.android.views.*
 import com.mimo.android.ui.theme.Gray300
 import com.mimo.android.ui.theme.Gray600
 import com.mimo.android.ui.theme.Teal100
+import com.mimo.android.ui.theme.Teal400
+import com.mimo.android.ui.theme.Teal900
 import com.mimo.android.viewmodels.MyHouseViewModel
 import com.mimo.android.viewmodels.convertDeviceTypeToKoreaName
 
@@ -136,57 +138,64 @@ fun MyHouseScreen(
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
+        if (myHouseUiState.loading) {
             HeadingLarge(text = "우리 집", fontSize = Size.lg)
-            ButtonSmall(text = "집 추가", onClick = ::handleShowCreateHouseButtonModal)
-        }
+            Spacer(modifier = Modifier.padding(3.dp))
+            LinearProgressbar()
+            Spacer(modifier = Modifier.padding(10.dp))
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                HeadingLarge(text = "우리 집", fontSize = Size.lg)
+                ButtonSmall(text = "집 추가", onClick = ::handleShowCreateHouseButtonModal)
+            }
 
-        Spacer(modifier = Modifier.padding(14.dp))
+            Spacer(modifier = Modifier.padding(14.dp))
 
-        HeadingSmall(text = "현재 거주지", fontSize = Size.lg)
-        Spacer(modifier = Modifier.padding(4.dp))
+            HeadingSmall(text = "현재 거주지", fontSize = Size.lg)
+            Spacer(modifier = Modifier.padding(4.dp))
 
 
-        if (currentHouse == null) {
-            Text(text = "등록된 거주지가 없어요")
-        }
-        if (currentHouse != null) {
-            Card(
-                house = currentHouse,
-                isCurrentHome = true,
-                onClick = { house -> navigateToMyHouseDetailScreen(house) },
-                onClickMenu = { house -> handleShowCardModal(house) },
-                onLongClick = {}
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(16.dp))
-
-        HeadingSmall(text = "다른 거주지")
-        Spacer(modifier = Modifier.padding(4.dp))
-        if (anotherHouseList.isEmpty()) {
-            Text(text = "등록된 거주지가 없어요")
-        }
-        if (anotherHouseList.isNotEmpty()) {
-            anotherHouseList.forEachIndexed { index, anotherHouse ->
+            if (currentHouse == null) {
+                Text(text = "등록된 거주지가 없어요")
+            }
+            if (currentHouse != null) {
                 Card(
-                    house = anotherHouse,
-                    isCurrentHome = false,
+                    house = currentHouse,
+                    isCurrentHome = true,
                     onClick = { house -> navigateToMyHouseDetailScreen(house) },
                     onClickMenu = { house -> handleShowCardModal(house) },
                     onLongClick = {}
                 )
+            }
 
-                if (index < anotherHouseList.size) {
-                    Spacer(modifier = Modifier.padding(4.dp))
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            HeadingSmall(text = "다른 거주지")
+            Spacer(modifier = Modifier.padding(4.dp))
+            if (anotherHouseList.isEmpty()) {
+                Text(text = "등록된 거주지가 없어요")
+            }
+            if (anotherHouseList.isNotEmpty()) {
+                anotherHouseList.forEachIndexed { index, anotherHouse ->
+                    Card(
+                        house = anotherHouse,
+                        isCurrentHome = false,
+                        onClick = { house -> navigateToMyHouseDetailScreen(house) },
+                        onClickMenu = { house -> handleShowCardModal(house) },
+                        onLongClick = {}
+                    )
+
+                    if (index < anotherHouseList.size) {
+                        Spacer(modifier = Modifier.padding(4.dp))
+                    }
                 }
             }
         }
-    }
+        }
 }
 
 @OptIn(ExperimentalFoundationApi::class)

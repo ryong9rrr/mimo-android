@@ -39,6 +39,7 @@ fun Router(
 ){
     val myHouseUiState by myHouseViewModel.uiState.collectAsState()
     val myHouseDetailUiState by myHouseDetailViewModel.uiState.collectAsState()
+    val myHouseHubListUiState by myHouseHubListViewModel.uiState.collectAsState()
 
     NavHost(navController = navController, startDestination = SleepScreenDestination.route) {
         composable(MyHouseScreenDestination.route) {
@@ -144,7 +145,10 @@ fun Router(
             arguments = MyHouseSimpleDeviceListDestination.arguments
         ) { backStackEntry ->
             val hubId = backStackEntry.arguments?.getString(MyHouseSimpleDeviceListDestination.hubIdTypeArg)
-            val hub = myHouseHubListViewModel.queryHub(hubId!!.toLong())
+            val hub = myHouseHubListViewModel.queryHub(
+                hubId = hubId!!.toLong(),
+                myHouseHubListUiState = myHouseHubListUiState
+            )
             if (hub == null) {
                 alertError()
                 return@composable

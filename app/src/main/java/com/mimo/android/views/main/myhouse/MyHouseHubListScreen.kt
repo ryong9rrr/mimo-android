@@ -47,25 +47,33 @@ fun MyHouseHubListScreen(
 
     ScrollView {
         Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
-        Spacer(modifier = Modifier.padding(14.dp))
 
-        HorizontalScroll(
-            children = {
-                HeadingLarge(text = house.nickname, fontSize = Size.lg)
-            }
-        )
-        Spacer(modifier = Modifier.padding(4.dp))
-        HorizontalScroll(
-            children = {
-                HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
-            }
-        )
-        Spacer(modifier = Modifier.padding(16.dp))
+        if (myHouseHubListUiState.loading) {
+            Spacer(modifier = Modifier.padding(3.dp))
+            LinearProgressbar()
+            Spacer(modifier = Modifier.padding(10.dp))
+        } else {
+            Spacer(modifier = Modifier.padding(14.dp))
 
-        HeadingSmall(text = "이 장소에 등록된 허브", fontSize = Size.lg)
-        Spacer(modifier = Modifier.padding(8.dp))
+            HorizontalScroll(
+                children = {
+                    HeadingLarge(text = house.nickname, fontSize = Size.lg)
+                }
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
 
-        HubList(hubList = myHouseHubListUiState.hubList, onClickHub = { hubId -> handleClickHub(hubId = hubId) })
+            HorizontalScroll(
+                children = {
+                    HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
+                }
+            )
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            HeadingSmall(text = "이 장소에 등록된 허브", fontSize = Size.lg)
+            Spacer(modifier = Modifier.padding(8.dp))
+
+            HubList(hubList = myHouseHubListUiState.hubList, onClickHub = { hubId -> handleClickHub(hubId = hubId) })
+        }
     }
 }
 

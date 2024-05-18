@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -132,11 +131,7 @@ fun MyHouseDetailScreen(
 
         if (myHouseDetailUiState.loading) {
             Spacer(modifier = Modifier.padding(3.dp))
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth().height(1.dp),
-                color = Teal900,
-                trackColor = Teal400
-            )
+            LinearProgressbar()
             Spacer(modifier = Modifier.padding(10.dp))
         } else {
             Spacer(modifier = Modifier.padding(14.dp))

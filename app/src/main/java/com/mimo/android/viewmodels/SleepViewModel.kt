@@ -87,7 +87,8 @@ class SleepViewModel: ViewModel() {
 }
 
 data class SleepUiState(
-    val wakeupTime: MyTime? = null
+    val wakeupTime: MyTime? = null,
+    val loading: Boolean = true
 )
 
 fun convertStringWakeupTimeToMyTime(stringWakeupTime: String): MyTime {
