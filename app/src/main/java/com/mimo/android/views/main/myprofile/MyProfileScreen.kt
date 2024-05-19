@@ -131,7 +131,7 @@ fun MyProfileScreen(
                 onClickNextDate = ::handleClickNextDate
             )
             Spacer(modifier = Modifier.padding(4.dp))
-            SleepChart(myProfileViewModel = myProfileViewModel)
+            SleepStatistics(myProfileViewModel = myProfileViewModel)
             Spacer(modifier = Modifier.padding(16.dp))
 
             Text(text = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}")

@@ -1,5 +1,6 @@
 package com.mimo.android.views.main.myprofile
 
+import SleepPatternChart
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,7 @@ import com.mimo.android.viewmodels.MyProfileViewModel
 import com.mimo.android.viewmodels.meanStage
 
 @Composable
-fun SleepChart(
+fun SleepStatistics(
     myProfileViewModel: MyProfileViewModel
 ){
     val myProfileUiState by myProfileViewModel.uiState.collectAsState()
@@ -36,6 +37,9 @@ fun SleepChart(
     } else {
         Column {
             Spacer(modifier = Modifier.padding(8.dp))
+
+            SleepPatternChart(startHour = 0f, endHour = 22f)
+
             myProfileUiState.sleepSessionRecordList!!.forEachIndexed { sessionIndex, session ->
                 val koreanStartTime = dateFormatter.format(session.startTime)
                 val koreanEndTime = dateFormatter.format(session.endTime)

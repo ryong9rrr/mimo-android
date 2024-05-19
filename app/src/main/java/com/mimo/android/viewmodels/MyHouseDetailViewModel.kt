@@ -218,7 +218,7 @@ fun convertDeviceTypeToKoreaName(x: String): String {
         return "커튼"
     }
     if (isLightType(x)) {
-        return "조명"
+        return "전등"
     }
     if (isLampType(x)) {
         return "무드등"
@@ -227,20 +227,4 @@ fun convertDeviceTypeToKoreaName(x: String): String {
         return "창문"
     }
     return ""
-}
-
-fun <T> debounce(
-    waitMs: Long = 300L,
-    scope: CoroutineScope,
-    destinationFunction: (T) -> Unit
-): (T) -> Unit {
-    var debounceJob: Job? = null
-
-    return { param: T ->
-        debounceJob?.cancel()
-        debounceJob = scope.launch {
-            delay(waitMs)
-            destinationFunction(param)
-        }
-    }
 }

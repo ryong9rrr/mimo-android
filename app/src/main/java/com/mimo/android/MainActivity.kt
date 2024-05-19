@@ -159,11 +159,10 @@ class MainActivity : ComponentActivity() {
             )
         }
 
-        // TODO: 개발 끝나면 주석 제거할 것
-//        // Notification Permission
-//        if (!isSleepNotificationPermissionGranted()) {
-//            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-//        }
+        // Notification Permission
+        if (!isSleepNotificationPermissionGranted()) {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
 
         authViewModel.checkAlreadyLoggedIn(
             firstSettingFunnelsViewModel = firstSettingFunnelsViewModel

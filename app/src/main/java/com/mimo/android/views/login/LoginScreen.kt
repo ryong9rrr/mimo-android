@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.mimo.android.ui.theme.*
 
 @Preview
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -26,15 +27,17 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeadingLarge(text = "스마트슬립 MIMO", fontSize = Size.lg)
+        Spacer(modifier = Modifier.weight(1f))
+        Text(text = "당신의 쾌적한 아침을 위한")
+        HeadingLarge(text = "MIMO", fontSize = Size.xl2)
 
-        Spacer(modifier = Modifier.padding(10.dp))
-
+        Spacer(modifier = Modifier.padding(8.dp))
         SocialLoginButton(
             onClick = onLoginWithKakao,
             desc = "KaKao",
             imageResource = R.drawable.kakao_login_large_narrow
         )
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 
