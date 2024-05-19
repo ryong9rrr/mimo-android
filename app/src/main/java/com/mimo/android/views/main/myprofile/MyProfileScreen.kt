@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,10 @@ import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.getData
 import com.mimo.android.viewmodels.MyProfileViewModel
 import com.mimo.android.R
+import com.mimo.android.components.LinearProgressbar
+import com.mimo.android.components.SimpleCalendar
+import com.mimo.android.viewmodels.convertCalendarDate
+import java.time.LocalDate
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -50,7 +55,25 @@ fun MyProfileScreen(
     authViewModel: AuthViewModel,
 ){
     val authUiState by authViewModel.uiState.collectAsState()
+    val myProfileUiState by myProfileViewModel.uiState.collectAsState()
     var isShowScreenModal by remember { mutableStateOf(false) }
+
+    fun isToday(): Boolean {
+        val stateDate = convertCalendarDate(myProfileUiState.date)
+        val todayDate = convertCalendarDate(LocalDate.now())
+        return stateDate.month == todayDate.month && stateDate.day == todayDate.day
+    }
+
+    fun handleClickPrevDate(){
+        myProfileViewModel.updateToPrevDate()
+    }
+
+    fun handleClickNextDate(){
+        if (isToday()) {
+            return
+        }
+        myProfileViewModel.updateToNextDate()
+    }
 
     fun handleShowScreenModal(){
         isShowScreenModal = true
@@ -58,6 +81,10 @@ fun MyProfileScreen(
 
     fun handleCloseScreenModal(){
         isShowScreenModal = false
+    }
+
+    LaunchedEffect(Unit) {
+        myProfileViewModel.init(healthConnectManager)
     }
 
     ScrollView {
@@ -73,36 +100,55 @@ fun MyProfileScreen(
             )
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            HeadingLarge(text = "내 정보", fontSize = Size.lg)
-            Column(
-                modifier = Modifier.height(42.dp),
-                verticalArrangement = Arrangement.Center
+        if (myProfileUiState.loading) {
+            LoadingView(
+                date = myProfileUiState.date
+            )
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Icon(
-                    imageVector = Icons.Default.Menu,
-                    size = 32.dp,
-                    onClick = ::handleShowScreenModal
-                )
+                HeadingLarge(text = "내 정보", fontSize = Size.lg)
+                Column(
+                    modifier = Modifier.height(42.dp),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Menu,
+                        size = 32.dp,
+                        onClick = ::handleShowScreenModal
+                    )
+                }
             }
+            Spacer(modifier = Modifier.padding(14.dp))
+            HeadingSmall(text = "수면 통계", fontSize = Size.lg)
+            Spacer(modifier = Modifier.padding(8.dp))
+            SimpleCalendar(
+                isToday = isToday(),
+                date = myProfileUiState.date,
+                onClickPrevDate = ::handleClickPrevDate,
+                onClickNextDate = ::handleClickNextDate
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            SleepChart(myProfileViewModel = myProfileViewModel)
+            Spacer(modifier = Modifier.padding(16.dp))
+
+            Text(text = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}")
+            Spacer(modifier = Modifier.padding(40.dp))
         }
-        Spacer(modifier = Modifier.padding(14.dp))
-
-        HeadingSmall(text = "수면 통계", fontSize = Size.lg)
-        Spacer(modifier = Modifier.padding(8.dp))
-
-        SleepCalendarChart(
-            myProfileViewModel = myProfileViewModel,
-            healthConnectManager = healthConnectManager,
-        )
-
-        Text(text = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}")
-
-        Spacer(modifier = Modifier.padding(40.dp))
     }
+}
+
+@Composable
+private fun LoadingView(date: LocalDate){
+    HeadingLarge(text = "내 정보", fontSize = Size.lg)
+    LinearProgressbar()
+    Spacer(modifier = Modifier.padding(1.dp))
+    HeadingSmall(text = "수면 통계", fontSize = Size.lg)
+    Spacer(modifier = Modifier.padding(8.dp))
+    SimpleCalendar(isToday = false, date = date)
+    Spacer(modifier = Modifier.padding(2.dp))
 }
 
 @Composable

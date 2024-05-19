@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.utils.dateFormatter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,48 +21,42 @@ import java.util.Locale
 private const val TAG = "MyProfileViewModel"
 
 class MyProfileViewModel: ViewModel() {
-    private var isInit = false
+    private var _healthConnectManager: HealthConnectManager? = null
     private val _uiState = MutableStateFlow(MyProfileUiState(date = LocalDate.now()))
     val uiState: StateFlow<MyProfileUiState> = _uiState.asStateFlow()
 
     fun init(healthConnectManager: HealthConnectManager){
-        if (isInit) {
-            return
-        }
-
-        viewModelScope.launch {
-            fetchSleepSessionRecord(
-                date = LocalDate.now(),
-                healthConnectManager = healthConnectManager,
-                cb = { isInit = true }
-            )
+        if (_healthConnectManager == null) {
+            _healthConnectManager = healthConnectManager
+            viewModelScope.launch {
+                fetchSleepSessionRecord(date = LocalDate.now())
+            }
         }
     }
 
-    fun updateToPrevDate(healthConnectManager: HealthConnectManager){
+    fun updateToPrevDate(){
         viewModelScope.launch {
             val prevDate = _uiState.value.date.minusDays(1)
-            fetchSleepSessionRecord(date = prevDate, healthConnectManager = healthConnectManager)
+            fetchSleepSessionRecord(date = prevDate)
         }
     }
 
-    fun updateToNextDate(healthConnectManager: HealthConnectManager){
+    fun updateToNextDate(){
         viewModelScope.launch {
             val nextDate = _uiState.value.date.plusDays(1)
-            fetchSleepSessionRecord(date = nextDate, healthConnectManager = healthConnectManager)
+            fetchSleepSessionRecord(date = nextDate)
         }
     }
 
-    private fun fetchSleepSessionRecord(
-        date: LocalDate,
-        healthConnectManager: HealthConnectManager,
-        cb: (() -> Unit)? = null
-    ){
+    private fun fetchSleepSessionRecord(date: LocalDate){
+        _uiState.update { prevState ->
+            prevState.copy(loading = true)
+        }
         viewModelScope.launch {
             val calendarDate = convertCalendarDate(date)
             val startTime = ZonedDateTime.of(calendarDate.year, calendarDate.month, calendarDate.day, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
             val endTime = ZonedDateTime.of(calendarDate.year, calendarDate.month, calendarDate.day, 23, 59, 59, 0, ZoneId.of("Asia/Seoul"))
-            val sleepSessionRecordList = healthConnectManager.readSleepSessionRecordList(startTime.toInstant(), endTime.toInstant())
+            val sleepSessionRecordList = _healthConnectManager?.readSleepSessionRecordList(startTime.toInstant(), endTime.toInstant())
 
             logSleepSessionList(
                 startTime = startTime,
@@ -69,10 +64,8 @@ class MyProfileViewModel: ViewModel() {
                 sleepSessionRecordList = sleepSessionRecordList
             )
 
-            cb?.invoke()
-
             _uiState.update { prevState ->
-                prevState.copy(date = date, sleepSessionRecordList = sleepSessionRecordList)
+                prevState.copy(date = date, sleepSessionRecordList = sleepSessionRecordList, loading = false)
             }
         }
     }
@@ -81,6 +74,7 @@ class MyProfileViewModel: ViewModel() {
 data class MyProfileUiState(
     val date: LocalDate,
     val sleepSessionRecordList: List<SleepSessionRecord>? = null,
+    val loading: Boolean = true
 )
 
 data class CalendarDate(

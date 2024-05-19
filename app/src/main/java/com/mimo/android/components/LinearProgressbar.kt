@@ -34,6 +34,6 @@ fun LinearProgressbar2(){
             color = Teal900,
             trackColor = Teal400
         )
-        Spacer(modifier = Modifier.padding(2.dp))
+        Spacer(modifier = Modifier.padding(3.dp))
     }
 }

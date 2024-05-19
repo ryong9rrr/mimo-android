@@ -34,6 +34,10 @@ fun MyHouseHubListScreen(
         myHouseHubListViewModel.fetchHubListByHouseId(house.houseId)
     }
 
+    fun handleClickHub(hubId: Long){
+        navController.navigate("${MyHouseSimpleDeviceListDestination.route}/${hubId}")
+    }
+
     fun handleGoPrev() {
         navController.navigateUp()
     }
@@ -41,38 +45,40 @@ fun MyHouseHubListScreen(
         handleGoPrev()
     }
 
-    fun handleClickHub(hubId: Long){
-        navController.navigate("${MyHouseSimpleDeviceListDestination.route}/${hubId}")
-    }
-
     ScrollView {
         Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
-
         if (myHouseHubListUiState.loading) {
-            LinearProgressbar2()
+            LoadingView(house = house)
         } else {
             Spacer(modifier = Modifier.padding(14.dp))
-
-            HorizontalScroll(
-                children = {
-                    HeadingLarge(text = house.nickname, fontSize = Size.lg)
-                }
-            )
-            Spacer(modifier = Modifier.padding(4.dp))
-
-            HorizontalScroll(
-                children = {
-                    HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
-                }
-            )
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            HeadingSmall(text = "이 장소에 등록된 허브", fontSize = Size.lg)
+            Header(house = house)
             Spacer(modifier = Modifier.padding(8.dp))
-
             HubList(hubList = myHouseHubListUiState.hubList, onClickHub = { hubId -> handleClickHub(hubId = hubId) })
         }
     }
+}
+
+@Composable
+private fun LoadingView(house: House){
+    LinearProgressbar2()
+    Header(house)
+}
+
+@Composable
+private fun Header(house: House){
+    HorizontalScroll(
+        children = {
+            HeadingLarge(text = house.nickname, fontSize = Size.lg)
+        }
+    )
+    Spacer(modifier = Modifier.padding(4.dp))
+    HorizontalScroll(
+        children = {
+            HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
+        }
+    )
+    Spacer(modifier = Modifier.padding(16.dp))
+    HeadingSmall(text = "이 장소에 등록된 허브", fontSize = Size.lg)
 }
 
 @Preview

@@ -89,7 +89,7 @@ class MyHouseDetailViewModel: ViewModel() {
 //        return
 
         viewModelScope.launch {
-            delay(300)
+            delay(200)
             getDeviceListByHouseId(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 houseId = houseId,
@@ -110,7 +110,7 @@ class MyHouseDetailViewModel: ViewModel() {
 
     private fun fakeFetchGetDeviceListByHouseId(){
         viewModelScope.launch {
-            delay(300)
+            delay(200)
             _uiState.value = MyHouseDetailUiState(
                 house = GetDeviceListByHouseIdResponse(
                     houseId = 1,

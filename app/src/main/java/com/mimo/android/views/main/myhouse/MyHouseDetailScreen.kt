@@ -130,21 +130,10 @@ fun MyHouseDetailScreen(
         }
 
         if (myHouseDetailUiState.loading) {
-            LinearProgressbar2()
+            LoadingView(house = house)
         } else {
             Spacer(modifier = Modifier.padding(14.dp))
-            HorizontalScroll(
-                children = {
-                    HeadingLarge(text = house.nickname, fontSize = Size.lg)
-                }
-            )
-            Spacer(modifier = Modifier.padding(4.dp))
-            HorizontalScroll(
-                children = {
-                    HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
-                }
-            )
-
+            Header(house = house)
             Spacer(modifier = Modifier.padding(12.dp))
 
             // 현재 서비스 시스템 상 위치 등록은 현재 위치만 등록가능하므로 현재 거주지가 아니라면 그냥 기기추가 못하게 버튼 숨겨버리기
@@ -156,7 +145,7 @@ fun MyHouseDetailScreen(
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    HeadingSmall(text = "나의 기기", fontSize = Size.lg)
+                    HeadingSmall(text = "사용 가능한 기기", fontSize = Size.lg)
                     ButtonSmall(text = "기기 추가")
                 }
             }
@@ -213,6 +202,29 @@ fun MyHouseDetailScreen(
             }
         }
     }
+}
+
+@Composable
+private fun LoadingView(house: House) {
+    LinearProgressbar2()
+    Header(house)
+    HeadingSmall(text = "사용 가능한 기기", fontSize = Size.lg)
+}
+
+@Composable
+private fun Header(house: House){
+    HorizontalScroll(
+        children = {
+            HeadingLarge(text = house.nickname, fontSize = Size.lg)
+        }
+    )
+    Spacer(modifier = Modifier.padding(4.dp))
+    HorizontalScroll(
+        children = {
+            HeadingSmall(text = house.address, fontSize = Size.sm, color = Teal100)
+        }
+    )
+    Spacer(modifier = Modifier.padding(12.dp))
 }
 
 @Composable

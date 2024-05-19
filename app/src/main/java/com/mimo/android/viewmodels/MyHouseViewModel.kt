@@ -60,7 +60,7 @@ class MyHouseViewModel: ViewModel() {
 
     fun fetchHouseList(){
         viewModelScope.launch {
-            delay(300)
+            delay(100)
             getHouseList(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 onSuccessCallback = { houses ->
