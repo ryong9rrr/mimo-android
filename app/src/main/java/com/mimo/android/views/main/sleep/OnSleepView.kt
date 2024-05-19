@@ -28,6 +28,11 @@ import com.mimo.android.R
 import com.mimo.android.utils.showToast
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.*
+import com.mimo.android.apis.sleeps.PostSleepDataRequest
+import com.mimo.android.apis.sleeps.postSleepData
+import com.mimo.android.utils.preferences.ACCESS_TOKEN
+import com.mimo.android.utils.preferences.getData
+import com.mimo.android.viewmodels.SleepUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 
@@ -43,21 +48,31 @@ fun OnSleepView(
     val coroutineScope = rememberCoroutineScope()
     val maxVolume = 1f
 
-    var isPlaying by remember { mutableStateOf(false) }
+    var job: Job? = null
     var volume by remember { mutableStateOf(0.1f) } // 볼륨 상태 추가
     val mediaPlayer = remember {
         MediaPlayer.create(MainActivity.getMainActivityContext(), R.raw.samsung_over_the_horizon).apply {
             setVolume(volume, volume) // 초기 볼륨 설정
         }
     }
-    var job: Job? = null
 
     fun playMusic() {
         mediaPlayer.start()
         job = coroutineScope.launch {
+            postSleepData(
+                accessToken = getData(ACCESS_TOKEN) ?: "",
+                postSleepDataRequest = PostSleepDataRequest(
+                    sleepLevel = 6
+                ),
+                onSuccessCallback = { showToast("MIMO 시작") },
+                onFailureCallback = {
+                    showToast("오류가 발생했어요.")
+                }
+            )
+
             while (true) {
                 delay(1000)
-                Log.i(TAG,"현재 볼륨 : ${volume}")
+                Log.i(com.mimo.android.views.main.sleep.TAG,"현재 볼륨 : ${volume}")
                 //delay(3 * 60 * 1000L) // 3분 대기
                 if (volume < maxVolume) {
                     volume += 0.1f // 볼륨 10% 증가
@@ -72,11 +87,6 @@ fun OnSleepView(
         job?.cancel()
         mediaPlayer.stop()
         mediaPlayer.prepare()
-    }
-
-    fun handleStartMIMO(){
-        showToast("MIMO 시작")
-        playMusic()
     }
 
     fun handleStopSleep(){
@@ -109,7 +119,7 @@ fun OnSleepView(
         Spacer(modifier = Modifier.padding(8.dp))
         Timer(
             targetTime = getMinus30MinutesLocalTime(sleepUiState.wakeupTime!!.hour, sleepUiState.wakeupTime!!.minute, sleepUiState.wakeupTime!!.second),
-            onFinish = ::handleStartMIMO
+            onFinish = ::playMusic
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(

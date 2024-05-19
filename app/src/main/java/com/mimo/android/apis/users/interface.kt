@@ -28,4 +28,10 @@ interface UsersApiService {
     fun getWakeupTime(
         @Header("X-AUTH-TOKEN") accessToken: String,
     ): Call<GetWakeupTimeResponse>
+
+    @Headers("Content-Type: application/json")
+    @DELETE("user/wakeup-time")
+    fun deleteWakeupTime(
+        @Header("X-AUTH-TOKEN") accessToken: String,
+    ): Call<Unit>
 }
