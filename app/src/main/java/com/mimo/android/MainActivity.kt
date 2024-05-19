@@ -160,10 +160,10 @@ class MainActivity : ComponentActivity() {
         }
 
         // TODO: 개발 중에는 잠시 주석
-//        // Notification Permission
-//        if (!isSleepNotificationPermissionGranted()) {
-//            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-//        }
+        // Notification Permission
+        if (!isSleepNotificationPermissionGranted()) {
+            startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+        }
 
         authViewModel.checkAlreadyLoggedIn(
             firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
