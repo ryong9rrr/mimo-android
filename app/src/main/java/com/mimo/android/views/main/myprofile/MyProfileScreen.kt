@@ -55,7 +55,6 @@ fun MyProfileScreen(
     myProfileViewModel: MyProfileViewModel,
     authViewModel: AuthViewModel,
 ){
-    val authUiState by authViewModel.uiState.collectAsState()
     val myProfileUiState by myProfileViewModel.uiState.collectAsState()
     var isShowScreenModal by remember { mutableStateOf(false) }
 
@@ -101,55 +100,35 @@ fun MyProfileScreen(
             )
         }
 
-        if (myProfileUiState.loading) {
-            LoadingView(
-                date = myProfileUiState.date
-            )
-        } else {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            HeadingLarge(text = "내 정보", fontSize = Size.lg)
+            Column(
+                modifier = Modifier.height(42.dp),
+                verticalArrangement = Arrangement.Center
             ) {
-                HeadingLarge(text = "내 정보", fontSize = Size.lg)
-                Column(
-                    modifier = Modifier.height(42.dp),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Menu,
-                        size = 32.dp,
-                        onClick = ::handleShowScreenModal
-                    )
-                }
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    size = 32.dp,
+                    onClick = ::handleShowScreenModal
+                )
             }
-            Spacer(modifier = Modifier.padding(14.dp))
-            HeadingSmall(text = "수면 통계", fontSize = Size.lg)
-            Spacer(modifier = Modifier.padding(8.dp))
-            SimpleCalendar(
-                isToday = isToday(),
-                date = myProfileUiState.date,
-                onClickPrevDate = ::handleClickPrevDate,
-                onClickNextDate = ::handleClickNextDate
-            )
-            Spacer(modifier = Modifier.padding(4.dp))
-            SleepStatistics(myProfileViewModel = myProfileViewModel)
-            Spacer(modifier = Modifier.padding(16.dp))
-
-            TextField(value = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}", onValueChange = {})
-            Spacer(modifier = Modifier.padding(40.dp))
         }
+        Spacer(modifier = Modifier.padding(14.dp))
+        HeadingSmall(text = "수면 통계", fontSize = Size.lg)
+        Spacer(modifier = Modifier.padding(16.dp))
+        SimpleCalendar(
+            isToday = isToday(),
+            date = myProfileUiState.date,
+            onClickPrevDate = ::handleClickPrevDate,
+            onClickNextDate = ::handleClickNextDate
+        )
+        Spacer(modifier = Modifier.padding(4.dp))
+        SleepStatistics(myProfileViewModel = myProfileViewModel)
+        Spacer(modifier = Modifier.padding(40.dp))
     }
-}
-
-@Composable
-private fun LoadingView(date: LocalDate){
-    HeadingLarge(text = "내 정보", fontSize = Size.lg)
-    LinearProgressbar()
-    Spacer(modifier = Modifier.padding(1.dp))
-    HeadingSmall(text = "수면 통계", fontSize = Size.lg)
-    Spacer(modifier = Modifier.padding(8.dp))
-    SimpleCalendar(isToday = false, date = date)
-    Spacer(modifier = Modifier.padding(2.dp))
 }
 
 @Composable
@@ -181,6 +160,7 @@ fun ScreenModalContent(
                 text = "닫기", color = Gray600, hasBorder = false,
                 onClick = { onClose() }
             )
+            TextField(value = "${getData(ACCESS_TOKEN)}", onValueChange = {})
         }
     }
 }

@@ -49,9 +49,6 @@ class MyProfileViewModel: ViewModel() {
     }
 
     private fun fetchSleepSessionRecord(date: LocalDate){
-        _uiState.update { prevState ->
-            prevState.copy(loading = true)
-        }
         viewModelScope.launch {
             val calendarDate = convertCalendarDate(date)
             val startTime = ZonedDateTime.of(calendarDate.year, calendarDate.month, calendarDate.day, 0, 0, 0, 0, ZoneId.of("Asia/Seoul"))
@@ -65,7 +62,7 @@ class MyProfileViewModel: ViewModel() {
             )
 
             _uiState.update { prevState ->
-                prevState.copy(date = date, sleepSessionRecordList = sleepSessionRecordList, loading = false)
+                prevState.copy(date = date, sleepSessionRecordList = sleepSessionRecordList)
             }
         }
     }
@@ -73,8 +70,7 @@ class MyProfileViewModel: ViewModel() {
 
 data class MyProfileUiState(
     val date: LocalDate,
-    val sleepSessionRecordList: List<SleepSessionRecord>? = null,
-    val loading: Boolean = true
+    val sleepSessionRecordList: List<SleepSessionRecord>? = null
 )
 
 data class CalendarDate(

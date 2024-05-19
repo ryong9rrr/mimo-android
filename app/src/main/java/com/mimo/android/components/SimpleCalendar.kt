@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.mimo.android.ui.theme.Teal100
 import com.mimo.android.viewmodels.convertCalendarDate
 import java.time.LocalDate
 
@@ -25,7 +26,7 @@ fun SimpleCalendar(
         if (isToday) {
             return Color.Gray
         }
-        return Color.White
+        return Teal100
     }
 
     fun showDateString(): String {
@@ -44,15 +45,16 @@ fun SimpleCalendar(
     ) {
         Icon(
             imageVector = Icons.Filled.KeyboardArrowLeft,
-            size = 24.dp,
-            onClick = onClickPrevDate
+            size = 32.dp,
+            onClick = onClickPrevDate,
+            color = Teal100
         )
 
-        Text(text = showDateString())
+        HeadingSmall(text = showDateString(), color = Teal100)
 
         Icon(
             imageVector = Icons.Filled.KeyboardArrowRight,
-            size = 24.dp,
+            size = 32.dp,
             onClick = onClickNextDate,
             color = getGoNextDayButtonColor()
         )
