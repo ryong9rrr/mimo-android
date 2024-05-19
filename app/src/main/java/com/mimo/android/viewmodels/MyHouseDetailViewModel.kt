@@ -201,7 +201,7 @@ fun isCurtainType(x: String): Boolean{
 }
 
 fun isLightType(x: String): Boolean{
-    return x == "조명" || x.toLowerCase() == "light"
+    return x == "조명" || x.toLowerCase() == "light" || x == "전등"
 }
 
 fun isLampType(x: String): Boolean{

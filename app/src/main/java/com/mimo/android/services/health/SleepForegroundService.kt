@@ -67,7 +67,7 @@ class SleepForegroundService: Service() {
         val notification = NotificationCompat
             .Builder(this, "running_channel")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Mimo")
+            .setContentTitle("MIMO")
             .setContentText("수면 감지 중")
             .build()
 
