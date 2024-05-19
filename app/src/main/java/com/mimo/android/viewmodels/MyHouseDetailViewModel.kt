@@ -89,7 +89,6 @@ class MyHouseDetailViewModel: ViewModel() {
 //        return
 
         viewModelScope.launch {
-            delay(200)
             getDeviceListByHouseId(
                 accessToken = getData(ACCESS_TOKEN) ?: "",
                 houseId = houseId,

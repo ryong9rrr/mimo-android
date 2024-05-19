@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -122,11 +123,22 @@ fun MyHouseDetailScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Icon(imageVector = Icons.Filled.ArrowBack, onClick = ::handleGoPrev)
-            Icon(
-                imageVector = Icons.Default.Menu,
-                size = 32.dp,
-                onClick = ::handleShowScreenModal
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ){
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    size = 32.dp,
+                    onClick = { myHouseDetailViewModel.fetchGetDeviceListByHouseId(house.houseId) },
+                    color = Teal100
+                )
+                Icon(
+                    imageVector = Icons.Default.Menu,
+                    size = 32.dp,
+                    onClick = ::handleShowScreenModal
+                )
+            }
         }
 
         if (myHouseDetailUiState.loading) {
