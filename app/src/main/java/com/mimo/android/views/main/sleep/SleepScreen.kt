@@ -51,11 +51,11 @@ fun SleepScreen(
     }
 
     fun handleSetWakeupTime(){
-        val minus30MinutesLocalTime = getMinus30MinutesLocalTime(selectedHour, selectedMinute, 0)
-        if (calculateRemainingTime(minus30MinutesLocalTime).toInt() == 0) {
-            showToast("30분 전 시간을 설정해주세요")
-            return
-        }
+//        val minus30MinutesLocalTime = getMinus30MinutesLocalTime(selectedHour, selectedMinute, 0)
+//        if (calculateRemainingTime(minus30MinutesLocalTime).toInt() == 0) {
+//            showToast("30분 전 시간을 설정해주세요")
+//            return
+//        }
 
         sleepViewModel.fetchPutWakeupTime(
             time = MyTime(

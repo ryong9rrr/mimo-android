@@ -35,6 +35,16 @@ fun TimePicker(
 ) {
     val _hours = (0..23).toList()
     val _minutes = (0..59).toList()
+
+    _hours.plus(null)
+    _hours.plus(null)
+    _hours.plus(null)
+    _hours.plus(null)
+    _minutes.plus(null)
+    _minutes.plus(null)
+    _minutes.plus(null)
+    _minutes.plus(null)
+
     var selectedHour by remember { mutableStateOf(hour) }
     var selectedMinute by remember { mutableStateOf(minute) }
 
@@ -45,28 +55,30 @@ fun TimePicker(
     val coroutineScope = rememberCoroutineScope()
 
     Box {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ){
-            Box(
-                modifier = Modifier
-                    .width(250.dp)
-                    .height(63.dp)
-                    .background(Color.Transparent)
-                    .border(
-                        width = 3.dp,
-                        color = Teal100,
-                        shape = RoundedCornerShape(8.dp), // 선택된 항목을 강조하는 테두리
-                    )
-            )
+        Column {
+            Spacer(modifier = Modifier.padding(25.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ){
+                Box(
+                    modifier = Modifier
+                        .width(250.dp)
+                        .height(63.dp)
+                        .background(Color.Transparent)
+                        .border(
+                            width = 3.dp,
+                            color = Teal100,
+                            shape = RoundedCornerShape(8.dp), // 선택된 항목을 강조하는 테두리
+                        )
+                )
+            }
         }
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
-
             Row(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalArrangement = Arrangement.Center,
@@ -119,7 +131,7 @@ fun TimePickerColumn(
         ) {
             LazyColumn(
                 state = state,
-                //contentPadding = PaddingValues(vertical = 50.dp),
+                contentPadding = PaddingValues(vertical = 50.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(items.size) { index ->

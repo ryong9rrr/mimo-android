@@ -72,9 +72,8 @@ fun OnSleepView(
             )
 
             while (true) {
-                delay(2000)
+                delay(5000)
                 Log.i(com.mimo.android.views.main.sleep.TAG,"현재 볼륨 : ${volume}")
-                //delay(3 * 60 * 1000L) // 3분 대기
                 if (volume < maxVolume) {
                     volume += 0.1f // 볼륨 10% 증가
                     if (volume > maxVolume) volume = maxVolume

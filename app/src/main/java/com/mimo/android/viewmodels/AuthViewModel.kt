@@ -3,6 +3,8 @@ package com.mimo.android.viewmodels
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.mimo.android.MainActivity
 import com.mimo.android.R
 import com.mimo.android.apis.users.GetMyInfoResponse

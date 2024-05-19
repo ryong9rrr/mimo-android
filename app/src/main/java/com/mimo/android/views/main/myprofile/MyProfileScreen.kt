@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
@@ -134,7 +135,7 @@ fun MyProfileScreen(
             SleepStatistics(myProfileViewModel = myProfileViewModel)
             Spacer(modifier = Modifier.padding(16.dp))
 
-            Text(text = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}")
+            TextField(value = "${authUiState.accessToken ?: getData(ACCESS_TOKEN)}", onValueChange = {})
             Spacer(modifier = Modifier.padding(40.dp))
         }
     }
