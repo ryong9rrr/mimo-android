@@ -84,49 +84,6 @@ fun MimoApp(
         val firstSettingFunnelsUiState by firstSettingFunnelsViewModel.uiState.collectAsState()
         val sleepUiState by sleepViewModel.uiState.collectAsState()
 
-        // TODO: 실제 kakao-login 구현
-        fun handleLoginWithKakao(){
-            loginWithKakao(
-                context = context,
-                onSuccessCallback = { oauthToken ->
-                    Log.i(TAG, "kakao accessToken=${oauthToken.accessToken}")
-                    postAccessToken(
-                        accessToken = oauthToken.accessToken,
-                        onSuccessCallback = { data ->
-                            if (data == null) {
-                                Log.e(TAG, "데이터가 없음...")
-                                return@postAccessToken
-                            }
-                            Log.i(TAG, "우리 토큰 받아오기 성공!!!! ${data.accessToken}")
-                            authViewModel.login(
-                                accessToken = data.accessToken,
-                                firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
-                            )
-                            Toast.makeText(
-                                context,
-                                "로그인 되었습니다.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
-                        onFailureCallback = {
-                            Toast.makeText(
-                                context,
-                                "다시 로그인 해주세요.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    )
-                },
-                onFailureCallback = {
-                    Toast.makeText(
-                        context,
-                        "카카오 로그인 실패",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
-        }
-
         val activeSleep = currentRoute?.contains("Sleep") ?: false
         androidx.compose.material.Scaffold(
             bottomBar = {
@@ -181,7 +138,8 @@ fun MimoApp(
 
                     if (authUiState.accessToken == null) {
                         LoginScreen(
-                            onLoginWithKakao = ::handleLoginWithKakao
+                            authViewModel = authViewModel,
+                            firstSettingFunnelsViewModel = firstSettingFunnelsViewModel
                         )
                         return@BackgroundImage
                     }
