@@ -189,3 +189,13 @@ MIMO는 갤럭시워치를 착용한 사용자가 "잘 자고 잘 일어날 수 
     <img width="400px" src="./docs/Demonstration_video_using_phone.gif" />
   </div>
 </div>
+
+</br>
+
+## 환경 변수 설정
+
+1. `local.properties` 파일에 아래와 같이 **카카오 디벨로퍼**에서 발급받은 안드로이드 앱 키를 등록해주세요.
+
+```
+kakao_sdk_appkey=앱 키
+```
