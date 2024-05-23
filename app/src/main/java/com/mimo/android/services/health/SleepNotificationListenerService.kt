@@ -6,8 +6,6 @@ import android.os.Looper
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import com.google.firebase.Firebase
-import com.google.firebase.database.database
 import com.mimo.android.apis.sleeps.PostSleepDataRequest
 import com.mimo.android.apis.sleeps.postSleepData
 import com.mimo.android.utils.preferences.ACCESS_TOKEN
@@ -18,11 +16,6 @@ import java.time.ZoneId
 private const val TAG = "SleepNotificationListenerService"
 
 class SleepNotificationListenerService: NotificationListenerService() {
-
-    // Firebase Realtime Database의 "messages" 노드에 참조를 가져옴
-    private val database = Firebase.database("https://mimo-14710-default-rtdb.asia-southeast1.firebasedatabase.app")
-    private val ref = database.getReference(getData(ACCESS_TOKEN) ?: "messages")
-
     private val handlerNotificationPosted = Handler(Looper.getMainLooper())
     private val handlerNotificationRemoved = Handler(Looper.getMainLooper())
     private var runnableNotificationPosted: Runnable? = null
@@ -63,7 +56,6 @@ class SleepNotificationListenerService: NotificationListenerService() {
                     sleepLevel = 4
                 )
             )
-            ref.push().setValue("${getCurrentKoreaTime()}에 슬립사이클 앱에서 onNotificationPosted (수면시작)")
         }
     }
 
@@ -101,7 +93,6 @@ class SleepNotificationListenerService: NotificationListenerService() {
                     sleepLevel = -1
                 )
             )
-            ref.push().setValue("${getCurrentKoreaTime()}에 슬립사이클 앱에서 onNotificationRemoved(수면종료)")
         }
     }
 }

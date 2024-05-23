@@ -17,13 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.app.ActivityCompat
-import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.lifecycleScope
-import com.google.firebase.Firebase
-import com.google.firebase.database.database
 import com.mimo.android.apis.createMimoApiService
-import com.mimo.android.apis.sleeps.PostSleepDataRequest
-import com.mimo.android.apis.sleeps.postSleepData
 import com.mimo.android.viewmodels.AuthViewModel
 import com.mimo.android.viewmodels.FirstSettingFunnelsViewModel
 import com.mimo.android.viewmodels.QrCodeViewModel
@@ -33,20 +27,10 @@ import com.mimo.android.services.gogglelocation.*
 import com.mimo.android.services.kakao.initializeKakaoSdk
 import com.mimo.android.services.qrcode.*
 import com.mimo.android.utils.backpresshandler.initializeWhenTwiceBackPressExitApp
-import com.mimo.android.utils.dateFormatter
 import com.mimo.android.utils.os.printKeyHash
-import com.mimo.android.utils.preferences.ACCESS_TOKEN
 import com.mimo.android.utils.preferences.createSharedPreferences
-import com.mimo.android.utils.preferences.getData
 import com.mimo.android.utils.showToast
 import com.mimo.android.viewmodels.*
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import java.time.*
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
-import java.util.Timer
-import java.util.TimerTask
 
 private const val TAG = "MainActivity"
 

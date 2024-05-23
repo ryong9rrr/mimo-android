@@ -4,7 +4,6 @@ import androidx.compose.material3.*
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.mimo.android.apis.users.postAccessToken
 import com.mimo.android.components.BackgroundImage
 import com.mimo.android.components.navigation.getColor
 import com.mimo.android.components.navigation.myicons.MyIconPack
@@ -33,7 +31,6 @@ import com.mimo.android.services.health.HealthConnectManager
 import com.mimo.android.views.*
 import com.mimo.android.views.firstsettingfunnels.*
 import com.mimo.android.views.login.LoginScreen
-import com.mimo.android.services.kakao.loginWithKakao
 import com.mimo.android.ui.theme.Teal900
 import com.mimo.android.viewmodels.MyHouseCurtainViewModel
 import com.mimo.android.viewmodels.MyHouseDetailViewModel
@@ -72,6 +69,7 @@ fun MimoApp(
     myHouseWindowViewModel: MyHouseWindowViewModel,
     sleepViewModel: SleepViewModel
     ){
+
     MaterialTheme {
         val scaffoldState = rememberScaffoldState()
         val navController = rememberNavController()

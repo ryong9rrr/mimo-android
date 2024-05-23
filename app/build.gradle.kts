@@ -1,9 +1,6 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-
-    // firebase
-    id("com.google.gms.google-services")
 }
 
 android {
@@ -21,6 +18,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val kakaoAppKey: String = rootProject.extra["kakao_sdk_appkey"] as String
+        buildConfigField("String", "kakao_sdk_appkey", "\"$kakaoAppKey\"")
+        manifestPlaceholders.put("kakao_sdk_appkey", kakaoAppKey)
     }
 
     buildTypes {
@@ -41,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -104,11 +106,6 @@ dependencies {
 
     // workmanager
     implementation("androidx.work:work-runtime-ktx:2.7.1")
-
-    // firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-analytics")
 
     // 음악
     implementation("androidx.compose.runtime:runtime-livedata:1.0.0")
