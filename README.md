@@ -1,4 +1,4 @@
-# 스마트슬립🌙 MIMO (Android Application)
+# ☀️ 미라클모닝 MIMO (Android Application)
 
 MIMO는 갤럭시워치를 착용한 사용자가 "잘 자고 잘 일어날 수 있도록" 하는 IoT 서비스입니다.
 
